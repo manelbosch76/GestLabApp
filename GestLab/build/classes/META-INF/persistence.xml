@@ -9,7 +9,7 @@
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/GestLab?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="manelbosch"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="ma180nel"/>
+      <property name="javax.persistence.jdbc.password" value="xxxxxxx"/>
     </properties>
   </persistence-unit>
 </persistence>
