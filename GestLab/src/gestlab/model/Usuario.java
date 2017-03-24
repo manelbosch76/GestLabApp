@@ -1,106 +1,64 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gestlab.model;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
- * @author manel
+ * Classe que representa els usuaaris del sistema
+ * @author manel bosch
  */
-@Entity
-@Table(name = "Usuario")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Usuario.findAll", query = "SELECT u FROM Usuario u"),
-    @NamedQuery(name = "Usuario.findById", query = "SELECT u FROM Usuario u WHERE u.id = :id"),
-    @NamedQuery(name = "Usuario.findByLogin", query = "SELECT u FROM Usuario u WHERE u.login = :login"),
-    @NamedQuery(name = "Usuario.findByContrasena", query = "SELECT u FROM Usuario u WHERE u.contrasena = :contrasena"),
-    @NamedQuery(name = "Usuario.findByDni", query = "SELECT u FROM Usuario u WHERE u.dni = :dni"),
-    @NamedQuery(name = "Usuario.findByNombre", query = "SELECT u FROM Usuario u WHERE u.nombre = :nombre"),
-    @NamedQuery(name = "Usuario.findByPrimerApellido", query = "SELECT u FROM Usuario u WHERE u.primerApellido = :primerApellido"),
-    @NamedQuery(name = "Usuario.findBySegundoApellido", query = "SELECT u FROM Usuario u WHERE u.segundoApellido = :segundoApellido"),
-    @NamedQuery(name = "Usuario.findByEmail", query = "SELECT u FROM Usuario u WHERE u.email = :email"),
-    @NamedQuery(name = "Usuario.findByTelefono", query = "SELECT u FROM Usuario u WHERE u.telefono = :telefono"),
-    @NamedQuery(name = "Usuario.findByAdministrador", query = "SELECT u FROM Usuario u WHERE u.administrador = :administrador")})
+
 public class Usuario implements Serializable {
+    
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
+    
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "login")
+    
     private String login;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "contrasena")
+    
     private String contrasena;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 10)
-    @Column(name = "dni")
+    
     private String dni;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "nombre")
+    
     private String nombre;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "primer_apellido")
+    
     private String primerApellido;
-    @Size(max = 20)
-    @Column(name = "segundo_apellido")
+   
     private String segundoApellido;
-    // @Pattern(regexp="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", message="Invalid email")//if the field contains email address consider using this annotation to enforce field validation
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "email")
+    
     private String email;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "telefono")
+    
     private String telefono;
-    @Basic(optional = false)
-    @NotNull
-    @Column(name = "administrador")
+    
     private boolean administrador;
-    @JoinColumn(name = "id_empresa", referencedColumnName = "id")
-    @ManyToOne(optional = false)
+    
     private Empresa idEmpresa;
 
     public Usuario() {
     }
 
+    /**
+     * Crea un usuari a partir del seu identificador
+     * @author manel bosch
+     * @param id identificador
+     */
     public Usuario(Long id) {
         this.id = id;
     }
 
+    /**
+     * Crea un usuari a partir de les seves dades
+     * @author manel bosch
+     * @param id identificador
+     * @param login 
+     * @param contrasena 
+     * @param dni 
+     * @param nombre 
+     * @param primerApellido 
+     * @param email 
+     * @param telefono 
+     * @param administrador 
+     */
     public Usuario(Long id, String login, String contrasena, String dni, String nombre, String primerApellido, String email, String telefono, boolean administrador) {
         this.id = id;
         this.login = login;

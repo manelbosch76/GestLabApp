@@ -4,7 +4,7 @@ package gestlab.view.functionality;
 import java.util.List;
 
 /**
- * Classe que permet ccrear les diferents taules a mostrar a la interfície
+ * Classe que permet crear les diferents taules a mostrar a la interfície
  * @author manel bosch
  */
 public class TablesFunctionality {

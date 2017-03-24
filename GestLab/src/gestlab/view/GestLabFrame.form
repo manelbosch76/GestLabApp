@@ -124,9 +124,9 @@
                               <Component id="jCheckBoxAdmin" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="jPanelDadesEmpresa" min="-2" max="-2" attributes="0"/>
-                              <Component id="jPanelDadesPersonals" min="-2" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="jPanelDadesEmpresa" max="32767" attributes="0"/>
+                              <Component id="jPanelDadesPersonals" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace pref="120" max="32767" attributes="0"/>
                       </Group>
@@ -220,6 +220,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldNom">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelCognom1">
                       <Properties>
@@ -227,6 +230,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldCognom1">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelCognom2">
                       <Properties>
@@ -234,6 +240,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldCognom2">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelMail">
                       <Properties>
@@ -241,6 +250,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldMail">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelTelf">
                       <Properties>
@@ -248,6 +260,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldTelf">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JLabel" name="jLabelDni">
                       <Properties>
@@ -255,6 +270,9 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldDni">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -263,18 +281,23 @@
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
+                          <Group type="102" attributes="0">
                               <EmptySpace pref="107" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jLabelNif" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabelNomEmpresa" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jLabelAdreca" alignment="0" min="-2" max="-2" attributes="0"/>
-                              </Group>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jTextFieldNif" linkSize="6" alignment="0" min="-2" pref="200" max="-2" attributes="0"/>
-                                  <Component id="jTextFieldNomEmpresa" linkSize="6" alignment="0" max="32767" attributes="0"/>
-                                  <Component id="jTextFieldAdreca" linkSize="6" alignment="0" max="32767" attributes="0"/>
+                                  <Group type="102" alignment="1" attributes="0">
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jLabelNif" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabelNomEmpresa" alignment="0" min="-2" max="-2" attributes="0"/>
+                                          <Component id="jLabelAdreca" alignment="0" min="-2" max="-2" attributes="0"/>
+                                      </Group>
+                                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                                      <Group type="103" groupAlignment="0" attributes="0">
+                                          <Component id="jTextFieldNif" linkSize="6" alignment="0" min="-2" pref="200" max="-2" attributes="0"/>
+                                          <Component id="jTextFieldNomEmpresa" linkSize="6" alignment="0" max="32767" attributes="0"/>
+                                          <Component id="jTextFieldAdreca" linkSize="6" alignment="0" max="32767" attributes="0"/>
+                                      </Group>
+                                  </Group>
+                                  <Component id="jButtonModifDades" alignment="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -298,7 +321,9 @@
                                   <Component id="jLabelAdreca" alignment="3" min="-2" max="-2" attributes="0"/>
                                   <Component id="jTextFieldAdreca" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <EmptySpace pref="102" max="32767" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Component id="jButtonModifDades" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -320,10 +345,27 @@
                       </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldNif">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldNomEmpresa">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldAdreca">
+                      <Properties>
+                        <Property name="editable" type="boolean" value="false"/>
+                      </Properties>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jButtonModifDades">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Modificar dades"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonModifDadesActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -436,16 +478,25 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Nou Usuari"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonNewUserActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonModifUser">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Modificar Usuari"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonModifUserActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonDelUser">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Eliminar Usuari"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDelUserActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -510,11 +561,17 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Buscar"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonUserIdActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonSearchSurname">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Buscar"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSearchSurnameActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>

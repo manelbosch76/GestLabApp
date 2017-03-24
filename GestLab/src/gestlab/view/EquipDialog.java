@@ -4,7 +4,7 @@ package gestlab.view;
 import gestlab.model.Usuario;
 
 /**
- *
+ * Classe per gestionar l'entrada/modificació de dades d'un equip
  * @author manel bosch
  */
 public class EquipDialog extends javax.swing.JDialog {
@@ -12,7 +12,8 @@ public class EquipDialog extends javax.swing.JDialog {
     Usuario usuario;
 
     /**
-     * Creates new form UserDialog
+     * Crea una finestra per entrar un nou equip
+     * @author manel bosch
      * @param parent
      * @param modal
      */
@@ -22,7 +23,7 @@ public class EquipDialog extends javax.swing.JDialog {
     }
     
     /**
-     * Crea un nou formulari per modificar dades d'usuari passat per paràmetre
+     * Crea un nou formulari per modificar dades d'un equip passat per paràmetre
      * @param parent
      * @param modal
      * @param u Usuari a modificar

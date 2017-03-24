@@ -236,6 +236,7 @@ public class Login extends javax.swing.JFrame {
     /**
      * Mètode per comprovar les dades entrades per pantalla
      * @author manel bosch
+     * @return true o false
      */
     public boolean checkData(){
         boolean acces = false;

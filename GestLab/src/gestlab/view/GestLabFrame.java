@@ -3,15 +3,18 @@ package gestlab.view;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.UsuarioRestfulClient;
 import gestlab.view.functionality.TablesFunctionality;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.ws.rs.core.GenericType;
 
 /**
- *
- * @author manel
+ * Classe que gestiona la finestra principal del programa
+ * @author manel bosch
  */
 public class GestLabFrame extends javax.swing.JFrame {
     
@@ -25,6 +28,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Creates new form GestLabFrame
+     * @author manel bosch
      * @param u Usuari que accedeix al programa
      */
     public GestLabFrame(Usuario u) {
@@ -42,6 +46,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     
     /**
      * Mètode per omplir els camps de la pestanya perfil
+     * @author manel bosch
      */
     private void fillProfile(){
         jTextFieldNom.setText(usuario.getNombre());
@@ -57,6 +62,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     
     /**
      * Mètode per amagar els botons i el panell d'usuaris en cas de no ser un usuari administrador
+     * @author manel bosch
      */
     private void hideButtons(){
         jTabbedPaneMain.remove(jPanelUsuaris);
@@ -68,15 +74,13 @@ public class GestLabFrame extends javax.swing.JFrame {
         jButtonDelEquip.setVisible(false);
     }
     
-    ChangeListener changeListener = new ChangeListener() {
-      @Override
-      public void stateChanged(ChangeEvent changeEvent) {
+    //Listener per controlar els canvis de pestanya de la finestra del programa
+    ChangeListener changeListener = (ChangeEvent changeEvent) -> {
         JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
         int index = sourceTabbedPane.getSelectedIndex();
         if(sourceTabbedPane.getTitleAt(index).equals("Usuaris")){
             fillUsersList();
         }
-      }
     };
 
     /**
@@ -113,6 +117,7 @@ public class GestLabFrame extends javax.swing.JFrame {
         jTextFieldNif = new javax.swing.JTextField();
         jTextFieldNomEmpresa = new javax.swing.JTextField();
         jTextFieldAdreca = new javax.swing.JTextField();
+        jButtonModifDades = new javax.swing.JButton();
         jCheckBoxAdmin = new javax.swing.JCheckBox();
         jPanelUsuaris = new javax.swing.JPanel();
         jScrollPaneUsers = new javax.swing.JScrollPane();
@@ -167,15 +172,27 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jLabelName.setText("Nom:");
 
+        jTextFieldNom.setEditable(false);
+
         jLabelCognom1.setText("Primer cognom:");
+
+        jTextFieldCognom1.setEditable(false);
 
         jLabelCognom2.setText("Segon cognom:");
 
+        jTextFieldCognom2.setEditable(false);
+
         jLabelMail.setText("email:");
+
+        jTextFieldMail.setEditable(false);
 
         jLabelTelf.setText("Telèfon:");
 
+        jTextFieldTelf.setEditable(false);
+
         jLabelDni.setText("DNI:");
+
+        jTextFieldDni.setEditable(false);
 
         javax.swing.GroupLayout jPanelDadesPersonalsLayout = new javax.swing.GroupLayout(jPanelDadesPersonals);
         jPanelDadesPersonals.setLayout(jPanelDadesPersonalsLayout);
@@ -241,21 +258,37 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jLabelAdreca.setText("Adreça:");
 
+        jTextFieldNif.setEditable(false);
+
+        jTextFieldNomEmpresa.setEditable(false);
+
+        jTextFieldAdreca.setEditable(false);
+
+        jButtonModifDades.setText("Modificar dades");
+        jButtonModifDades.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModifDadesActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanelDadesEmpresaLayout = new javax.swing.GroupLayout(jPanelDadesEmpresa);
         jPanelDadesEmpresa.setLayout(jPanelDadesEmpresaLayout);
         jPanelDadesEmpresaLayout.setHorizontalGroup(
             jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesEmpresaLayout.createSequentialGroup()
+            .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
                 .addContainerGap(107, Short.MAX_VALUE)
                 .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelNif)
-                    .addComponent(jLabelNomEmpresa)
-                    .addComponent(jLabelAdreca))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldNif, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextFieldNomEmpresa)
-                    .addComponent(jTextFieldAdreca))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesEmpresaLayout.createSequentialGroup()
+                        .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelNif)
+                            .addComponent(jLabelNomEmpresa)
+                            .addComponent(jLabelAdreca))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextFieldNif, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jTextFieldNomEmpresa)
+                            .addComponent(jTextFieldAdreca)))
+                    .addComponent(jButtonModifDades, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
@@ -276,7 +309,9 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelAdreca)
                     .addComponent(jTextFieldAdreca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(102, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonModifDades)
+                .addContainerGap())
         );
 
         jCheckBoxAdmin.setEnabled(false);
@@ -306,9 +341,9 @@ public class GestLabFrame extends javax.swing.JFrame {
                     .addComponent(jLabelAdministrador)
                     .addComponent(jCheckBoxAdmin))
                 .addGap(18, 18, 18)
-                .addGroup(jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap(120, Short.MAX_VALUE))
         );
 
@@ -320,10 +355,25 @@ public class GestLabFrame extends javax.swing.JFrame {
         jScrollPaneUsers.setViewportView(jTableUsers);
 
         jButtonNewUser.setText("Nou Usuari");
+        jButtonNewUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNewUserActionPerformed(evt);
+            }
+        });
 
         jButtonModifUser.setText("Modificar Usuari");
+        jButtonModifUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModifUserActionPerformed(evt);
+            }
+        });
 
         jButtonDelUser.setText("Eliminar Usuari");
+        jButtonDelUser.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelUserActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelAdminUserLayout = new javax.swing.GroupLayout(jPanelAdminUser);
         jPanelAdminUser.setLayout(jPanelAdminUserLayout);
@@ -373,8 +423,18 @@ public class GestLabFrame extends javax.swing.JFrame {
         });
 
         jButtonUserId.setText("Buscar");
+        jButtonUserId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonUserIdActionPerformed(evt);
+            }
+        });
 
         jButtonSearchSurname.setText("Buscar");
+        jButtonSearchSurname.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSearchSurnameActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelUserSearchLayout = new javax.swing.GroupLayout(jPanelUserSearch);
         jPanelUserSearch.setLayout(jPanelUserSearchLayout);
@@ -767,6 +827,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar desaparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en guanyar el focus
      */
     private void jTextFieldSurnameFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldSurnameFocusGained
@@ -776,6 +837,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar l'aparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en perdre el focus
      */
     private void jTextFieldSurnameFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldSurnameFocusLost
@@ -786,6 +848,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar desaparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en guanyar el focus
      */
     private void jTextFieldUserIdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldUserIdFocusGained
@@ -795,6 +858,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar l'aparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en perdre el focus
      */
     private void jTextFieldUserIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldUserIdFocusLost
@@ -805,6 +869,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar desaparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en guanyar el focus
      */
     private void jTextFieldProductFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldProductFocusGained
@@ -814,6 +879,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar l'aparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en perdre el focus
      */
     private void jTextFieldProductIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldProductIdFocusLost
@@ -824,6 +890,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar desaparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en guanyar el focus
      */
     private void jTextFieldEquipFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldEquipFocusGained
@@ -833,6 +900,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar l'aparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en perdre el focus
      */
     private void jTextFieldEquipFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldEquipFocusLost
@@ -843,6 +911,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar l'aparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en perdre el focus
      */
     private void jTextFieldProductFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldProductFocusLost
@@ -853,6 +922,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar desaparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en guanyar el focus
      */
     private void jTextFieldProductIdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldProductIdFocusGained
@@ -863,6 +933,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar desaparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en guanyar el focus
      */
     private void jTextFieldEquipIdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldEquipIdFocusGained
@@ -873,6 +944,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per controlar l'aparició del text per defecte
+     * @author manel bosch
      * @param evt Event que es produeix en perdre el focus
      */
     private void jTextFieldEquipIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldEquipIdFocusLost
@@ -881,6 +953,89 @@ public class GestLabFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextFieldEquipIdFocusLost
 
+    /**
+     * Mètode per modificar les dades del perfil
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonModifDadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifDadesActionPerformed
+        UserDialog dialog = new UserDialog(this, true, usuario);
+        dialog.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent e){
+                fillProfile();
+            }
+        });
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButtonModifDadesActionPerformed
+
+    /**
+     * Mètode per buscar un usuari a la base de dades pel seu cognom
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonSearchSurnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchSurnameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonSearchSurnameActionPerformed
+
+    /**
+     * Mètode per buscar un usuari a la base de dades pel seu identificador
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonUserIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUserIdActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonUserIdActionPerformed
+
+    /**
+     * Mètode per introduir un usuari nou a la base de dades
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonNewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewUserActionPerformed
+        UserDialog dialog = new UserDialog(this, true);
+        dialog.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent e){
+                fillUsersList();
+            }
+        });
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButtonNewUserActionPerformed
+
+    /**
+     * Mètode per modificar un usuari seleccionat 
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonModifUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifUserActionPerformed
+        if(jTableUsers.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un usuari a modificar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableUsers.getSelectedRow();
+            Long id = (Long) jTableUsers.getModel().getValueAt(row,0);
+            /*u = get usuario from restful service
+            /UserDialog dialog = new UserDialog(this, true);
+                dialog.addWindowListener(new WindowAdapter(){
+                    @Override
+                    public void windowClosed(WindowEvent e){
+                        fillUsersList();
+                    }
+                });
+                dialog.setVisible(true);
+            */
+        }
+    }//GEN-LAST:event_jButtonModifUserActionPerformed
+
+    /**
+     * Mètode per eliminar usuari 
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonDelUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelUserActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonDelUserActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonDelEquip;
     private javax.swing.JButton jButtonDelProduct;
@@ -888,6 +1043,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonEquipId;
     private javax.swing.JButton jButtonEquipsAvailable;
     private javax.swing.JButton jButtonEquipsUsed;
+    private javax.swing.JButton jButtonModifDades;
     private javax.swing.JButton jButtonModifEquip;
     private javax.swing.JButton jButtonModifProduct;
     private javax.swing.JButton jButtonModifUser;
@@ -954,9 +1110,15 @@ public class GestLabFrame extends javax.swing.JFrame {
     Gestió d'usuaris
     */
     
+    /**
+     * Mètode per omplir la taula d'usuaris
+     * @author manel bosch
+     */
     public void fillUsersList(){
         usuarios = uClient.findAll_JSON(gTypeUser);
         jTableUsers.setModel(tFunc.createTableModel(Usuario.class, usuarios));
         //jTableUsers.getColumnModel().removeColumn(jTableUsers.getColumn(0));
     }
+    
+   
 }

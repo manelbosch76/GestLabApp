@@ -1,35 +1,32 @@
 
 package gestlab.restfulclient;
 
-import gestlab.model.Usuario;
-import java.util.List;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.GenericType;
 
 /**
  * Jersey REST client generated for REST resource:UsuarioFacadeREST
  * [model.usuario]<br>
  * USAGE:
  * <pre>
- *        UsuarioRestfulClient client = new UsuarioRestfulClient();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
+        LoginClient client = new LoginClient();
+        Object response = client.XXX(...);
+        // do whatever with response
+        client.close();
+ </pre>
  *
  * @author manel bosch
  */
 
 //Classe no comentada perquè s'haurà d'implementar a partir del servei RESTful real que es faci
 
-public class UsuarioRestfulClient {
+public class LoginClient {
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "http://localhost:8080/RestfulServer/webresources";
+    private static final String BASE_URI = "http://localhost:8080/GestLabServer/webresources";
 
-    public UsuarioRestfulClient() {
+    public LoginClient() {
         client = javax.ws.rs.client.ClientBuilder.newClient();
         webTarget = client.target(BASE_URI).path("model.usuario");
     }
@@ -80,6 +77,18 @@ public class UsuarioRestfulClient {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
     }
 
+    public <T> T findByLogin_XML(Class<T> responseType, String login) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{login}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
+    public <T> T findByLogin_JSON(Class<T> responseType, String login) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{login}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
+    }
+
     public <T> T findAll_XML(Class<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
@@ -88,17 +97,6 @@ public class UsuarioRestfulClient {
     public <T> T findAll_JSON(Class<T> responseType) throws ClientErrorException {
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
-    }
-    
-    /**
-     * Mètode per poder obtenir llista d'usuaris
-     * @param genericType tipus genèric que representa la llista d'usuaris
-     * @return llista d'usuaris
-     * @throws ClientErrorException 
-     */
-    public List<Usuario> findAll_JSON(GenericType<List<Usuario>> genericType) throws ClientErrorException{
-        WebTarget resource = webTarget;
-        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(genericType);
     }
 
     public void remove(String id) throws ClientErrorException {

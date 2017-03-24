@@ -1,22 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gestlab.view;
 
 import gestlab.model.Usuario;
 
 /**
- *
- * @author manel
+ * Classe que gestiona la finestra d'entrada/modificació de dades d'un usuari
+ * @author manel bosch
  */
 public class UserDialog extends javax.swing.JDialog {
     
     Usuario usuario;
 
     /**
-     * Creates new form UserDialog
+     * Crea un nou formulari per entrar dades d'un nou usuari
+     * @author manel bosch
      * @param parent
      * @param modal
      */
@@ -27,6 +24,7 @@ public class UserDialog extends javax.swing.JDialog {
     
     /**
      * Crea un nou formulari per modificar dades d'usuari passat per paràmetre
+     * @author manel bosch
      * @param parent
      * @param modal
      * @param u Usuari a modificar
@@ -312,6 +310,10 @@ public class UserDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Mètode per guardar les noves dades
+     * @param evt Event que es produeix en prémer el botó
+     */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButtonSaveActionPerformed
@@ -425,6 +427,7 @@ public class UserDialog extends javax.swing.JDialog {
     
     /**
      * Mètode per saber si tots els camps necessaris estan plens
+     * @author manel bosch
      * @return true o false
      */
     private boolean checkFilledFields(){

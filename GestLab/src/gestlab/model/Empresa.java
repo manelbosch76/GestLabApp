@@ -1,67 +1,45 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gestlab.model;
 
 import java.io.Serializable;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- *
+ * Classe que representa les empreses dels usuaris de la base de dades
  * @author manel bosch
  */
-@Entity
-@Table(name = "Empresa")
-@XmlRootElement
-@NamedQueries({
-    @NamedQuery(name = "Empresa.findAll", query = "SELECT e FROM Empresa e"),
-    @NamedQuery(name = "Empresa.findById", query = "SELECT e FROM Empresa e WHERE e.id = :id"),
-    @NamedQuery(name = "Empresa.findByNif", query = "SELECT e FROM Empresa e WHERE e.nif = :nif"),
-    @NamedQuery(name = "Empresa.findByNombreEmpresa", query = "SELECT e FROM Empresa e WHERE e.nombreEmpresa = :nombreEmpresa"),
-    @NamedQuery(name = "Empresa.findByDireccionEmpresa", query = "SELECT e FROM Empresa e WHERE e.direccionEmpresa = :direccionEmpresa")})
+
 public class Empresa implements Serializable {
+    
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
-    @Column(name = "id")
+    
     private Long id;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 20)
-    @Column(name = "nif")
+    
     private String nif;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 50)
-    @Column(name = "nombre_empresa")
+    
     private String nombreEmpresa;
-    @Basic(optional = false)
-    @NotNull
-    @Size(min = 1, max = 100)
-    @Column(name = "direccion_empresa")
+    
     private String direccionEmpresa;
 
     public Empresa() {
     }
 
+    /**
+     * Crea una empresa a partir del seu identificador
+     * @author manel bosch
+     * @param id identificador
+     */
     public Empresa(Long id) {
         this.id = id;
     }
 
+    /**
+     * Crea una empresa a partir de les seves dades
+     * @author manel bosch
+     * @param id identificador
+     * @param nif
+     * @param nombreEmpresa
+     * @param direccionEmpresa 
+     */
     public Empresa(Long id, String nif, String nombreEmpresa, String direccionEmpresa) {
         this.id = id;
         this.nif = nif;
