@@ -2,9 +2,11 @@
 package gestlab.model;
 
 import java.io.Serializable;
+import java.util.Collection;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * Classe que representa les empreses dels usuaris de la base de dades
+ * Classe que representa les empreses
  * @author manel bosch
  */
 
@@ -12,77 +14,120 @@ public class Empresa implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    private Long id;
-    
     private String nif;
     
     private String nombreEmpresa;
     
     private String direccionEmpresa;
+   
+    private Collection<Cliente> clienteCollection;
 
+    /**
+     * Constructor per defecte
+     * @author manel bosch
+     */
     public Empresa() {
     }
 
     /**
-     * Crea una empresa a partir del seu identificador
+     * Constructor entrant nif de l'empresa
      * @author manel bosch
-     * @param id identificador
+     * @param nif de l'empresa
      */
-    public Empresa(Long id) {
-        this.id = id;
+    public Empresa(String nif) {
+        this.nif = nif;
     }
 
     /**
-     * Crea una empresa a partir de les seves dades
+     * Constructor amb totes les dades de l'empresa passades com a paràmetres
      * @author manel bosch
-     * @param id identificador
-     * @param nif
-     * @param nombreEmpresa
-     * @param direccionEmpresa 
+     * @param nif nif de l'empresa
+     * @param nombreEmpresa Nom de l'empresa
+     * @param direccionEmpresa Adreça de l'empresa
      */
-    public Empresa(Long id, String nif, String nombreEmpresa, String direccionEmpresa) {
-        this.id = id;
+    public Empresa(String nif, String nombreEmpresa, String direccionEmpresa) {
         this.nif = nif;
         this.nombreEmpresa = nombreEmpresa;
         this.direccionEmpresa = direccionEmpresa;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
+    /**
+     * Obté el nif de l'empresa
+     * @author manel bosch
+     * @return NIF nif de l'empresa
+     */
     public String getNif() {
         return nif;
     }
 
+    /**
+     * Entra el nif de l'empresa
+     * @author manel bosch
+     * @param nif nif de l'empresa
+     */
     public void setNif(String nif) {
         this.nif = nif;
     }
 
+    /**
+     * Obté el nom de l'empresa
+     * @author manel bosch
+     * @return nom Nom de l'empresa
+     */
     public String getNombreEmpresa() {
         return nombreEmpresa;
     }
 
+    /**
+     * Entra el nom de l'empresa
+     * @author manel bosch
+     * @param nombreEmpresa Nom de l'empresa
+     */
     public void setNombreEmpresa(String nombreEmpresa) {
         this.nombreEmpresa = nombreEmpresa;
     }
 
+    /**
+     * Obté l'adreça de l'empresa
+     * @author manel bosch
+     * @return adreça Adreça de l'empresa
+     */
     public String getDireccionEmpresa() {
         return direccionEmpresa;
     }
 
+    /**
+     * Entra l'adreça de l'empresa
+     * @author manel bosch
+     * @param direccionEmpresa Adreça de l'empresa
+     */
     public void setDireccionEmpresa(String direccionEmpresa) {
         this.direccionEmpresa = direccionEmpresa;
+    }
+
+    /**
+     * Obté els diferents clients que té registrats 
+     * @author manel bosch
+     * @return llista de clients de l'empresa
+     */
+    @XmlTransient
+    public Collection<Cliente> getClienteCollection() {
+        return clienteCollection;
+    }
+
+    /**
+     * Entra la llista de clients registrat que pertanyen a l'empresa
+     * @author manel bosch
+     * @param clienteCollection llista de clients de l'empresa
+     */
+    public void setClienteCollection(Collection<Cliente> clienteCollection) {
+        this.clienteCollection = clienteCollection;
     }
 
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (id != null ? id.hashCode() : 0);
+        hash += (nif != null ? nif.hashCode() : 0);
         return hash;
     }
 
@@ -93,7 +138,7 @@ public class Empresa implements Serializable {
             return false;
         }
         Empresa other = (Empresa) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.nif == null && other.nif != null) || (this.nif != null && !this.nif.equals(other.nif))) {
             return false;
         }
         return true;
@@ -101,7 +146,7 @@ public class Empresa implements Serializable {
 
     @Override
     public String toString() {
-        return "gestlab.model.Empresa[ id=" + id + " ]";
+        return "gestlab.model.Empresa[ nif=" + nif + " ]";
     }
     
 }

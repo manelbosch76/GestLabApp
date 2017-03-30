@@ -21,10 +21,9 @@ public class GestLab {
      */
     public static void main(String[] args) {
         
-        usuario = new Usuario((long) 10,"jordi","jordi","64591021G","Jordi","Albareda","joalba@gmail.com","633441572", true);
-        gestlabFrame = new GestLabFrame(usuario);
-        gestlabFrame.setVisible(true);
-        
+        login = new Login();
+        login.setVisible(true);
+       
     }
     
 }

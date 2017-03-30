@@ -1,38 +1,42 @@
 
 package gestlab.view;
 
-import gestlab.model.Usuario;
+//import gestlab.model.Producto;
 
 /**
- *
+ * Classe per gestionar l'entrada/modificació de dades d'un producte
  * @author manel bosch
  */
 public class ProductDialog extends javax.swing.JDialog {
     
-    Usuario usuario;
+    //Producto producto;
 
     /**
-     * Creates new form UserDialog
-     * @param parent
-     * @param modal
+     * Crea una finestra per entrar un nou producte
+     * @author manel bosch
+     * @param parent finestra mare
+     * @param modal manté el focus fins a tancar la finestra
      */
     public ProductDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
     }
     
+    
     /**
-     * Crea un nou formulari per modificar dades d'usuari passat per paràmetre
+     * Crea un nou formulari per modificar dades d'un producte passat per paràmetre
      * @param parent
      * @param modal
-     * @param u Usuari a modificar
+     * @param p Producte a modificar
      */
-    public ProductDialog(java.awt.Frame parent, boolean modal, Usuario u) {
+    /*
+    public EquipDialog(java.awt.Frame parent, boolean modal, Producto p) {
         super(parent, modal);
         initComponents();
-        usuario = u;
-        fillUserData(u);
+        //equipo = e;
+        fillEquipData(e);
     }
+    */
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,31 +48,19 @@ public class ProductDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         jLabelTitol = new javax.swing.JLabel();
-        jPanelDadesPersonals = new javax.swing.JPanel();
+        jPanelDadesProducte = new javax.swing.JPanel();
         jLabelName = new javax.swing.JLabel();
         jTextFieldNom = new javax.swing.JTextField();
-        jLabelCognom1 = new javax.swing.JLabel();
-        jTextFieldCognom1 = new javax.swing.JTextField();
-        jLabelCognom2 = new javax.swing.JLabel();
-        jTextFieldCognom2 = new javax.swing.JTextField();
-        jLabelMail = new javax.swing.JLabel();
-        jTextFieldMail = new javax.swing.JTextField();
-        jLabelTelf = new javax.swing.JLabel();
-        jTextFieldTelf = new javax.swing.JTextField();
-        jLabelDni = new javax.swing.JLabel();
-        jTextFieldDni = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
-        jPanelDadesEmpresa = new javax.swing.JPanel();
-        jLabelNif = new javax.swing.JLabel();
-        jLabelNomEmpresa = new javax.swing.JLabel();
-        jLabelAdreca = new javax.swing.JLabel();
-        jTextFieldNif = new javax.swing.JTextField();
-        jTextFieldNomEmpresa = new javax.swing.JTextField();
-        jTextFieldAdreca = new javax.swing.JTextField();
-        jLabelLogin = new javax.swing.JLabel();
-        jLabelPasswd = new javax.swing.JLabel();
-        jTextFieldLogin = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        jLabelCompany = new javax.swing.JLabel();
+        jTextFieldCompany = new javax.swing.JTextField();
+        jLabelReference = new javax.swing.JLabel();
+        jTextFieldReference = new javax.swing.JTextField();
+        jLabelUnits = new javax.swing.JLabel();
+        jTextFieldUnits = new javax.swing.JTextField();
+        jLabelQuantity = new javax.swing.JLabel();
+        jLabelIdProducte = new javax.swing.JLabel();
+        jTextFieldIdProducte = new javax.swing.JTextField();
+        jTextFieldQuantity = new javax.swing.JTextField();
         jPanelBotons = new javax.swing.JPanel();
         jButtonSave = new javax.swing.JButton();
         jButtonClear = new javax.swing.JButton();
@@ -84,140 +76,71 @@ public class ProductDialog extends javax.swing.JDialog {
 
         jLabelName.setText("Nom:");
 
-        jLabelCognom1.setText("Primer cognom:");
+        jLabelCompany.setText("Casa comercial:");
 
-        jLabelCognom2.setText("Segon cognom:");
+        jLabelReference.setText("Referència:");
 
-        jLabelMail.setText("email:");
+        jLabelUnits.setText("Unitats:");
 
-        jLabelTelf.setText("Telèfon:");
+        jLabelQuantity.setText("Quantitat:");
 
-        jLabelDni.setText("DNI:");
+        jLabelIdProducte.setText("ID:");
 
-        jLabel1.setFont(new java.awt.Font("Ubuntu", 0, 10)); // NOI18N
-        jLabel1.setText("(no obligatori)");
-
-        javax.swing.GroupLayout jPanelDadesPersonalsLayout = new javax.swing.GroupLayout(jPanelDadesPersonals);
-        jPanelDadesPersonals.setLayout(jPanelDadesPersonalsLayout);
-        jPanelDadesPersonalsLayout.setHorizontalGroup(
-            jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+        javax.swing.GroupLayout jPanelDadesProducteLayout = new javax.swing.GroupLayout(jPanelDadesProducte);
+        jPanelDadesProducte.setLayout(jPanelDadesProducteLayout);
+        jPanelDadesProducteLayout.setHorizontalGroup(
+            jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelDadesProducteLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelCognom1)
-                            .addComponent(jLabelName)
-                            .addComponent(jLabelMail)
-                            .addComponent(jLabelTelf)))
-                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
-                        .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelDni)
-                            .addComponent(jLabelCognom2)
-                            .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldMail)
-                    .addComponent(jTextFieldCognom2)
-                    .addComponent(jTextFieldCognom1)
-                    .addComponent(jTextFieldNom)
-                    .addComponent(jTextFieldTelf, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(jTextFieldDni))
-                .addContainerGap())
-        );
-        jPanelDadesPersonalsLayout.setVerticalGroup(
-            jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesPersonalsLayout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelDni)
-                    .addComponent(jTextFieldDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelName)
-                    .addComponent(jTextFieldNom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldCognom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelCognom1))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldCognom2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
-                        .addComponent(jLabelCognom2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)))
-                .addGap(36, 36, 36)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelMail)
-                    .addComponent(jTextFieldMail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelTelf)
-                    .addComponent(jTextFieldTelf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
-        );
-
-        jLabelNif.setText("NIF:");
-
-        jLabelNomEmpresa.setText("Nom empresa:");
-
-        jLabelAdreca.setText("Adreça:");
-
-        jLabelLogin.setText("Login:");
-
-        jLabelPasswd.setText("Password:");
-
-        jPasswordField1.setText("jPasswordField1");
-
-        javax.swing.GroupLayout jPanelDadesEmpresaLayout = new javax.swing.GroupLayout(jPanelDadesEmpresa);
-        jPanelDadesEmpresa.setLayout(jPanelDadesEmpresaLayout);
-        jPanelDadesEmpresaLayout.setHorizontalGroup(
-            jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelNif)
-                    .addComponent(jLabelNomEmpresa)
-                    .addComponent(jLabelAdreca)
-                    .addComponent(jLabelLogin)
-                    .addComponent(jLabelPasswd))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldNomEmpresa)
-                    .addComponent(jTextFieldAdreca)
-                    .addComponent(jTextFieldLogin)
-                    .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
-                        .addComponent(jTextFieldNif, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelDadesProducteLayout.createSequentialGroup()
+                        .addComponent(jLabelIdProducte)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPasswordField1))
+                    .addGroup(jPanelDadesProducteLayout.createSequentialGroup()
+                        .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelName)
+                            .addComponent(jLabelCompany)
+                            .addComponent(jLabelReference)
+                            .addComponent(jLabelUnits)
+                            .addComponent(jLabelQuantity))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jTextFieldReference, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(jTextFieldCompany)
+                    .addComponent(jTextFieldNom)
+                    .addComponent(jTextFieldIdProducte)
+                    .addComponent(jTextFieldUnits, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                    .addComponent(jTextFieldQuantity))
                 .addContainerGap())
         );
-        jPanelDadesEmpresaLayout.setVerticalGroup(
-            jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesEmpresaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelLogin)
-                    .addComponent(jTextFieldLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+        jPanelDadesProducteLayout.setVerticalGroup(
+            jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesProducteLayout.createSequentialGroup()
+                .addContainerGap(26, Short.MAX_VALUE)
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelIdProducte)
+                    .addComponent(jTextFieldIdProducte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelPasswd))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelNif)
-                    .addComponent(jTextFieldNif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldNom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelName))
                 .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelNomEmpresa)
-                    .addComponent(jTextFieldNomEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldCompany, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelCompany))
                 .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelAdreca)
-                    .addComponent(jTextFieldAdreca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldReference, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelReference))
+                .addGap(18, 18, 18)
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jTextFieldUnits, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelUnits))
+                .addGap(20, 20, 20)
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelQuantity)
+                    .addComponent(jTextFieldQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26))
         );
 
         jButtonSave.setText("Guardar");
@@ -251,11 +174,11 @@ public class ProductDialog extends javax.swing.JDialog {
                     .addComponent(jLabelMessage)
                     .addGroup(jPanelBotonsLayout.createSequentialGroup()
                         .addComponent(jButtonSave)
-                        .addGap(18, 18, 18)
+                        .addGap(40, 40, 40)
                         .addComponent(jButtonClear)
-                        .addGap(18, 18, 18)
+                        .addGap(31, 31, 31)
                         .addComponent(jButtonCancel)))
-                .addGap(203, 203, 203))
+                .addGap(168, 168, 168))
         );
 
         jPanelBotonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonCancel, jButtonClear, jButtonSave});
@@ -264,7 +187,7 @@ public class ProductDialog extends javax.swing.JDialog {
             jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBotonsLayout.createSequentialGroup()
                 .addComponent(jLabelMessage)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonSave)
                     .addComponent(jButtonClear)
@@ -278,13 +201,11 @@ public class ProductDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jPanelBotons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jLabelTitol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(jPanelDadesProducte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanelBotons, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -292,16 +213,11 @@ public class ProductDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabelTitol)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
+                .addComponent(jPanelDadesProducte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelBotons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addGap(32, 32, 32))
         );
 
         pack();
@@ -317,21 +233,15 @@ public class ProductDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
-        jTextFieldDni.setText("");
+        jTextFieldIdProducte.setText("");
         jTextFieldNom.setText("");
-        jTextFieldCognom1.setText("");
-        jTextFieldCognom2.setText("");
-        jTextFieldMail.setText("");
-        jTextFieldTelf.setText("");
-        jTextFieldLogin.setText("");
-        jPasswordField1.setText("");
-        jTextFieldNif.setText("");
-        jTextFieldNomEmpresa.setText("");
-        jTextFieldAdreca.setText("");
+        jTextFieldCompany.setText("");
+        jTextFieldReference.setText("");
+        jTextFieldUnits.setText("");
     }//GEN-LAST:event_jButtonClearActionPerformed
 
     /**
-     * Mètode per cancelar l'entrada de dades i per tant tancar el programa
+     * Mètode per cancelar l'entrada de dades i per tant tancar la finestra
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
@@ -343,94 +253,66 @@ public class ProductDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonClear;
     private javax.swing.JButton jButtonSave;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabelAdreca;
-    private javax.swing.JLabel jLabelCognom1;
-    private javax.swing.JLabel jLabelCognom2;
-    private javax.swing.JLabel jLabelDni;
-    private javax.swing.JLabel jLabelLogin;
-    private javax.swing.JLabel jLabelMail;
+    private javax.swing.JLabel jLabelCompany;
+    private javax.swing.JLabel jLabelIdProducte;
     private javax.swing.JLabel jLabelMessage;
     private javax.swing.JLabel jLabelName;
-    private javax.swing.JLabel jLabelNif;
-    private javax.swing.JLabel jLabelNomEmpresa;
-    private javax.swing.JLabel jLabelPasswd;
-    private javax.swing.JLabel jLabelTelf;
+    private javax.swing.JLabel jLabelQuantity;
+    private javax.swing.JLabel jLabelReference;
     private javax.swing.JLabel jLabelTitol;
+    private javax.swing.JLabel jLabelUnits;
     private javax.swing.JPanel jPanelBotons;
-    private javax.swing.JPanel jPanelDadesEmpresa;
-    private javax.swing.JPanel jPanelDadesPersonals;
-    private javax.swing.JPasswordField jPasswordField1;
-    private javax.swing.JTextField jTextFieldAdreca;
-    private javax.swing.JTextField jTextFieldCognom1;
-    private javax.swing.JTextField jTextFieldCognom2;
-    private javax.swing.JTextField jTextFieldDni;
-    private javax.swing.JTextField jTextFieldLogin;
-    private javax.swing.JTextField jTextFieldMail;
-    private javax.swing.JTextField jTextFieldNif;
+    private javax.swing.JPanel jPanelDadesProducte;
+    private javax.swing.JTextField jTextFieldCompany;
+    private javax.swing.JTextField jTextFieldIdProducte;
     private javax.swing.JTextField jTextFieldNom;
-    private javax.swing.JTextField jTextFieldNomEmpresa;
-    private javax.swing.JTextField jTextFieldTelf;
+    private javax.swing.JTextField jTextFieldQuantity;
+    private javax.swing.JTextField jTextFieldReference;
+    private javax.swing.JTextField jTextFieldUnits;
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Mètode per omplir els camps amb les dades de l'usuari passat com a paràmetre
+     * Mètode per omplir els camps amb les dades del producte passat com a paràmetre
      * @author manel bosch
+     * @param p Producte
      */
-    private void fillUserData(Usuario usuario){
-        jTextFieldDni.setText(usuario.getDni());
-        jTextFieldNom.setText(usuario.getNombre());
-        jTextFieldCognom1.setText(usuario.getPrimerApellido());
-        jTextFieldCognom2.setText(usuario.getSegundoApellido());
-        jTextFieldMail.setText(usuario.getEmail());
-        jTextFieldTelf.setText(usuario.getTelefono());
-        jTextFieldLogin.setText(usuario.getLogin());
-        jPasswordField1.setText(usuario.getContrasena());//Falta encriptació
-        jTextFieldNif.setText(usuario.getIdEmpresa().getNif());
-        jTextFieldNomEmpresa.setText(usuario.getIdEmpresa().getNombreEmpresa());
-        jTextFieldAdreca.setText(usuario.getIdEmpresa().getDireccionEmpresa());
+    /*
+    private void fillEquipData(Producto p){
+        jTextFieldIdEquip.setText();
+        jTextFieldNom.setText();
+        jTextFieldMarca.setText();
+        jTextFieldModel.setText();
+        jTextFieldInventari.setText();
     }
+    */
     
     /**
-     * Mètode per llegir els camps amb les dades entrades per crear l'usuari
+     * Mètode per llegir els camps amb les dades entrades per crear el producte
      * @author manel bosch
-     * @return Usuari amb les dades entrades
+     * @return Producte amb les dades entrades
      */
-    private Usuario getUserData(){
+    /*
+    private Usuario getEquipData(){
         if(checkFilledFields()){
-            Usuario u = new Usuario();
-            u.setDni(jTextFieldDni.getText());
-            u.setNombre(jTextFieldNom.getText());
-            u.setPrimerApellido(jTextFieldCognom1.getText());
-            u.setSegundoApellido(jTextFieldCognom2.getText());
-            u.setEmail(jTextFieldMail.getText());
-            u.setTelefono(jTextFieldTelf.getText());
-            u.setLogin(jTextFieldLogin.getText());
-            u.setContrasena(jPasswordField1.getText());//Falta encriptació
-            u.getIdEmpresa().setNif(jTextFieldNif.getText());
-            u.getIdEmpresa().setNombreEmpresa(jTextFieldNomEmpresa.getText());
-            u.getIdEmpresa().setDireccionEmpresa(jTextFieldAdreca.getText());
-            jLabelMessage.setText("");
-            return u;
+            Equipo e = new Equipo();
+            
+            return e;
         }else{
             jLabelMessage.setText("Siusplau, omple tots els camps obligatoris");
             return null;
         }
     }
+    */
     
     /**
      * Mètode per saber si tots els camps necessaris estan plens
      * @return true o false
      */
     private boolean checkFilledFields(){
-        return !(jTextFieldDni.getText().equals("")
+        return !(jTextFieldIdProducte.getText().equals("")
                 ||jTextFieldNom.getText().equals("")
-                ||jTextFieldCognom1.getText().equals("")
-                ||jTextFieldMail.getText().equals("")
-                ||jTextFieldTelf.getText().equals("")
-                ||jTextFieldLogin.getText().equals("")
-                ||jPasswordField1.getText().equals("")
-                ||jTextFieldNif.getText().equals("")
-                ||jTextFieldAdreca.getText().equals(""));
+                ||jTextFieldCompany.getText().equals("")
+                ||jTextFieldUnits.getText().equals(""));
+        //Falta acabar
     }
 }

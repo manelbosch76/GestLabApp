@@ -1,8 +1,7 @@
 package gestlab.view;
 
 import gestlab.model.Usuario;
-import gestlab.restfulclient.UsuarioRestfulClient;
-import java.util.Arrays;
+import gestlab.restfulclient.UsuarioClient;
 
 /**
  * Classe que representa l'interfície d'entrada al programa
@@ -13,8 +12,8 @@ public class Login extends javax.swing.JFrame {
     private String login;
     private char[] passwd;
     private boolean admin;
-    
-    UsuarioRestfulClient client;
+
+    UsuarioClient client;
     Usuario usuario;
 
     GestLabFrame gestlabFrame;
@@ -25,7 +24,6 @@ public class Login extends javax.swing.JFrame {
      * @author manel bosch
      */
     public Login() {
-        client = new UsuarioRestfulClient();
         initComponents();
     }
 
@@ -192,16 +190,22 @@ public class Login extends javax.swing.JFrame {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnterActionPerformed
+        jLabelMessage.setText("");
+        
         getData();
+        
+        //client = new UsuarioClientSsl(login, String.valueOf(passwd));
+        client = new UsuarioClient();
+        usuario = client.find_JSON(Usuario.class, login);
 
-        if(checkData()){
+        if(checkData()){ 
             client.close();
             this.dispose();
-            gestlabFrame = new GestLabFrame(usuario);
+            gestlabFrame = new GestLabFrame(usuario);//Passo per paràmetre l'usuari però hauria de passar el tokken
             gestlabFrame.setVisible(true);
-            
         }else{
             jLabelMessage.setText("Usuari y password incorrectes");
+            cleanFields();
         }
     }//GEN-LAST:event_jButtonEnterActionPerformed
 
@@ -211,8 +215,7 @@ public class Login extends javax.swing.JFrame {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonCleanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCleanActionPerformed
-        jTextFieldLogin.setText("");
-        jPasswordField.setText("");
+        cleanFields();
     }//GEN-LAST:event_jButtonCleanActionPerformed
 
     /**
@@ -238,10 +241,12 @@ public class Login extends javax.swing.JFrame {
      * @author manel bosch
      * @return true o false
      */
+    // Un cop implementada la seguretat SSL no caldrà. La comprovació es farà al servidor 
+    // retornant el token que l'identificarà
     public boolean checkData(){
         boolean acces = false;
         usuario = client.find_JSON(Usuario.class, login);
-        if(usuario!=null && usuario.getContrasena().equals(Arrays.toString(passwd))){
+        if(usuario!=null && usuario.getContrasena().equals(String.valueOf(passwd))){
             acces = true;
         }
         return acces;
@@ -260,4 +265,14 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField;
     private javax.swing.JTextField jTextFieldLogin;
     // End of variables declaration//GEN-END:variables
+
+    /**
+     * Mètode per netejar els camps d'entrada de dades
+     * @author manel bosch
+     */
+    public void cleanFields(){
+        jTextFieldLogin.setText("");
+        jPasswordField.setText("");
+    }
+
 }

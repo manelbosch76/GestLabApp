@@ -9,7 +9,8 @@ import java.util.List;
  */
 public class TablesFunctionality {
     
-    private static final String[] USERHEADERS = {"id","DNI","Nom","Cognom","E-mail","Telefon","Administrador"};
+    private static final String[] CLIENTHEADERS = {"DNI","Nom","Cognom","E-mail","Telefon"};
+    private static final String[] COMPANYHEADERS = {"NIF","Nom","Adreça"};
     
     /**
      * Crea una Taula model amb la llista de tots els usuaris a la base de dades
@@ -41,7 +42,9 @@ public class TablesFunctionality {
     private String[] getHeaders(String name){
         String[] headers = null;
         switch (name){
-            case "Usuario": headers = USERHEADERS.clone();
+            case "Cliente": headers = CLIENTHEADERS.clone();
+                break;
+            case "Empresa": headers = COMPANYHEADERS.clone();
                 break;
         }
         return headers;

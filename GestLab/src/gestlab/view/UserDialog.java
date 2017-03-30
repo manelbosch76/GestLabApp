@@ -1,7 +1,18 @@
 
 package gestlab.view;
 
+import gestlab.model.Cliente;
+import gestlab.model.Empresa;
 import gestlab.model.Usuario;
+import gestlab.restfulclient.ClienteClient;
+import gestlab.restfulclient.EmpresaClient;
+import gestlab.restfulclient.UsuarioClient;
+import gestlab.view.functionality.TablesFunctionality;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.ws.rs.core.GenericType;
 
 /**
  * Classe que gestiona la finestra d'entrada/modificació de dades d'un usuari
@@ -10,30 +21,68 @@ import gestlab.model.Usuario;
 public class UserDialog extends javax.swing.JDialog {
     
     Usuario usuario;
+    Cliente cliente;
+    Empresa empresa;
+    private List<Empresa> empreses;
+    GenericType<List<Empresa>> gTypeUser = new GenericType<List<Empresa>>(){};
+    Boolean newClient = false;
+    
+    private ClienteClient cClient;
+    private UsuarioClient uClient;
+    private EmpresaClient eClient;
+
+    TablesFunctionality tFunc = new TablesFunctionality();
 
     /**
      * Crea un nou formulari per entrar dades d'un nou usuari
      * @author manel bosch
-     * @param parent
-     * @param modal
+     * @param parent finestra mare
+     * @param modal manté el focus fins a tancar la finestra
      */
     public UserDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
+        initClients();
+        empreses = eClient.findAll_JSON(gTypeUser);
         initComponents();
+        newClient = true;
+        isNew();
+        fillCompanyTable();
     }
     
     /**
      * Crea un nou formulari per modificar dades d'usuari passat per paràmetre
      * @author manel bosch
-     * @param parent
-     * @param modal
-     * @param u Usuari a modificar
+     * @param parent finestra mare
+     * @param modal manté el focus fins a tancar la finestra
+     * @param c Cliente a modificar
      */
-    public UserDialog(java.awt.Frame parent, boolean modal, Usuario u) {
+    public UserDialog(java.awt.Frame parent, boolean modal, Cliente c) {
         super(parent, modal);
+        initClients();
+        empreses = eClient.findAll_JSON(gTypeUser);
         initComponents();
-        usuario = u;
-        fillUserData(u);
+        isNew();
+        cliente = c;
+        empresa = c.getIDEmpresa();
+        fillUserData(c);//Omple camps de client i d'empresa
+        fillCompanyTable();
+    }
+    
+    /**
+     * Mètode per amagar camps segons si el client que s'entra és nou o és una modificació d'un existent
+     * @author manel bosch
+     */
+    private void isNew(){
+        if(newClient){
+            jButtonModifCompany.setVisible(false);
+            jTextFieldLogin.setEnabled(false);
+        }else{
+            jTextFieldDni.setEnabled(false);
+            jPasswordField1.setVisible(false);
+            jLabelPasswd.setVisible(false);
+            jTextFieldLogin.setVisible(false);
+            jLabelLogin.setVisible(false);
+        }
     }
 
     /**
@@ -59,7 +108,13 @@ public class UserDialog extends javax.swing.JDialog {
         jTextFieldTelf = new javax.swing.JTextField();
         jLabelDni = new javax.swing.JLabel();
         jTextFieldDni = new javax.swing.JTextField();
-        jLabel1 = new javax.swing.JLabel();
+        jLabelNoObligation = new javax.swing.JLabel();
+        jLabelLogin = new javax.swing.JLabel();
+        jTextFieldLogin = new javax.swing.JTextField();
+        jLabelPasswd = new javax.swing.JLabel();
+        jPasswordField1 = new javax.swing.JPasswordField();
+        jLabelAdmin = new javax.swing.JLabel();
+        jCheckBoxAdmin = new javax.swing.JCheckBox();
         jPanelDadesEmpresa = new javax.swing.JPanel();
         jLabelNif = new javax.swing.JLabel();
         jLabelNomEmpresa = new javax.swing.JLabel();
@@ -67,15 +122,15 @@ public class UserDialog extends javax.swing.JDialog {
         jTextFieldNif = new javax.swing.JTextField();
         jTextFieldNomEmpresa = new javax.swing.JTextField();
         jTextFieldAdreca = new javax.swing.JTextField();
-        jLabelLogin = new javax.swing.JLabel();
-        jLabelPasswd = new javax.swing.JLabel();
-        jTextFieldLogin = new javax.swing.JTextField();
-        jPasswordField1 = new javax.swing.JPasswordField();
+        jButtonNewCompany = new javax.swing.JButton();
+        jButtonModifCompany = new javax.swing.JButton();
+        jScrollPaneCompany = new javax.swing.JScrollPane();
+        jTableCompanies = new javax.swing.JTable();
+        jButtonAddCompany = new javax.swing.JButton();
         jPanelBotons = new javax.swing.JPanel();
         jButtonSave = new javax.swing.JButton();
         jButtonClear = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
-        jLabelMessage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -96,8 +151,16 @@ public class UserDialog extends javax.swing.JDialog {
 
         jLabelDni.setText("DNI:");
 
-        jLabel1.setFont(new java.awt.Font("Ubuntu", 0, 10)); // NOI18N
-        jLabel1.setText("(no obligatori)");
+        jLabelNoObligation.setFont(new java.awt.Font("Ubuntu", 0, 10)); // NOI18N
+        jLabelNoObligation.setText("(no obligatori)");
+
+        jLabelLogin.setText("Login:");
+
+        jLabelPasswd.setText("Password:");
+
+        jPasswordField1.setText("jPasswordField1");
+
+        jLabelAdmin.setText("Administrador:");
 
         javax.swing.GroupLayout jPanelDadesPersonalsLayout = new javax.swing.GroupLayout(jPanelDadesPersonals);
         jPanelDadesPersonals.setLayout(jPanelDadesPersonalsLayout);
@@ -107,32 +170,57 @@ public class UserDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabelAdmin)
+                        .addGap(18, 18, 18)
+                        .addComponent(jCheckBoxAdmin)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesPersonalsLayout.createSequentialGroup()
                         .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelCognom1)
-                            .addComponent(jLabelName)
-                            .addComponent(jLabelMail)
-                            .addComponent(jLabelTelf)))
-                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
-                        .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelDni)
-                            .addComponent(jLabelCognom2)
-                            .addComponent(jLabel1))
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldMail)
-                    .addComponent(jTextFieldCognom2)
-                    .addComponent(jTextFieldCognom1)
-                    .addComponent(jTextFieldNom)
-                    .addComponent(jTextFieldTelf, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(jTextFieldDni))
+                            .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabelCognom1)
+                                                    .addComponent(jLabelName)))
+                                            .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                                                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(jLabelDni)
+                                                    .addComponent(jLabelCognom2)
+                                                    .addComponent(jLabelNoObligation))
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                        .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                                            .addComponent(jLabelMail)
+                                            .addGap(69, 69, 69)))
+                                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                                        .addComponent(jLabelTelf)
+                                        .addGap(51, 51, 51)))
+                                .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                                    .addComponent(jLabelLogin)
+                                    .addGap(68, 68, 68)))
+                            .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                                .addComponent(jLabelPasswd)
+                                .addGap(38, 38, 38)))
+                        .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPasswordField1)
+                            .addComponent(jTextFieldLogin)
+                            .addComponent(jTextFieldTelf)
+                            .addComponent(jTextFieldMail)
+                            .addComponent(jTextFieldCognom2, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                            .addComponent(jTextFieldCognom1)
+                            .addComponent(jTextFieldNom)
+                            .addComponent(jTextFieldDni))))
                 .addContainerGap())
         );
+
+        jPanelDadesPersonalsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jPasswordField1, jTextFieldCognom1, jTextFieldCognom2, jTextFieldDni, jTextFieldLogin, jTextFieldMail, jTextFieldNom, jTextFieldTelf});
+
         jPanelDadesPersonalsLayout.setVerticalGroup(
             jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesPersonalsLayout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
+            .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelDni)
                     .addComponent(jTextFieldDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -150,8 +238,8 @@ public class UserDialog extends javax.swing.JDialog {
                     .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
                         .addComponent(jLabelCognom2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel1)))
-                .addGap(36, 36, 36)
+                        .addComponent(jLabelNoObligation)))
+                .addGap(18, 18, 18)
                 .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelMail)
                     .addComponent(jTextFieldMail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -159,7 +247,19 @@ public class UserDialog extends javax.swing.JDialog {
                 .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelTelf)
                     .addComponent(jTextFieldTelf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addGap(36, 36, 36)
+                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelLogin)
+                    .addComponent(jTextFieldLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabelPasswd))
+                .addGap(18, 18, 18)
+                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabelAdmin)
+                    .addComponent(jCheckBoxAdmin))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jLabelNif.setText("NIF:");
@@ -168,11 +268,31 @@ public class UserDialog extends javax.swing.JDialog {
 
         jLabelAdreca.setText("Adreça:");
 
-        jLabelLogin.setText("Login:");
+        jButtonNewCompany.setText("Nova empresa");
+        jButtonNewCompany.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNewCompanyActionPerformed(evt);
+            }
+        });
 
-        jLabelPasswd.setText("Password:");
+        jButtonModifCompany.setText("Modificar empresa");
+        jButtonModifCompany.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModifCompanyActionPerformed(evt);
+            }
+        });
 
-        jPasswordField1.setText("jPasswordField1");
+        jScrollPaneCompany.setBorder(javax.swing.BorderFactory.createTitledBorder("Llista Empreses"));
+
+        jTableCompanies.setModel(tFunc.createTableModel(Empresa.class, empreses));
+        jScrollPaneCompany.setViewportView(jTableCompanies);
+
+        jButtonAddCompany.setText("Afegir empresa a Client");
+        jButtonAddCompany.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAddCompanyActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelDadesEmpresaLayout = new javax.swing.GroupLayout(jPanelDadesEmpresa);
         jPanelDadesEmpresa.setLayout(jPanelDadesEmpresaLayout);
@@ -181,34 +301,37 @@ public class UserDialog extends javax.swing.JDialog {
             .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelNif)
-                    .addComponent(jLabelNomEmpresa)
-                    .addComponent(jLabelAdreca)
-                    .addComponent(jLabelLogin)
-                    .addComponent(jLabelPasswd))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextFieldNomEmpresa)
-                    .addComponent(jTextFieldAdreca)
-                    .addComponent(jTextFieldLogin)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesEmpresaLayout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButtonModifCompany))
                     .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
-                        .addComponent(jTextFieldNif, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jScrollPaneCompany, javax.swing.GroupLayout.DEFAULT_SIZE, 425, Short.MAX_VALUE)
+                            .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
+                                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabelNif)
+                                    .addComponent(jLabelNomEmpresa)
+                                    .addComponent(jLabelAdreca))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jTextFieldNomEmpresa)
+                                    .addComponent(jTextFieldNif)
+                                    .addComponent(jTextFieldAdreca, javax.swing.GroupLayout.DEFAULT_SIZE, 306, Short.MAX_VALUE))))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPasswordField1))
+                    .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(jButtonNewCompany)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButtonAddCompany)))
                 .addContainerGap())
         );
+
+        jPanelDadesEmpresaLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonModifCompany, jButtonNewCompany});
+
         jPanelDadesEmpresaLayout.setVerticalGroup(
             jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesEmpresaLayout.createSequentialGroup()
+            .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelLogin)
-                    .addComponent(jTextFieldLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jPasswordField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabelPasswd))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelNif)
                     .addComponent(jTextFieldNif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -220,7 +343,15 @@ public class UserDialog extends javax.swing.JDialog {
                 .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelAdreca)
                     .addComponent(jTextFieldAdreca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jButtonModifCompany)
+                .addGap(24, 24, 24)
+                .addComponent(jScrollPaneCompany, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonAddCompany)
+                    .addComponent(jButtonNewCompany))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jButtonSave.setText("Guardar");
@@ -248,30 +379,26 @@ public class UserDialog extends javax.swing.JDialog {
         jPanelBotons.setLayout(jPanelBotonsLayout);
         jPanelBotonsLayout.setHorizontalGroup(
             jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBotonsLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelMessage)
-                    .addGroup(jPanelBotonsLayout.createSequentialGroup()
-                        .addComponent(jButtonSave)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonClear)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonCancel)))
-                .addGap(203, 203, 203))
+            .addGroup(jPanelBotonsLayout.createSequentialGroup()
+                .addGap(204, 204, 204)
+                .addComponent(jButtonSave)
+                .addGap(27, 27, 27)
+                .addComponent(jButtonClear)
+                .addGap(28, 28, 28)
+                .addComponent(jButtonCancel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanelBotonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonCancel, jButtonClear, jButtonSave});
 
         jPanelBotonsLayout.setVerticalGroup(
             jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBotonsLayout.createSequentialGroup()
-                .addComponent(jLabelMessage)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanelBotonsLayout.createSequentialGroup()
                 .addGroup(jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonSave)
                     .addComponent(jButtonClear)
-                    .addComponent(jButtonCancel)))
+                    .addComponent(jButtonCancel))
+                .addGap(0, 12, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -281,28 +408,28 @@ public class UserDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabelTitol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
                     .addComponent(jPanelBotons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabelTitol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jLabelTitol)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGap(18, 18, 18)
+                        .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanelBotons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -312,10 +439,37 @@ public class UserDialog extends javax.swing.JDialog {
 
     /**
      * Mètode per guardar les noves dades
+     * @author manel bosch
      * @param evt Event que es produeix en prémer el botó
      */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
+        Cliente c; Usuario u; Empresa e;
+        if(checkFilledFields() && checkCompanyFields()){
+            if(newClient){
+                c = getClientData();
+                e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
+                c.setIDEmpresa(e);
+                jTextFieldLogin.setText(jTextFieldDni.getText());
+                u = getUserData();
+                cClient.create_JSON(c);
+                uClient.create_JSON(u);
+            }else{
+                cliente = getClientData();
+                e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
+                cliente.setIDEmpresa(e);
+                String id = cliente.getDni();
+                cClient.edit_JSON(cliente, id);
+                u = uClient.find_JSON(Usuario.class, id);
+                if(u.getAdministrador() != jCheckBoxAdmin.isSelected()){ //Comprovo si se li ha canviat la condició d'administrador
+                    u.setAdministrador(jCheckBoxAdmin.isSelected());
+                    uClient.edit_JSON(u, id);
+                }
+            }
+        }else{
+            JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }
+        closeClients();
+        this.dispose(); 
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     /**
@@ -332,6 +486,7 @@ public class UserDialog extends javax.swing.JDialog {
         jTextFieldTelf.setText("");
         jTextFieldLogin.setText("");
         jPasswordField1.setText("");
+        jCheckBoxAdmin.setSelected(false);
         jTextFieldNif.setText("");
         jTextFieldNomEmpresa.setText("");
         jTextFieldAdreca.setText("");
@@ -343,23 +498,89 @@ public class UserDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
+        closeClients();
         this.dispose();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
+    /**
+     * Mètode per cridar la finestra per omplir les dades d'una nova empresa
+     * @author manel bosch
+     * @param evt 
+     */
+    private void jButtonNewCompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewCompanyActionPerformed
+        CompanyDialog dialog = new CompanyDialog(this, true);
+        dialog.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent e){
+                fillCompanyTable();
+            }
+        });
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButtonNewCompanyActionPerformed
+
+    /**
+     * Mètode per modificar l'empresa del client
+     * @author manel bosch
+     * @param evt Clicar el botó
+     */
+    private void jButtonModifCompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifCompanyActionPerformed
+        CompanyDialog dialog = new CompanyDialog(this, true, empresa);
+        dialog.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent e){
+                fillCompanyData(empresa);
+                fillCompanyTable();
+            }
+        });
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButtonModifCompanyActionPerformed
+
+    /**
+     * Mètode per afegir una nova empresa a un nou Client o per reemplaçar la que té un client existent que es modifica
+     * @author manel bosch
+     * @param evt Clicar el botó
+     */
+    private void jButtonAddCompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddCompanyActionPerformed
+        if(newClient){
+            if(checkFilledFields()){
+                JOptionPane.showMessageDialog(null,"Falten les dades del client","Alert !!",JOptionPane.WARNING_MESSAGE);
+            }else{
+                cliente = getClientData();
+                if(jTableCompanies.getSelectedRowCount() == 0){
+                    JOptionPane.showMessageDialog(null,"Selecciona una empresa a afegir al client","Alert !!",JOptionPane.WARNING_MESSAGE);
+                }else{
+                    Empresa e = getCompanyFromTable();
+                    cliente.setIDEmpresa(e);
+                    fillCompanyData(e);
+                }
+            }
+        }else{
+            if(jTableCompanies.getSelectedRowCount() == 0){
+                JOptionPane.showMessageDialog(null,"Selecciona una empresa a afegir al client","Alert !!",JOptionPane.WARNING_MESSAGE);
+            }else{
+                cliente.setIDEmpresa(getCompanyFromTable());
+            }
+        }
+    }//GEN-LAST:event_jButtonAddCompanyActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAddCompany;
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonClear;
+    private javax.swing.JButton jButtonModifCompany;
+    private javax.swing.JButton jButtonNewCompany;
     private javax.swing.JButton jButtonSave;
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JCheckBox jCheckBoxAdmin;
+    private javax.swing.JLabel jLabelAdmin;
     private javax.swing.JLabel jLabelAdreca;
     private javax.swing.JLabel jLabelCognom1;
     private javax.swing.JLabel jLabelCognom2;
     private javax.swing.JLabel jLabelDni;
     private javax.swing.JLabel jLabelLogin;
     private javax.swing.JLabel jLabelMail;
-    private javax.swing.JLabel jLabelMessage;
     private javax.swing.JLabel jLabelName;
     private javax.swing.JLabel jLabelNif;
+    private javax.swing.JLabel jLabelNoObligation;
     private javax.swing.JLabel jLabelNomEmpresa;
     private javax.swing.JLabel jLabelPasswd;
     private javax.swing.JLabel jLabelTelf;
@@ -368,6 +589,8 @@ public class UserDialog extends javax.swing.JDialog {
     private javax.swing.JPanel jPanelDadesEmpresa;
     private javax.swing.JPanel jPanelDadesPersonals;
     private javax.swing.JPasswordField jPasswordField1;
+    private javax.swing.JScrollPane jScrollPaneCompany;
+    private javax.swing.JTable jTableCompanies;
     private javax.swing.JTextField jTextFieldAdreca;
     private javax.swing.JTextField jTextFieldCognom1;
     private javax.swing.JTextField jTextFieldCognom2;
@@ -381,64 +604,142 @@ public class UserDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Mètode per omplir els camps amb les dades de l'usuari passat com a paràmetre
+     * Mètode per inicialitzar els clients del servei RESTful
      * @author manel bosch
      */
-    private void fillUserData(Usuario usuario){
-        jTextFieldDni.setText(usuario.getDni());
-        jTextFieldNom.setText(usuario.getNombre());
-        jTextFieldCognom1.setText(usuario.getPrimerApellido());
-        jTextFieldCognom2.setText(usuario.getSegundoApellido());
-        jTextFieldMail.setText(usuario.getEmail());
-        jTextFieldTelf.setText(usuario.getTelefono());
-        jTextFieldLogin.setText(usuario.getLogin());
-        jPasswordField1.setText(usuario.getContrasena());//Falta encriptació
-        jTextFieldNif.setText(usuario.getIdEmpresa().getNif());
-        jTextFieldNomEmpresa.setText(usuario.getIdEmpresa().getNombreEmpresa());
-        jTextFieldAdreca.setText(usuario.getIdEmpresa().getDireccionEmpresa());
+    private void initClients(){
+        uClient = new UsuarioClient();
+        cClient = new ClienteClient();
+        eClient = new EmpresaClient();
     }
     
     /**
-     * Mètode per llegir els camps amb les dades entrades per crear l'usuari
+     * Mètode per tancar els clients del RESTful service
      * @author manel bosch
-     * @return Usuari amb les dades entrades
      */
-    private Usuario getUserData(){
+    private void closeClients(){
+        uClient.close();
+        eClient.close();
+        cClient.close();
+    }
+    
+    /**
+     * Mètode per omplir la llista d'empreses de la taula
+     * @author manel bosch
+     */
+    private void fillCompanyTable(){
+        empreses = eClient.findAll_JSON(gTypeUser);
+        jTableCompanies.setModel(tFunc.createTableModel(Empresa.class, empreses));
+    }
+    
+    /**
+     * Mètode per omplir els camps amb les dades del client passat com a paràmetre
+     * @author manel bosch
+     * @param c Client
+     */
+    private void fillUserData(Cliente c){
+        jTextFieldDni.setText(c.getDni());
+        jTextFieldNom.setText(c.getNombre());
+        jTextFieldCognom1.setText(c.getPrimerApellido());
+        jTextFieldCognom2.setText(c.getSegundoApellido());
+        jTextFieldMail.setText(c.getEMail());
+        jTextFieldTelf.setText(c.getTelefono());
+        Usuario u = uClient.find_JSON(Usuario.class, c.getDni());
+        jCheckBoxAdmin.setSelected(u.getAdministrador());
+        fillCompanyData(c.getIDEmpresa());
+    }
+    
+    /**
+     * Mètode per omplir els camps amb les dades de l'empresa passada com a paràmetre
+     * author manel bosch
+     * @param e Empresa
+     */
+    private void fillCompanyData(Empresa e){
+        jTextFieldNif.setText(e.getNif());
+        jTextFieldNomEmpresa.setText(e.getNombreEmpresa());
+        jTextFieldAdreca.setText(e.getDireccionEmpresa());
+    }
+    
+    /**
+     * Mètode per llegir els camps amb les dades entrades per crear el client
+     * @author manel bosch
+     * @return Client amb les dades entrades
+     */
+    private Cliente getClientData(){
         if(checkFilledFields()){
-            Usuario u = new Usuario();
-            u.setDni(jTextFieldDni.getText());
-            u.setNombre(jTextFieldNom.getText());
-            u.setPrimerApellido(jTextFieldCognom1.getText());
-            u.setSegundoApellido(jTextFieldCognom2.getText());
-            u.setEmail(jTextFieldMail.getText());
-            u.setTelefono(jTextFieldTelf.getText());
-            u.setLogin(jTextFieldLogin.getText());
-            u.setContrasena(jPasswordField1.getText());//Falta encriptació
-            u.getIdEmpresa().setNif(jTextFieldNif.getText());
-            u.getIdEmpresa().setNombreEmpresa(jTextFieldNomEmpresa.getText());
-            u.getIdEmpresa().setDireccionEmpresa(jTextFieldAdreca.getText());
-            jLabelMessage.setText("");
-            return u;
+            Cliente c = new Cliente(jTextFieldDni.getText());
+            c.setNombre(jTextFieldNom.getText());
+            c.setPrimerApellido(jTextFieldCognom1.getText());
+            c.setSegundoApellido(jTextFieldCognom2.getText());
+            c.setEMail(jTextFieldMail.getText());
+            c.setTelefono(jTextFieldTelf.getText());
+            return c;
         }else{
-            jLabelMessage.setText("Siusplau, omple tots els camps obligatoris");
+            JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris","Alert !!",JOptionPane.WARNING_MESSAGE);
             return null;
         }
     }
     
     /**
+     * Mètode per obtenir les dades d'un nou usuari que s'entra al sistema
+     * @author manel bosch
+     * @return Usuario
+     */
+    private Usuario getUserData(){
+        if(checkFilledFields()){
+            Usuario u = new Usuario(jTextFieldDni.getText());
+            u.setContrasena(String.valueOf(jPasswordField1.getPassword()));//Falta encriptació
+            u.setAdministrador(jCheckBoxAdmin.isSelected());
+            return u;
+        }else{
+            JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris","Alert !!",JOptionPane.WARNING_MESSAGE);
+            return null;
+        }
+    }
+    
+   
+    /**
+     * Mètode per obtenir l'empresa seleccionada de la taula d'empreses
+     * @author manel bosch
+     * @return Emrpesa
+     */
+    private Empresa getCompanyFromTable(){
+        int row = jTableCompanies.getSelectedRow();
+        String id = (String) jTableCompanies.getModel().getValueAt(row,0);
+        Empresa e = eClient.find_JSON(Empresa.class, id);
+        return e;
+    }
+    
+    /**
      * Mètode per saber si tots els camps necessaris estan plens
      * @author manel bosch
-     * @return true o false
+     * @return true si els camps estan plens, false si no
      */
     private boolean checkFilledFields(){
-        return !(jTextFieldDni.getText().equals("")
-                ||jTextFieldNom.getText().equals("")
-                ||jTextFieldCognom1.getText().equals("")
-                ||jTextFieldMail.getText().equals("")
-                ||jTextFieldTelf.getText().equals("")
-                ||jTextFieldLogin.getText().equals("")
-                ||jPasswordField1.getText().equals("")
-                ||jTextFieldNif.getText().equals("")
+        if(newClient){
+            return !(jTextFieldDni.getText().equals("")
+                    ||jTextFieldNom.getText().equals("")
+                    ||jTextFieldCognom1.getText().equals("")
+                    ||jTextFieldMail.getText().equals("")
+                    ||jTextFieldTelf.getText().equals("")
+                    ||jPasswordField1.getText().equals(""));
+        }else{//Si el client no és nou no es comproven els camps login ni passwd
+            return !(jTextFieldDni.getText().equals("")
+                    ||jTextFieldNom.getText().equals("")
+                    ||jTextFieldCognom1.getText().equals("")
+                    ||jTextFieldMail.getText().equals("")
+                    ||jTextFieldTelf.getText().equals(""));
+        }
+    }
+    
+    /**
+     * Mètode per saber si els camps de l'empresa estan buits
+     * @author manel bosch
+     * @return true si els camps estan plens, false si no
+     */
+    private boolean checkCompanyFields(){
+        return !(jTextFieldNif.getText().equals("")
+                ||jTextFieldNomEmpresa.getText().equals("")
                 ||jTextFieldAdreca.getText().equals(""));
     }
 }

@@ -1,7 +1,8 @@
 
 package gestlab.view.functionality;
 
-import gestlab.model.Usuario;
+import gestlab.model.Cliente;
+import gestlab.model.Empresa;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -68,20 +69,26 @@ public class ListTableModel <T> extends DefaultTableModel {
     public Object getValueAt(int row, int col) {
         String name = auxClass.getSimpleName();
         switch (name) {
-            case "Usuario":
-                Usuario u = (Usuario) list.get(row);
+            case "Cliente":
+                Cliente c = (Cliente) list.get(row);
                 switch(col){
-                    case 0: return u.getId();
-                    //case 1: return u.getLogin();
-                    //case 2: return u.getContrasena();
-                    case 1: return u.getDni();
-                    case 2: return u.getNombre();
-                    case 3: return u.getPrimerApellido();
-                    case 4: return u.getEmail();
-                    case 5: return u.getTelefono();
-                    case 6: return u.getAdministrador();
+                    case 0: return c.getDni();
+                    case 1: return c.getNombre();
+                    case 2: return c.getPrimerApellido();
+                    case 3: return c.getEMail();
+                    case 4: return c.getTelefono();
                     default: return null;
                 }
+            case "Empresa":
+                Empresa e = (Empresa) list.get(row);
+                switch(col){
+                    case 0: return e.getNif();
+                    case 1: return e.getNombreEmpresa();
+                    case 2: return e.getDireccionEmpresa();
+                    default: return null;
+                }
+            //case "Producte":
+            //case "Equip":
         default: return null;
         }
     }

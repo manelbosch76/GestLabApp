@@ -1,7 +1,8 @@
 package gestlab.view;
 
+import gestlab.model.Cliente;
 import gestlab.model.Usuario;
-import gestlab.restfulclient.UsuarioRestfulClient;
+import gestlab.restfulclient.ClienteClient;
 import gestlab.view.functionality.TablesFunctionality;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -19,45 +20,39 @@ import javax.ws.rs.core.GenericType;
 public class GestLabFrame extends javax.swing.JFrame {
     
     private Usuario usuario;
-    private UsuarioRestfulClient uClient;
-    GenericType<List<Usuario>> gTypeUser = new GenericType<List<Usuario>>(){};
+    private String id;
+    private Cliente cliente;
+    private List<Cliente> clientes;
+    
+    private ClienteClient cClient;
+    GenericType<List<Cliente>> gTypeClient = new GenericType<List<Cliente>>(){};
     
     TablesFunctionality tFunc = new TablesFunctionality();
-    
-    private List<Usuario> usuarios;
 
     /**
-     * Creates new form GestLabFrame
+     * Crea un nou frame GestLabFrame
      * @author manel bosch
      * @param u Usuari que accedeix al programa
      */
     public GestLabFrame(Usuario u) {
         usuario = u;
-        uClient = new UsuarioRestfulClient();
+        id = u.getId();//En teoria treuria el id a partir del token:
+
         initComponents();
+        jButtonCancelModifProfile.setVisible(false);
         if(!u.getAdministrador()){
             hideButtons();
-        }else{
-            jCheckBoxAdmin.setSelected(true);
         }
         fillProfile();
         jTabbedPaneMain.addChangeListener(changeListener);
     }
     
     /**
-     * Mètode per omplir els camps de la pestanya perfil
+     * Mètode per obrir la connexió al servei Cliente
      * @author manel bosch
      */
-    private void fillProfile(){
-        jTextFieldNom.setText(usuario.getNombre());
-        jTextFieldDni.setText(usuario.getDni());
-        jTextFieldCognom1.setText(usuario.getPrimerApellido());
-        jTextFieldCognom2.setText(usuario.getSegundoApellido());
-        jTextFieldMail.setText(usuario.getEmail());
-        jTextFieldTelf.setText(usuario.getTelefono());
-        //jTextFieldNif.setText(usuario.getIdEmpresa().getNif());
-        //jTextFieldNomEmpresa.setText(usuario.getIdEmpresa().getNombreEmpresa());
-        //jTextFieldAdreca.setText(usuario.getIdEmpresa().getDireccionEmpresa());
+    private void openClient(){
+        cClient = new ClienteClient();
     }
     
     /**
@@ -79,7 +74,14 @@ public class GestLabFrame extends javax.swing.JFrame {
         JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
         int index = sourceTabbedPane.getSelectedIndex();
         if(sourceTabbedPane.getTitleAt(index).equals("Usuaris")){
+            cClient.close();
             fillUsersList();
+        }else if(sourceTabbedPane.getTitleAt(index).equals("Productes")){
+            //TODO
+        }else if(sourceTabbedPane.getTitleAt(index).equals("Equipament")){
+            //TODO
+        }else if(sourceTabbedPane.getTitleAt(index).equals("Perfil")){
+            //TODO
         }
     };
 
@@ -96,7 +98,6 @@ public class GestLabFrame extends javax.swing.JFrame {
         jPanelMain = new javax.swing.JPanel();
         jTabbedPaneMain = new javax.swing.JTabbedPane();
         jPanelPerfil = new javax.swing.JPanel();
-        jLabelAdministrador = new javax.swing.JLabel();
         jPanelDadesPersonals = new javax.swing.JPanel();
         jLabelName = new javax.swing.JLabel();
         jTextFieldNom = new javax.swing.JTextField();
@@ -104,21 +105,15 @@ public class GestLabFrame extends javax.swing.JFrame {
         jTextFieldCognom1 = new javax.swing.JTextField();
         jLabelCognom2 = new javax.swing.JLabel();
         jTextFieldCognom2 = new javax.swing.JTextField();
+        jLabelDni = new javax.swing.JLabel();
+        jTextFieldDni = new javax.swing.JTextField();
         jLabelMail = new javax.swing.JLabel();
         jTextFieldMail = new javax.swing.JTextField();
         jLabelTelf = new javax.swing.JLabel();
         jTextFieldTelf = new javax.swing.JTextField();
-        jLabelDni = new javax.swing.JLabel();
-        jTextFieldDni = new javax.swing.JTextField();
-        jPanelDadesEmpresa = new javax.swing.JPanel();
-        jLabelNif = new javax.swing.JLabel();
-        jLabelNomEmpresa = new javax.swing.JLabel();
-        jLabelAdreca = new javax.swing.JLabel();
-        jTextFieldNif = new javax.swing.JTextField();
-        jTextFieldNomEmpresa = new javax.swing.JTextField();
-        jTextFieldAdreca = new javax.swing.JTextField();
-        jButtonModifDades = new javax.swing.JButton();
-        jCheckBoxAdmin = new javax.swing.JCheckBox();
+        jButtonModifProfile = new javax.swing.JButton();
+        jButtonChangePasswd = new javax.swing.JButton();
+        jButtonCancelModifProfile = new javax.swing.JButton();
         jPanelUsuaris = new javax.swing.JPanel();
         jScrollPaneUsers = new javax.swing.JScrollPane();
         jTableUsers = new javax.swing.JTable();
@@ -145,6 +140,7 @@ public class GestLabFrame extends javax.swing.JFrame {
         jPanelProductGlobal = new javax.swing.JPanel();
         jButtonProductsUsed = new javax.swing.JButton();
         jButtonProductsAvailable = new javax.swing.JButton();
+        jButtonBuyProduct = new javax.swing.JButton();
         jPanelEquips = new javax.swing.JPanel();
         jPanelEquipSearch = new javax.swing.JPanel();
         jTextFieldEquip = new javax.swing.JTextField();
@@ -159,6 +155,7 @@ public class GestLabFrame extends javax.swing.JFrame {
         jPanelProductGlobal2 = new javax.swing.JPanel();
         jButtonEquipsUsed = new javax.swing.JButton();
         jButtonEquipsAvailable = new javax.swing.JButton();
+        jButtonBook = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -167,8 +164,6 @@ public class GestLabFrame extends javax.swing.JFrame {
         jLabelTitle.setText("GestLab");
 
         jTabbedPaneMain.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-
-        jLabelAdministrador.setText("Administrador:");
 
         jLabelName.setText("Nom:");
 
@@ -182,6 +177,10 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jTextFieldCognom2.setEditable(false);
 
+        jLabelDni.setText("DNI:");
+
+        jTextFieldDni.setEditable(false);
+
         jLabelMail.setText("email:");
 
         jTextFieldMail.setEditable(false);
@@ -190,49 +189,55 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jTextFieldTelf.setEditable(false);
 
-        jLabelDni.setText("DNI:");
-
-        jTextFieldDni.setEditable(false);
-
         javax.swing.GroupLayout jPanelDadesPersonalsLayout = new javax.swing.GroupLayout(jPanelDadesPersonals);
         jPanelDadesPersonals.setLayout(jPanelDadesPersonalsLayout);
         jPanelDadesPersonalsLayout.setHorizontalGroup(
             jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesPersonalsLayout.createSequentialGroup()
+            .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelCognom1)
-                            .addComponent(jLabelName)
-                            .addComponent(jLabelCognom2)
-                            .addComponent(jLabelMail)
-                            .addComponent(jLabelTelf))
-                        .addGap(18, 18, 18))
-                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(jLabelDni)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addComponent(jLabelCognom1)
+                    .addComponent(jLabelName)
+                    .addComponent(jLabelCognom2)
+                    .addComponent(jLabelDni))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldMail)
                     .addComponent(jTextFieldCognom2)
                     .addComponent(jTextFieldCognom1)
-                    .addComponent(jTextFieldNom)
-                    .addComponent(jTextFieldTelf, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(jTextFieldDni))
-                .addContainerGap())
+                    .addComponent(jTextFieldNom, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldDni, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(93, 93, 93)
+                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelMail)
+                    .addComponent(jLabelTelf))
+                .addGap(18, 18, 18)
+                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextFieldTelf, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextFieldMail, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 12, Short.MAX_VALUE))
         );
+
+        jPanelDadesPersonalsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jTextFieldMail, jTextFieldTelf});
+
         jPanelDadesPersonalsLayout.setVerticalGroup(
             jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesPersonalsLayout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelDni)
-                    .addComponent(jTextFieldDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelName)
-                    .addComponent(jTextFieldNom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                        .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelDni)
+                            .addComponent(jTextFieldDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelMail))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabelName)
+                            .addComponent(jTextFieldNom, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabelTelf)))
+                    .addGroup(jPanelDadesPersonalsLayout.createSequentialGroup()
+                        .addComponent(jTextFieldMail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jTextFieldTelf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(18, 18, 18)
                 .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldCognom1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -241,117 +246,68 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelCognom2)
                     .addComponent(jTextFieldCognom2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelMail)
-                    .addComponent(jTextFieldMail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesPersonalsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelTelf)
-                    .addComponent(jTextFieldTelf, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabelNif.setText("NIF:");
-
-        jLabelNomEmpresa.setText("Nom empresa:");
-
-        jLabelAdreca.setText("Adreça:");
-
-        jTextFieldNif.setEditable(false);
-
-        jTextFieldNomEmpresa.setEditable(false);
-
-        jTextFieldAdreca.setEditable(false);
-
-        jButtonModifDades.setText("Modificar dades");
-        jButtonModifDades.addActionListener(new java.awt.event.ActionListener() {
+        jButtonModifProfile.setText("Modificar dades");
+        jButtonModifProfile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonModifDadesActionPerformed(evt);
+                jButtonModifProfileActionPerformed(evt);
             }
         });
 
-        javax.swing.GroupLayout jPanelDadesEmpresaLayout = new javax.swing.GroupLayout(jPanelDadesEmpresa);
-        jPanelDadesEmpresa.setLayout(jPanelDadesEmpresaLayout);
-        jPanelDadesEmpresaLayout.setHorizontalGroup(
-            jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
-                .addContainerGap(107, Short.MAX_VALUE)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesEmpresaLayout.createSequentialGroup()
-                        .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelNif)
-                            .addComponent(jLabelNomEmpresa)
-                            .addComponent(jLabelAdreca))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jTextFieldNif, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextFieldNomEmpresa)
-                            .addComponent(jTextFieldAdreca)))
-                    .addComponent(jButtonModifDades, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
-        );
+        jButtonChangePasswd.setText("Canviar Contrassenya");
+        jButtonChangePasswd.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonChangePasswdActionPerformed(evt);
+            }
+        });
 
-        jPanelDadesEmpresaLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jTextFieldAdreca, jTextFieldNif, jTextFieldNomEmpresa});
-
-        jPanelDadesEmpresaLayout.setVerticalGroup(
-            jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDadesEmpresaLayout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelNif)
-                    .addComponent(jTextFieldNif, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelNomEmpresa)
-                    .addComponent(jTextFieldNomEmpresa, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEmpresaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabelAdreca)
-                    .addComponent(jTextFieldAdreca, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButtonModifDades)
-                .addContainerGap())
-        );
-
-        jCheckBoxAdmin.setEnabled(false);
+        jButtonCancelModifProfile.setText("Cancelar");
+        jButtonCancelModifProfile.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonCancelModifProfileActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelPerfilLayout = new javax.swing.GroupLayout(jPanelPerfil);
         jPanelPerfil.setLayout(jPanelPerfilLayout);
         jPanelPerfilLayout.setHorizontalGroup(
             jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelPerfilLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(jPanelPerfilLayout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addComponent(jLabelAdministrador)
-                .addGap(26, 26, 26)
-                .addComponent(jCheckBoxAdmin)
+                .addGroup(jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelPerfilLayout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanelPerfilLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButtonChangePasswd)
+                            .addGroup(jPanelPerfilLayout.createSequentialGroup()
+                                .addComponent(jButtonModifProfile)
+                                .addGap(141, 141, 141)
+                                .addComponent(jButtonCancelModifProfile)))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelPerfilLayout.setVerticalGroup(
             jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelPerfilLayout.createSequentialGroup()
-                .addGap(39, 39, 39)
-                .addGroup(jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabelAdministrador)
-                    .addComponent(jCheckBoxAdmin))
+                .addGap(70, 70, 70)
+                .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50)
+                .addGroup(jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonModifProfile)
+                    .addComponent(jButtonCancelModifProfile))
                 .addGap(18, 18, 18)
-                .addGroup(jPanelPerfilLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanelDadesEmpresa, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanelDadesPersonals, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(120, Short.MAX_VALUE))
+                .addComponent(jButtonChangePasswd)
+                .addContainerGap(109, Short.MAX_VALUE))
         );
 
         jTabbedPaneMain.addTab("Perfil", jPanelPerfil);
 
         jScrollPaneUsers.setBorder(javax.swing.BorderFactory.createTitledBorder("Llista Usuaris"));
 
-        jTableUsers.setModel(tFunc.createTableModel(Usuario.class, usuarios));
+        jTableUsers.setModel(tFunc.createTableModel(Cliente.class, clientes));
         jScrollPaneUsers.setViewportView(jTableUsers);
 
         jButtonNewUser.setText("Nou Usuari");
@@ -472,10 +428,10 @@ public class GestLabFrame extends javax.swing.JFrame {
             .addGroup(jPanelUsuarisLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelUsuarisLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPaneUsers)
+                    .addComponent(jScrollPaneUsers, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE)
                     .addGroup(jPanelUsuarisLayout.createSequentialGroup()
                         .addComponent(jPanelUserSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 429, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanelAdminUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap())
         );
@@ -582,7 +538,9 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jButtonProductsUsed.setText("Productes consumits");
 
-        jButtonProductsAvailable.setText("Productes Disponibles");
+        jButtonProductsAvailable.setText("Productes disponibles");
+
+        jButtonBuyProduct.setText("Comprar Producte");
 
         javax.swing.GroupLayout jPanelProductGlobalLayout = new javax.swing.GroupLayout(jPanelProductGlobal);
         jPanelProductGlobal.setLayout(jPanelProductGlobalLayout);
@@ -592,20 +550,22 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanelProductGlobalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonProductsUsed)
-                    .addComponent(jButtonProductsAvailable))
+                    .addComponent(jButtonProductsAvailable)
+                    .addComponent(jButtonBuyProduct))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanelProductGlobalLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonProductsAvailable, jButtonProductsUsed});
+        jPanelProductGlobalLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonBuyProduct, jButtonProductsAvailable, jButtonProductsUsed});
 
         jPanelProductGlobalLayout.setVerticalGroup(
             jPanelProductGlobalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelProductGlobalLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButtonProductsUsed)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonProductsAvailable)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(jButtonBuyProduct))
         );
 
         javax.swing.GroupLayout jPanelProductesLayout = new javax.swing.GroupLayout(jPanelProductes);
@@ -617,9 +577,9 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addGroup(jPanelProductesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelProductesLayout.createSequentialGroup()
                         .addComponent(jPanelProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(103, 103, 103)
+                        .addGap(44, 44, 44)
                         .addComponent(jPanelProductGlobal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
                         .addComponent(jPanelAdminProducts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPaneProducts))
                 .addContainerGap())
@@ -630,7 +590,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addGroup(jPanelProductesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanelAdminProducts, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanelProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanelProductGlobal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanelProductGlobal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPaneProducts, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                 .addContainerGap())
@@ -728,7 +688,9 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jButtonEquipsUsed.setText("Equips utilitzats");
 
-        jButtonEquipsAvailable.setText("Equips Disponibles");
+        jButtonEquipsAvailable.setText("Equips disponibles");
+
+        jButtonBook.setText("Reservar equip");
 
         javax.swing.GroupLayout jPanelProductGlobal2Layout = new javax.swing.GroupLayout(jPanelProductGlobal2);
         jPanelProductGlobal2.setLayout(jPanelProductGlobal2Layout);
@@ -738,20 +700,22 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanelProductGlobal2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonEquipsUsed)
-                    .addComponent(jButtonEquipsAvailable))
+                    .addComponent(jButtonEquipsAvailable)
+                    .addComponent(jButtonBook))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanelProductGlobal2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonEquipsAvailable, jButtonEquipsUsed});
+        jPanelProductGlobal2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonBook, jButtonEquipsAvailable, jButtonEquipsUsed});
 
         jPanelProductGlobal2Layout.setVerticalGroup(
             jPanelProductGlobal2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelProductGlobal2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButtonEquipsUsed)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButtonEquipsAvailable)
-                .addContainerGap())
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addComponent(jButtonBook))
         );
 
         javax.swing.GroupLayout jPanelEquipsLayout = new javax.swing.GroupLayout(jPanelEquips);
@@ -763,9 +727,9 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addGroup(jPanelEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelEquipsLayout.createSequentialGroup()
                         .addComponent(jPanelEquipSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(115, 115, 115)
+                        .addGap(81, 81, 81)
                         .addComponent(jPanelProductGlobal2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 153, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
                         .addComponent(jPanelAdminEquips, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPaneEquips))
                 .addContainerGap())
@@ -776,7 +740,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addGroup(jPanelEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jPanelAdminEquips, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanelEquipSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanelProductGlobal2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanelProductGlobal2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPaneEquips, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                 .addContainerGap())
@@ -790,8 +754,8 @@ public class GestLabFrame extends javax.swing.JFrame {
             jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelMainLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPaneMain)
-                .addContainerGap())
+                .addComponent(jTabbedPaneMain, javax.swing.GroupLayout.PREFERRED_SIZE, 745, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelMainLayout.setVerticalGroup(
             jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -807,10 +771,9 @@ public class GestLabFrame extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanelMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jLabelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelTitle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanelMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -958,16 +921,18 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
-    private void jButtonModifDadesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifDadesActionPerformed
-        UserDialog dialog = new UserDialog(this, true, usuario);
-        dialog.addWindowListener(new WindowAdapter(){
-            @Override
-            public void windowClosed(WindowEvent e){
-                fillProfile();
-            }
-        });
-        dialog.setVisible(true);
-    }//GEN-LAST:event_jButtonModifDadesActionPerformed
+    private void jButtonModifProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifProfileActionPerformed
+        jButtonCancelModifProfile.setVisible(true);
+        if(jButtonModifProfile.getText().equals("Modificar dades")){
+            enableTextFields(true);
+            jButtonModifProfile.setText("Guardar canvis");
+        }else if (jButtonModifProfile.getText().equals("Guardar canvis")){
+            changeProfile(cliente);
+            jButtonModifProfile.setText("Modificar dades");
+            jButtonCancelModifProfile.setVisible(false);
+            enableTextFields(false);
+        }
+    }//GEN-LAST:event_jButtonModifProfileActionPerformed
 
     /**
      * Mètode per buscar un usuari a la base de dades pel seu cognom
@@ -1010,20 +975,21 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     private void jButtonModifUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifUserActionPerformed
         if(jTableUsers.getSelectedRowCount()==0){
-            JOptionPane.showMessageDialog(null,"Selecciona un usuari a modificar","Alert !!",JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Selecciona un client a modificar","Alert !!",JOptionPane.WARNING_MESSAGE);
         }else{
             int row = jTableUsers.getSelectedRow();
-            Long id = (Long) jTableUsers.getModel().getValueAt(row,0);
-            /*u = get usuario from restful service
-            /UserDialog dialog = new UserDialog(this, true);
+            String idClient = (String) jTableUsers.getModel().getValueAt(row,0);
+            openClient();
+            Cliente c = cClient.find_JSON(Cliente.class, idClient);
+            UserDialog dialog = new UserDialog(this, true, c);
                 dialog.addWindowListener(new WindowAdapter(){
                     @Override
                     public void windowClosed(WindowEvent e){
                         fillUsersList();
                     }
                 });
-                dialog.setVisible(true);
-            */
+            cClient.close();
+            dialog.setVisible(true);
         }
     }//GEN-LAST:event_jButtonModifUserActionPerformed
 
@@ -1033,19 +999,53 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonDelUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelUserActionPerformed
-        // TODO add your handling code here:
+        if(jTableUsers.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un client a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableUsers.getSelectedRow();
+            String id = (String) jTableUsers.getModel().getValueAt(row,0);
+            openClient();
+            cClient.remove(id);
+            cClient.close();
+        }
     }//GEN-LAST:event_jButtonDelUserActionPerformed
 
+    /**
+     * Mètode per cridar la finestra per canviar el password
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonChangePasswdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonChangePasswdActionPerformed
+        PasswordDialog dialog = new PasswordDialog(this, true, usuario);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButtonChangePasswdActionPerformed
+
+    /**
+     * Mètode per cancelar la modificació de dades del perfil
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonCancelModifProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelModifProfileActionPerformed
+        jButtonModifProfile.setText("Modificar dades");
+        jButtonCancelModifProfile.setVisible(false);
+        fillProfile();
+        enableTextFields(false);
+    }//GEN-LAST:event_jButtonCancelModifProfileActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonBook;
+    private javax.swing.JButton jButtonBuyProduct;
+    private javax.swing.JButton jButtonCancelModifProfile;
+    private javax.swing.JButton jButtonChangePasswd;
     private javax.swing.JButton jButtonDelEquip;
     private javax.swing.JButton jButtonDelProduct;
     private javax.swing.JButton jButtonDelUser;
     private javax.swing.JButton jButtonEquipId;
     private javax.swing.JButton jButtonEquipsAvailable;
     private javax.swing.JButton jButtonEquipsUsed;
-    private javax.swing.JButton jButtonModifDades;
     private javax.swing.JButton jButtonModifEquip;
     private javax.swing.JButton jButtonModifProduct;
+    private javax.swing.JButton jButtonModifProfile;
     private javax.swing.JButton jButtonModifUser;
     private javax.swing.JButton jButtonNewEquip;
     private javax.swing.JButton jButtonNewProduct;
@@ -1057,22 +1057,16 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonSearchProductName;
     private javax.swing.JButton jButtonSearchSurname;
     private javax.swing.JButton jButtonUserId;
-    private javax.swing.JCheckBox jCheckBoxAdmin;
-    private javax.swing.JLabel jLabelAdministrador;
-    private javax.swing.JLabel jLabelAdreca;
     private javax.swing.JLabel jLabelCognom1;
     private javax.swing.JLabel jLabelCognom2;
     private javax.swing.JLabel jLabelDni;
     private javax.swing.JLabel jLabelMail;
     private javax.swing.JLabel jLabelName;
-    private javax.swing.JLabel jLabelNif;
-    private javax.swing.JLabel jLabelNomEmpresa;
     private javax.swing.JLabel jLabelTelf;
     private javax.swing.JLabel jLabelTitle;
     private javax.swing.JPanel jPanelAdminEquips;
     private javax.swing.JPanel jPanelAdminProducts;
     private javax.swing.JPanel jPanelAdminUser;
-    private javax.swing.JPanel jPanelDadesEmpresa;
     private javax.swing.JPanel jPanelDadesPersonals;
     private javax.swing.JPanel jPanelEquipSearch;
     private javax.swing.JPanel jPanelEquips;
@@ -1089,16 +1083,13 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPaneUsers;
     private javax.swing.JTabbedPane jTabbedPaneMain;
     private javax.swing.JTable jTableUsers;
-    private javax.swing.JTextField jTextFieldAdreca;
     private javax.swing.JTextField jTextFieldCognom1;
     private javax.swing.JTextField jTextFieldCognom2;
     private javax.swing.JTextField jTextFieldDni;
     private javax.swing.JTextField jTextFieldEquip;
     private javax.swing.JTextField jTextFieldEquipId;
     private javax.swing.JTextField jTextFieldMail;
-    private javax.swing.JTextField jTextFieldNif;
     private javax.swing.JTextField jTextFieldNom;
-    private javax.swing.JTextField jTextFieldNomEmpresa;
     private javax.swing.JTextField jTextFieldProduct;
     private javax.swing.JTextField jTextFieldProductId;
     private javax.swing.JTextField jTextFieldSurname;
@@ -1106,6 +1097,62 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldUserId;
     // End of variables declaration//GEN-END:variables
 
+    
+    /*
+    Gestió del perfil
+    */
+    
+    /**
+     * Mètode per omplir els camps de la pestanya perfil
+     * @author manel bosch
+     */
+    private void fillProfile(){
+        openClient();
+        cliente = cClient.find_JSON(Cliente.class, id);
+        jTextFieldNom.setText(cliente.getNombre());
+        jTextFieldDni.setText(cliente.getDni());
+        jTextFieldCognom1.setText(cliente.getPrimerApellido());
+        jTextFieldCognom2.setText(cliente.getSegundoApellido());
+        jTextFieldMail.setText(cliente.getEMail());
+        jTextFieldTelf.setText(cliente.getTelefono());
+        cClient.close();
+    }
+    
+    /**
+     * Mètode per habilitar l'entrada de dades als camps de text
+     * @author manel bosch
+     * @param b Boolean
+     */
+    public void enableTextFields(Boolean b){
+        jTextFieldNom.setEnabled(b);
+        jTextFieldCognom1.setEnabled(b);
+        jTextFieldCognom2.setEnabled(b);
+        jTextFieldMail.setEnabled(b);
+        jTextFieldTelf.setEnabled(b);
+        jTextFieldNom.setEditable(b);
+        jTextFieldCognom1.setEditable(b);
+        jTextFieldCognom2.setEditable(b);
+        jTextFieldMail.setEditable(b);
+        jTextFieldTelf.setEditable(b);
+    }
+    
+     /**
+     * Mètode per canviar els camps del client
+     * @author manel bosch
+     * @param c Client
+     */
+    public void changeProfile(Cliente c){
+        openClient();
+        c.setNombre(jTextFieldNom.getText());
+        c.setPrimerApellido(jTextFieldCognom1.getText());
+        c.setSegundoApellido(jTextFieldCognom2.getText());
+        c.setEMail(jTextFieldMail.getText());
+        c.setTelefono(jTextFieldTelf.getText());
+        cClient.edit_JSON(c, c.getDni());
+        cClient.close();
+    }
+    
+    
     /*
     Gestió d'usuaris
     */
@@ -1115,9 +1162,10 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      */
     public void fillUsersList(){
-        usuarios = uClient.findAll_JSON(gTypeUser);
-        jTableUsers.setModel(tFunc.createTableModel(Usuario.class, usuarios));
-        //jTableUsers.getColumnModel().removeColumn(jTableUsers.getColumn(0));
+        openClient();
+        clientes = cClient.findAll_JSON(gTypeClient);
+        jTableUsers.setModel(tFunc.createTableModel(Cliente.class, clientes));
+        cClient.close();
     }
     
    

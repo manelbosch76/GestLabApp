@@ -4,7 +4,7 @@ package gestlab.model;
 import java.io.Serializable;
 
 /**
- * Classe que representa els usuaaris del sistema
+ * Classe que representa els usuaris
  * @author manel bosch
  */
 
@@ -12,151 +12,113 @@ public class Usuario implements Serializable {
     
     private static final long serialVersionUID = 1L;
     
-    private Long id;
-    
-    private String login;
+    private String id;
     
     private String contrasena;
     
-    private String dni;
-    
-    private String nombre;
-    
-    private String primerApellido;
-   
-    private String segundoApellido;
-    
-    private String email;
-    
-    private String telefono;
-    
     private boolean administrador;
     
-    private Empresa idEmpresa;
+    private String token;
 
+    /**
+     * Constructor per defecte
+     * @author manel bosch
+     */
     public Usuario() {
     }
 
-    /**
-     * Crea un usuari a partir del seu identificador
+     /**
+     * Constructor entrant dni de l'usuari
      * @author manel bosch
-     * @param id identificador
+     * @param id Dni de l'usuari
      */
-    public Usuario(Long id) {
+    public Usuario(String id) {
         this.id = id;
     }
 
     /**
-     * Crea un usuari a partir de les seves dades
+     * Constructor amb totes les dades de l'usuari passades com a paràmetres
      * @author manel bosch
-     * @param id identificador
-     * @param login 
-     * @param contrasena 
-     * @param dni 
-     * @param nombre 
-     * @param primerApellido 
-     * @param email 
-     * @param telefono 
-     * @param administrador 
+     * @param id Dni de l'usuari
+     * @param contrasena Contrasenya de l'usuari
+     * @param administrador Booleà que indica si l'usuari és administrador
      */
-    public Usuario(Long id, String login, String contrasena, String dni, String nombre, String primerApellido, String email, String telefono, boolean administrador) {
+    public Usuario(String id, String contrasena, boolean administrador) {
         this.id = id;
-        this.login = login;
         this.contrasena = contrasena;
-        this.dni = dni;
-        this.nombre = nombre;
-        this.primerApellido = primerApellido;
-        this.email = email;
-        this.telefono = telefono;
         this.administrador = administrador;
     }
 
-    public Long getId() {
+    /**
+     * Obté el dni (login) de l'usuari
+     * @author manel bosch
+     * @return login
+     */
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    /**
+     * Entra el dni (login) de l'usuari
+     * @author manel bosch
+     * @param id DNI de l'usuari
+     */
+    public void setId(String id) {
         this.id = id;
     }
 
-    public String getLogin() {
-        return login;
-    }
-
-    public void setLogin(String login) {
-        this.login = login;
-    }
-
+    /**
+     * Obté la contrassenya de l'usuari
+     * @author manel bosch
+     * @return contrasenya de l'usuari
+     */
     public String getContrasena() {
         return contrasena;
     }
 
+    /**
+     * Entra la contrassenya de l'usuari
+     * @author manel bosch
+     * @param contrasena contrasenya de l'usuari
+     */
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
     }
 
-    public String getDni() {
-        return dni;
-    }
-
-    public void setDni(String dni) {
-        this.dni = dni;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getPrimerApellido() {
-        return primerApellido;
-    }
-
-    public void setPrimerApellido(String primerApellido) {
-        this.primerApellido = primerApellido;
-    }
-
-    public String getSegundoApellido() {
-        return segundoApellido;
-    }
-
-    public void setSegundoApellido(String segundoApellido) {
-        this.segundoApellido = segundoApellido;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
-
+    /**
+     * Obté si l'usuari és administrador o no
+     * @author manel bosch
+     * @return true o false
+     */
     public boolean getAdministrador() {
         return administrador;
     }
 
+    /**
+     * Entra si l'usuari és administrador o no
+     * @author manel bosch
+     * @param administrador Booleà per indicar si és administrador o no
+     */
     public void setAdministrador(boolean administrador) {
         this.administrador = administrador;
     }
 
-    public Empresa getIdEmpresa() {
-        return idEmpresa;
+    /**
+     * Obté el token de l'usuari
+     * @author manel bosch
+     * @return token Token de l'usuari
+     */
+    public String getToken() {
+        return token;
     }
 
-    public void setIdEmpresa(Empresa idEmpresa) {
-        this.idEmpresa = idEmpresa;
+    /**
+     * Entra el token de l'usuari
+     * @author manel bosch
+     * @param token Token de l'usuari
+     */
+    public void setToken(String token) {
+        this.token = token;
     }
 
     @Override
