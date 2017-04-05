@@ -4,9 +4,9 @@ package gestlab.view;
 import gestlab.model.Cliente;
 import gestlab.model.Empresa;
 import gestlab.model.Usuario;
-import gestlab.restfulclient.ClienteClient;
-import gestlab.restfulclient.EmpresaClient;
-import gestlab.restfulclient.UsuarioClient;
+import gestlab.restfulclient.ClienteClientSsl;
+import gestlab.restfulclient.EmpresaClientSsl;
+import gestlab.restfulclient.UsuarioClientSsl;
 import gestlab.view.functionality.TablesFunctionality;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -20,16 +20,16 @@ import javax.ws.rs.core.GenericType;
  */
 public class UserDialog extends javax.swing.JDialog {
     
-    Usuario usuario;
-    Cliente cliente;
-    Empresa empresa;
+    private final Usuario usuario;
+    private Cliente cliente;
+    private Empresa empresa;
     private List<Empresa> empreses;
     GenericType<List<Empresa>> gTypeUser = new GenericType<List<Empresa>>(){};
     Boolean newClient = false;
     
-    private ClienteClient cClient;
-    private UsuarioClient uClient;
-    private EmpresaClient eClient;
+    private ClienteClientSsl cClient;
+    private UsuarioClientSsl uClient;
+    private EmpresaClientSsl eClient;
 
     TablesFunctionality tFunc = new TablesFunctionality();
 
@@ -38,9 +38,11 @@ public class UserDialog extends javax.swing.JDialog {
      * @author manel bosch
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
+     * @param usuario Usuari que està connectat al programa
      */
-    public UserDialog(java.awt.Frame parent, boolean modal) {
+    public UserDialog(java.awt.Frame parent, boolean modal, Usuario usuario) {
         super(parent, modal);
+        this.usuario = usuario;
         initClients();
         empreses = eClient.findAll_JSON(gTypeUser);
         initComponents();
@@ -54,15 +56,17 @@ public class UserDialog extends javax.swing.JDialog {
      * @author manel bosch
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
+     * @param usuario Usuari que està connectat al programa
      * @param c Cliente a modificar
      */
-    public UserDialog(java.awt.Frame parent, boolean modal, Cliente c) {
+    public UserDialog(java.awt.Frame parent, boolean modal, Usuario usuario, Cliente c) {
         super(parent, modal);
+        this.usuario = usuario;
         initClients();
         empreses = eClient.findAll_JSON(gTypeUser);
         initComponents();
         isNew();
-        cliente = c;
+        this.cliente = c;
         empresa = c.getIDEmpresa();
         fillUserData(c);//Omple camps de client i d'empresa
         fillCompanyTable();
@@ -608,9 +612,9 @@ public class UserDialog extends javax.swing.JDialog {
      * @author manel bosch
      */
     private void initClients(){
-        uClient = new UsuarioClient();
-        cClient = new ClienteClient();
-        eClient = new EmpresaClient();
+        uClient = new UsuarioClientSsl(usuario.getToken());
+        cClient = new ClienteClientSsl(usuario.getToken());
+        eClient = new EmpresaClientSsl(usuario.getToken());
     }
     
     /**

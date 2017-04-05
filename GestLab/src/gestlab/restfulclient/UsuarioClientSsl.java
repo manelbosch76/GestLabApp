@@ -5,11 +5,18 @@
  */
 package gestlab.restfulclient;
 
+import gestlab.helper.Authenticator;
+import gestlab.helper.PathConstants;
+import java.io.UnsupportedEncodingException;
+import java.util.Base64;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
+import javax.xml.bind.DatatypeConverter;
+
+
 
 /**
  * Jersey REST client generated for REST resource:UsuarioFacadeREST
@@ -27,16 +34,26 @@ import javax.ws.rs.client.WebTarget;
 public class UsuarioClientSsl {
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "https://localhost:8080/GestLabRestful/webresources";
+    private Authenticator auth;
 
     public UsuarioClientSsl() {
-        client = javax.ws.rs.client.ClientBuilder.newBuilder().sslContext(getSSLContext()).build();
-        webTarget = client.target(BASE_URI).path("model.usuario");
+        client = javax.ws.rs.client.ClientBuilder.newBuilder().sslContext(getSSLContext()).hostnameVerifier(getHostnameVerifier()).build();
+        webTarget = client.target(PathConstants.SERVICE_SSL).path(PathConstants.USUARIO_SERVICE);
     }
 
     public UsuarioClientSsl(String username, String password) {
         this();
         setUsernamePassword(username, password);
+    }
+    
+    /**
+     * Constructor per generar un client amb el token associat a l'usuari
+     * @author manel bosch
+     * @param token token amb el id i password de l'usuari codificats
+     */
+    public UsuarioClientSsl(String token) {
+        this();
+        webTarget.register(token);
     }
 
     public String countREST() throws ClientErrorException {
@@ -46,7 +63,8 @@ public class UsuarioClientSsl {
     }
 
     public void edit_JSON(Object requestEntity, String id) throws ClientErrorException {
-        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
+        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id}))
+                .request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
     }
 
     public <T> T find_JSON(Class<T> responseType, String id) throws ClientErrorException {
@@ -79,7 +97,9 @@ public class UsuarioClientSsl {
     }
 
     public final void setUsernamePassword(String username, String password) {
-        webTarget.register(new org.glassfish.jersey.client.filter.HttpBasicAuthFilter(username, password));
+        //webTarget.register(new org.glassfish.jersey.client.filter.HttpBasicAuthFilter(username, password));
+        auth = new Authenticator(username, password);
+        webTarget.register(auth);
     }
 
     private HostnameVerifier getHostnameVerifier() {
@@ -111,11 +131,53 @@ public class UsuarioClientSsl {
         };
         SSLContext ctx = null;
         try {
-            ctx = SSLContext.getInstance("SSL");
-            ctx.init(null, new javax.net.ssl.TrustManager[]{x509}, null);
-        } catch (java.security.GeneralSecurityException ex) {
+            ctx = SSLContext.getInstance("TLSv1");
+            System.setProperty("https.protocols", "TLSv1");
+            ctx.init(null, new javax.net.ssl.TrustManager[]{x509}, new java.security.SecureRandom());
+        }catch (java.security.GeneralSecurityException ex) {
         }
         return ctx;
     }
     
+    /**
+     * Mètode per obtenir el token codificat
+     * @author manel bosch
+     * @return token codificat
+     */
+    public String getToken(){
+        return auth.getBasicAuthentication();
+        
+        /*
+        String token = log + ":" + pass;
+        try {
+            return "BASIC " + DatatypeConverter.printBase64Binary(token.getBytes("UTF-8"));
+        } catch (UnsupportedEncodingException ex) {
+            throw new IllegalStateException("Cannot encode with UTF-8", ex);
+        }
+        
+        //Possible mètode a implementar en el servidor per genera el token
+        
+        HmacSHA256Signer signer;
+        try{
+            signer = new HmacSHA256Signer("GestLab", null, pass.getBytes());
+        } catch (InvalidKeyException e) {
+            throw new RuntimeException(e);
+        }
+        //Configure JSON token
+        JsonToken token = new net.oauth.jsontoken.JsonToken(signer);
+        token.setParam("Id", log);
+        //Configure request object, which provides information of the item
+        JsonObject request = new JsonObject();
+        request.addProperty("userId", login);
+        request.addProperty("admin", admin);
+        JsonObject payload = token.getPayloadAsJsonObject();
+        payload.add("info", request);
+               
+        try {
+            return token.serializeAndSign();
+        } catch (SignatureException e) {
+            throw new RuntimeException(e);
+        }
+                */
+    }
 }

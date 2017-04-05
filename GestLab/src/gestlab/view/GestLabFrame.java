@@ -2,7 +2,7 @@ package gestlab.view;
 
 import gestlab.model.Cliente;
 import gestlab.model.Usuario;
-import gestlab.restfulclient.ClienteClient;
+import gestlab.restfulclient.ClienteClientSsl;
 import gestlab.view.functionality.TablesFunctionality;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -19,12 +19,13 @@ import javax.ws.rs.core.GenericType;
  */
 public class GestLabFrame extends javax.swing.JFrame {
     
-    private Usuario usuario;
-    private String id;
+    private final Usuario usuario;
+    private String token;
     private Cliente cliente;
     private List<Cliente> clientes;
     
-    private ClienteClient cClient;
+    private ClienteClientSsl cClient;
+    
     GenericType<List<Cliente>> gTypeClient = new GenericType<List<Cliente>>(){};
     
     TablesFunctionality tFunc = new TablesFunctionality();
@@ -35,12 +36,14 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @param u Usuari que accedeix al programa
      */
     public GestLabFrame(Usuario u) {
-        usuario = u;
-        id = u.getId();//En teoria treuria el id a partir del token:
+        this.usuario = u;
+        this.token = u.getToken();
 
         initComponents();
+        
         jButtonCancelModifProfile.setVisible(false);
-        if(!u.getAdministrador()){
+        //Si l'usuari no és administrador s'amaguen alguns botons i pestanya Usuaris
+        if(!usuario.getAdministrador()){
             hideButtons();
         }
         fillProfile();
@@ -52,7 +55,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      */
     private void openClient(){
-        cClient = new ClienteClient();
+        cClient = new ClienteClientSsl(token);
     }
     
     /**
@@ -958,7 +961,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonNewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewUserActionPerformed
-        UserDialog dialog = new UserDialog(this, true);
+        UserDialog dialog = new UserDialog(this, true, usuario);
         dialog.addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosed(WindowEvent e){
@@ -981,7 +984,7 @@ public class GestLabFrame extends javax.swing.JFrame {
             String idClient = (String) jTableUsers.getModel().getValueAt(row,0);
             openClient();
             Cliente c = cClient.find_JSON(Cliente.class, idClient);
-            UserDialog dialog = new UserDialog(this, true, c);
+            UserDialog dialog = new UserDialog(this, true, usuario, c);
                 dialog.addWindowListener(new WindowAdapter(){
                     @Override
                     public void windowClosed(WindowEvent e){
@@ -1097,7 +1100,6 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldUserId;
     // End of variables declaration//GEN-END:variables
 
-    
     /*
     Gestió del perfil
     */
@@ -1108,7 +1110,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     private void fillProfile(){
         openClient();
-        cliente = cClient.find_JSON(Cliente.class, id);
+        cliente = cClient.find_JSON(Cliente.class, usuario.getId());
         jTextFieldNom.setText(cliente.getNombre());
         jTextFieldDni.setText(cliente.getDni());
         jTextFieldCognom1.setText(cliente.getPrimerApellido());

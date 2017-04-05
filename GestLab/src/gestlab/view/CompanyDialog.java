@@ -2,7 +2,8 @@
 package gestlab.view;
 
 import gestlab.model.Empresa;
-import gestlab.restfulclient.EmpresaClient;
+import gestlab.model.Usuario;
+import gestlab.restfulclient.EmpresaClientSsl;
 import javax.swing.JOptionPane;
 
 /**
@@ -12,16 +13,19 @@ import javax.swing.JOptionPane;
 public class CompanyDialog extends javax.swing.JDialog {
     
     Empresa empresa;
-    private EmpresaClient eClient;
+    Usuario usuario;
+    private EmpresaClientSsl eClient;
 
     /**
      * Crea un nou formulari per entrar dades d'una nova empresa
      * @author manel bosch
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
+     * @param usuario Usuari que està connectat al programa
      */
-    public CompanyDialog(javax.swing.JDialog parent, boolean modal) {
+    public CompanyDialog(javax.swing.JDialog parent, boolean modal, Usuario usuario) {
         super(parent, modal);
+        this.usuario = usuario;
         openClient();
         initComponents();
     }
@@ -31,10 +35,12 @@ public class CompanyDialog extends javax.swing.JDialog {
      * @author manel bosch
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
+     * @param usuario Usuari que està connectat al programa
      * @param e Empresa a modificar
      */
-    public CompanyDialog(javax.swing.JDialog parent, boolean modal, Empresa e) {
+    public CompanyDialog(javax.swing.JDialog parent, boolean modal, Usuario usuario, Empresa e) {
         super(parent, modal);
+        this.usuario = usuario;
         openClient();
         initComponents();
         empresa = e;
@@ -244,7 +250,7 @@ public class CompanyDialog extends javax.swing.JDialog {
      * @author manel bosch
      */
     private void openClient(){
-        eClient = new EmpresaClient();
+        eClient = new EmpresaClientSsl(usuario.getToken());
     }
     
     /**

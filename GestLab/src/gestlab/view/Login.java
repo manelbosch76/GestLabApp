@@ -1,7 +1,24 @@
 package gestlab.view;
 
+
+import com.google.common.collect.Lists;
+import com.google.gson.JsonObject;
 import gestlab.model.Usuario;
-import gestlab.restfulclient.UsuarioClient;
+import gestlab.restfulclient.UsuarioClientSsl;
+import static io.jsonwebtoken.Jwts.parser;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.SignatureException;
+import java.util.Base64;
+import java.util.List;
+import net.oauth.jsontoken.JsonToken;
+import net.oauth.jsontoken.JsonTokenParser;
+import net.oauth.jsontoken.crypto.HmacSHA256Signer;
+import net.oauth.jsontoken.crypto.HmacSHA256Verifier;
+import net.oauth.jsontoken.crypto.SignatureAlgorithm;
+import net.oauth.jsontoken.crypto.Verifier;
+import net.oauth.jsontoken.discovery.VerifierProvider;
+import net.oauth.jsontoken.discovery.VerifierProviders;
 
 /**
  * Classe que representa l'interfície d'entrada al programa
@@ -13,9 +30,10 @@ public class Login extends javax.swing.JFrame {
     private char[] passwd;
     private boolean admin;
 
-    UsuarioClient client;
     Usuario usuario;
 
+    UsuarioClientSsl client;
+    
     GestLabFrame gestlabFrame;
     
 
@@ -191,17 +209,21 @@ public class Login extends javax.swing.JFrame {
      */
     private void jButtonEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnterActionPerformed
         jLabelMessage.setText("");
-        
         getData();
         
-        //client = new UsuarioClientSsl(login, String.valueOf(passwd));
-        client = new UsuarioClient();
-        usuario = client.find_JSON(Usuario.class, login);
-
+        client = new UsuarioClientSsl(login, String.valueOf(passwd));
+        
         if(checkData()){ 
+            //Crear el token i afegir-lo a l'usuari ho hauria de fer el servidor
+            //L'app només hauria d'obtenir l'usuari amb totes les dades per passar-lo a la finestra principal
+            String token = client.getToken();
+            usuario.setToken(token);
+            client.edit_JSON(usuario, login);
+            
             client.close();
             this.dispose();
-            gestlabFrame = new GestLabFrame(usuario);//Passo per paràmetre l'usuari però hauria de passar el tokken
+
+            gestlabFrame = new GestLabFrame(usuario);
             gestlabFrame.setVisible(true);
         }else{
             jLabelMessage.setText("Usuari y password incorrectes");
@@ -226,31 +248,6 @@ public class Login extends javax.swing.JFrame {
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
         this.dispose();
     }//GEN-LAST:event_jButtonCancelActionPerformed
-    
-    /**
-     * Mètode per obtenir les dades entrades per pantalla
-     * @author manel bosch
-     */
-    public void getData(){
-        login = jTextFieldLogin.getText();
-        passwd = jPasswordField.getPassword();
-    }
-    
-    /**
-     * Mètode per comprovar les dades entrades per pantalla
-     * @author manel bosch
-     * @return true o false
-     */
-    // Un cop implementada la seguretat SSL no caldrà. La comprovació es farà al servidor 
-    // retornant el token que l'identificarà
-    public boolean checkData(){
-        boolean acces = false;
-        usuario = client.find_JSON(Usuario.class, login);
-        if(usuario!=null && usuario.getContrasena().equals(String.valueOf(passwd))){
-            acces = true;
-        }
-        return acces;
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancel;
@@ -266,6 +263,30 @@ public class Login extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldLogin;
     // End of variables declaration//GEN-END:variables
 
+     /**
+     * Mètode per obtenir les dades entrades per pantalla
+     * @author manel bosch
+     */
+    public void getData(){
+        login = jTextFieldLogin.getText();
+        passwd = jPasswordField.getPassword();
+    }
+    
+    /**
+     * Mètode per comprovar les dades entrades per pantalla
+     * @author manel bosch
+     * @return true o false
+     */
+    // En teoria la comprovació es farà al servidor 
+    public boolean checkData(){
+        boolean acces = false;
+        usuario = client.find_JSON(Usuario.class, login);
+        if(usuario!=null && usuario.getContrasena().equals(String.valueOf(passwd))){
+            acces = true;
+        }
+        return acces;
+    }
+    
     /**
      * Mètode per netejar els camps d'entrada de dades
      * @author manel bosch
@@ -274,5 +295,4 @@ public class Login extends javax.swing.JFrame {
         jTextFieldLogin.setText("");
         jPasswordField.setText("");
     }
-
 }

@@ -2,7 +2,7 @@
 package gestlab.view;
 
 import gestlab.model.Usuario;
-import gestlab.restfulclient.UsuarioClient;
+import gestlab.restfulclient.UsuarioClientSsl;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
 
@@ -13,19 +13,19 @@ import javax.swing.JOptionPane;
 public class PasswordDialog extends javax.swing.JDialog {
     
     Usuario usuario;
-    private UsuarioClient uClient;
+    private UsuarioClientSsl uClient;
 
     /**
      * Crea un nou formulari per canviar el password
      * @author manel bosch
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
-     * @param u Usuario a modificar-li el password
+     * @param usuario Usuario a modificar-li el password
      */
-    public PasswordDialog(java.awt.Frame parent, boolean modal, Usuario u) {
+    public PasswordDialog(java.awt.Frame parent, boolean modal, Usuario usuario) {
         super(parent, modal);
         initComponents();
-        usuario = u;
+        this.usuario = usuario;
     }
 
     /**
@@ -242,7 +242,7 @@ public class PasswordDialog extends javax.swing.JDialog {
      * @author manel bosch
      */
     private void openClient(){
-        uClient = new UsuarioClient();
+        uClient = new UsuarioClientSsl(usuario.getToken());
     }
   
     /**

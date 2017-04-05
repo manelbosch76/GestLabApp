@@ -1,6 +1,7 @@
 
 package gestlab.restfulclient;
 
+import gestlab.helper.PathConstants;
 import gestlab.model.Cliente;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;
@@ -26,16 +27,25 @@ import javax.ws.rs.core.GenericType;
 public class ClienteClientSsl {
     private WebTarget webTarget;
     private Client client;
-    private static final String BASE_URI = "https://localhost:8080/GestLabRestful/webresources";
 
     public ClienteClientSsl() {
-        client = javax.ws.rs.client.ClientBuilder.newBuilder().sslContext(getSSLContext()).build();
-        webTarget = client.target(BASE_URI).path("model.cliente");
+        client = javax.ws.rs.client.ClientBuilder.newBuilder().sslContext(getSSLContext()).hostnameVerifier(getHostnameVerifier()).build();
+        webTarget = client.target(PathConstants.SERVICE_SSL).path(PathConstants.CLIENTE_SERVICE);
     }
 
     public ClienteClientSsl(String username, String password) {
         this();
         setUsernamePassword(username, password);
+    }
+    
+    /**
+     * Constructor per generar un client amb el token associat a l'usuari
+     * @author manel bosch
+     * @param token token amb el id i password de l'usuari codificats
+     */
+    public ClienteClientSsl(String token) {
+        this();
+        webTarget.register(token);
     }
 
     public String countREST() throws ClientErrorException {
@@ -122,8 +132,9 @@ public class ClienteClientSsl {
         };
         SSLContext ctx = null;
         try {
-            ctx = SSLContext.getInstance("SSL");
-            ctx.init(null, new javax.net.ssl.TrustManager[]{x509}, null);
+            ctx = SSLContext.getInstance("TLSv1");
+            System.setProperty("https.protocols", "TLSv1");
+            ctx.init(null, new javax.net.ssl.TrustManager[]{x509}, new java.security.SecureRandom());
         } catch (java.security.GeneralSecurityException ex) {
         }
         return ctx;
