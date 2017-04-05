@@ -227,6 +227,7 @@ public class CompanyDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
+        eClient.close();
         this.dispose();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 

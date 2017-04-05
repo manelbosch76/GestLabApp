@@ -7,14 +7,11 @@ package gestlab.restfulclient;
 
 import gestlab.helper.Authenticator;
 import gestlab.helper.PathConstants;
-import java.io.UnsupportedEncodingException;
-import java.util.Base64;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
-import javax.xml.bind.DatatypeConverter;
 
 
 

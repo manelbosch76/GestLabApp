@@ -26,6 +26,7 @@ public class PasswordDialog extends javax.swing.JDialog {
         super(parent, modal);
         initComponents();
         this.usuario = usuario;
+        openClient();
     }
 
     /**
@@ -192,7 +193,6 @@ public class PasswordDialog extends javax.swing.JDialog {
      */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         if(checkPasswd()){
-            openClient();
             usuario.setContrasena(String.valueOf(jPasswordFieldNew.getPassword()));
             uClient.edit_JSON(usuario, usuario.getId());
             uClient.close();
@@ -219,6 +219,7 @@ public class PasswordDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
+        uClient.close();
         this.dispose();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 

@@ -512,7 +512,7 @@ public class UserDialog extends javax.swing.JDialog {
      * @param evt 
      */
     private void jButtonNewCompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewCompanyActionPerformed
-        CompanyDialog dialog = new CompanyDialog(this, true);
+        CompanyDialog dialog = new CompanyDialog(this, true, usuario);
         dialog.addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosed(WindowEvent e){
@@ -528,7 +528,7 @@ public class UserDialog extends javax.swing.JDialog {
      * @param evt Clicar el botó
      */
     private void jButtonModifCompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifCompanyActionPerformed
-        CompanyDialog dialog = new CompanyDialog(this, true, empresa);
+        CompanyDialog dialog = new CompanyDialog(this, true, usuario, empresa);
         dialog.addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosed(WindowEvent e){

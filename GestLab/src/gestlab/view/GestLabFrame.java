@@ -1,5 +1,7 @@
 package gestlab.view;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import gestlab.model.Cliente;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.ClienteClientSsl;
@@ -1110,6 +1112,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     private void fillProfile(){
         openClient();
+        //Gson gson = new GsonBuilder().create();
         cliente = cClient.find_JSON(Cliente.class, usuario.getId());
         jTextFieldNom.setText(cliente.getNombre());
         jTextFieldDni.setText(cliente.getDni());
