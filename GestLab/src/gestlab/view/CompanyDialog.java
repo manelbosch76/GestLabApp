@@ -36,15 +36,16 @@ public class CompanyDialog extends javax.swing.JDialog {
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
      * @param usuario Usuari que està connectat al programa
-     * @param e Empresa a modificar
+     * @param empresa Empresa a modificar
      */
-    public CompanyDialog(javax.swing.JDialog parent, boolean modal, Usuario usuario, Empresa e) {
+    public CompanyDialog(javax.swing.JDialog parent, boolean modal, Usuario usuario, Empresa empresa) {
         super(parent, modal);
         this.usuario = usuario;
         openClient();
         initComponents();
-        empresa = e;
-        fillCompanyData(e);
+        jTextFieldNif.setEditable(false);//Canviar el nif d'una empresa seria crear-ne una de nova
+        this.empresa = empresa;
+        fillCompanyData(empresa);
     }
 
     /**
@@ -216,7 +217,6 @@ public class CompanyDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
-        jTextFieldNif.setText("");
         jTextFieldNomEmpresa.setText("");
         jTextFieldAdreca.setText("");
     }//GEN-LAST:event_jButtonClearActionPerformed

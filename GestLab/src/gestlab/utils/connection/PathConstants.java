@@ -1,4 +1,4 @@
-package gestlab.helper;
+package gestlab.utils.connection;
 
 /**
  * Classe amb les diferents rutes definides com a constants

@@ -1,18 +1,20 @@
 package gestlab.view;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import gestlab.model.Cliente;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.ClienteClientSsl;
-import gestlab.view.functionality.TablesFunctionality;
+import gestlab.utils.tables.TableCreator;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.RowFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableModel;
+import javax.swing.table.TableRowSorter;
 import javax.ws.rs.core.GenericType;
 
 /**
@@ -22,15 +24,15 @@ import javax.ws.rs.core.GenericType;
 public class GestLabFrame extends javax.swing.JFrame {
     
     private final Usuario usuario;
-    private String token;
-    private Cliente cliente;
+    private final String token;
+    
+    Cliente cliente;
     private List<Cliente> clientes;
-    
     private ClienteClientSsl cClient;
-    
     GenericType<List<Cliente>> gTypeClient = new GenericType<List<Cliente>>(){};
     
-    TablesFunctionality tFunc = new TablesFunctionality();
+    private TableRowSorter<TableModel> rowSorter;
+    TableCreator tFunc = new TableCreator();
 
     /**
      * Crea un nou frame GestLabFrame
@@ -78,15 +80,17 @@ public class GestLabFrame extends javax.swing.JFrame {
     ChangeListener changeListener = (ChangeEvent changeEvent) -> {
         JTabbedPane sourceTabbedPane = (JTabbedPane) changeEvent.getSource();
         int index = sourceTabbedPane.getSelectedIndex();
-        if(sourceTabbedPane.getTitleAt(index).equals("Usuaris")){
-            cClient.close();
-            fillUsersList();
-        }else if(sourceTabbedPane.getTitleAt(index).equals("Productes")){
-            //TODO
-        }else if(sourceTabbedPane.getTitleAt(index).equals("Equipament")){
-            //TODO
-        }else if(sourceTabbedPane.getTitleAt(index).equals("Perfil")){
-            //TODO
+        switch (sourceTabbedPane.getTitleAt(index)) {
+            case "Clients":
+                fillClientsList();
+                break;
+            case "Productes":
+                break;
+            case "Equipament":
+                break;
+            case "Perfil":
+                fillProfile();
+                break;
         }
     };
 
@@ -121,15 +125,15 @@ public class GestLabFrame extends javax.swing.JFrame {
         jButtonCancelModifProfile = new javax.swing.JButton();
         jPanelUsuaris = new javax.swing.JPanel();
         jScrollPaneUsers = new javax.swing.JScrollPane();
-        jTableUsers = new javax.swing.JTable();
+        jTableClients = new javax.swing.JTable();
         jPanelAdminUser = new javax.swing.JPanel();
-        jButtonNewUser = new javax.swing.JButton();
-        jButtonModifUser = new javax.swing.JButton();
-        jButtonDelUser = new javax.swing.JButton();
+        jButtonNewClient = new javax.swing.JButton();
+        jButtonModifClient = new javax.swing.JButton();
+        jButtonDelClient = new javax.swing.JButton();
         jPanelUserSearch = new javax.swing.JPanel();
         jTextFieldSurname = new javax.swing.JTextField();
-        jTextFieldUserId = new javax.swing.JTextField();
-        jButtonUserId = new javax.swing.JButton();
+        jTextFieldClientId = new javax.swing.JTextField();
+        jButtonClientId = new javax.swing.JButton();
         jButtonSearchSurname = new javax.swing.JButton();
         jPanelProductes = new javax.swing.JPanel();
         jPanelAdminProducts = new javax.swing.JPanel();
@@ -310,29 +314,30 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jTabbedPaneMain.addTab("Perfil", jPanelPerfil);
 
-        jScrollPaneUsers.setBorder(javax.swing.BorderFactory.createTitledBorder("Llista Usuaris"));
+        jScrollPaneUsers.setBorder(javax.swing.BorderFactory.createTitledBorder("Llista Clients"));
 
-        jTableUsers.setModel(tFunc.createTableModel(Cliente.class, clientes));
-        jScrollPaneUsers.setViewportView(jTableUsers);
+        jTableClients.setAutoCreateRowSorter(true);
+        jTableClients.setModel(tFunc.createTableModel(Cliente.class, clientes));
+        jScrollPaneUsers.setViewportView(jTableClients);
 
-        jButtonNewUser.setText("Nou Usuari");
-        jButtonNewUser.addActionListener(new java.awt.event.ActionListener() {
+        jButtonNewClient.setText("Nou Client");
+        jButtonNewClient.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonNewUserActionPerformed(evt);
+                jButtonNewClientActionPerformed(evt);
             }
         });
 
-        jButtonModifUser.setText("Modificar Usuari");
-        jButtonModifUser.addActionListener(new java.awt.event.ActionListener() {
+        jButtonModifClient.setText("Modificar Client");
+        jButtonModifClient.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonModifUserActionPerformed(evt);
+                jButtonModifClientActionPerformed(evt);
             }
         });
 
-        jButtonDelUser.setText("Eliminar Usuari");
-        jButtonDelUser.addActionListener(new java.awt.event.ActionListener() {
+        jButtonDelClient.setText("Eliminar Client");
+        jButtonDelClient.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonDelUserActionPerformed(evt);
+                jButtonDelClientActionPerformed(evt);
             }
         });
 
@@ -343,23 +348,23 @@ public class GestLabFrame extends javax.swing.JFrame {
             .addGroup(jPanelAdminUserLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanelAdminUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonNewUser, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButtonModifUser, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButtonDelUser, javax.swing.GroupLayout.Alignment.TRAILING))
+                    .addComponent(jButtonNewClient, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonModifClient, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButtonDelClient, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addContainerGap())
         );
 
-        jPanelAdminUserLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonDelUser, jButtonModifUser, jButtonNewUser});
+        jPanelAdminUserLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonDelClient, jButtonModifClient, jButtonNewClient});
 
         jPanelAdminUserLayout.setVerticalGroup(
             jPanelAdminUserLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelAdminUserLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButtonNewUser)
+                .addComponent(jButtonNewClient)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonModifUser)
+                .addComponent(jButtonModifClient)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonDelUser)
+                .addComponent(jButtonDelClient)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -373,20 +378,20 @@ public class GestLabFrame extends javax.swing.JFrame {
             }
         });
 
-        jTextFieldUserId.setText("Id");
-        jTextFieldUserId.addFocusListener(new java.awt.event.FocusAdapter() {
+        jTextFieldClientId.setText("Id");
+        jTextFieldClientId.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
-                jTextFieldUserIdFocusGained(evt);
+                jTextFieldClientIdFocusGained(evt);
             }
             public void focusLost(java.awt.event.FocusEvent evt) {
-                jTextFieldUserIdFocusLost(evt);
+                jTextFieldClientIdFocusLost(evt);
             }
         });
 
-        jButtonUserId.setText("Buscar");
-        jButtonUserId.addActionListener(new java.awt.event.ActionListener() {
+        jButtonClientId.setText("Buscar");
+        jButtonClientId.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonUserIdActionPerformed(evt);
+                jButtonClientIdActionPerformed(evt);
             }
         });
 
@@ -405,11 +410,11 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(jPanelUserSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jTextFieldSurname, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                    .addComponent(jTextFieldUserId))
+                    .addComponent(jTextFieldClientId))
                 .addGap(18, 18, 18)
                 .addGroup(jPanelUserSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonSearchSurname)
-                    .addComponent(jButtonUserId))
+                    .addComponent(jButtonClientId))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanelUserSearchLayout.setVerticalGroup(
@@ -421,8 +426,8 @@ public class GestLabFrame extends javax.swing.JFrame {
                     .addComponent(jButtonSearchSurname))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
                 .addGroup(jPanelUserSearchLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextFieldUserId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonUserId))
+                    .addComponent(jTextFieldClientId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonClientId))
                 .addContainerGap())
         );
 
@@ -451,7 +456,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addContainerGap())
         );
 
-        jTabbedPaneMain.addTab("Usuaris", jPanelUsuaris);
+        jTabbedPaneMain.addTab("Clients", jPanelUsuaris);
 
         jButtonNewProduct.setText("Nou Producte");
 
@@ -819,21 +824,21 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      * @param evt Event que es produeix en guanyar el focus
      */
-    private void jTextFieldUserIdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldUserIdFocusGained
-        if(jTextFieldUserId.getText().trim().equals("Id"))
-           jTextFieldUserId.setText("");
-    }//GEN-LAST:event_jTextFieldUserIdFocusGained
+    private void jTextFieldClientIdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldClientIdFocusGained
+        if(jTextFieldClientId.getText().trim().equals("Id"))
+           jTextFieldClientId.setText("");
+    }//GEN-LAST:event_jTextFieldClientIdFocusGained
 
     /**
      * Mètode per controlar l'aparició del text per defecte
      * @author manel bosch
      * @param evt Event que es produeix en perdre el focus
      */
-    private void jTextFieldUserIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldUserIdFocusLost
-        if(jTextFieldUserId.getText().trim().equals("")){
-           jTextFieldUserId.setText("Id");
+    private void jTextFieldClientIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldClientIdFocusLost
+        if(jTextFieldClientId.getText().trim().equals("")){
+           jTextFieldClientId.setText("Id");
         }
-    }//GEN-LAST:event_jTextFieldUserIdFocusLost
+    }//GEN-LAST:event_jTextFieldClientIdFocusLost
 
     /**
      * Mètode per controlar desaparició del text per defecte
@@ -929,13 +934,13 @@ public class GestLabFrame extends javax.swing.JFrame {
     private void jButtonModifProfileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifProfileActionPerformed
         jButtonCancelModifProfile.setVisible(true);
         if(jButtonModifProfile.getText().equals("Modificar dades")){
-            enableTextFields(true);
+            editProfileTextFields(true);
             jButtonModifProfile.setText("Guardar canvis");
         }else if (jButtonModifProfile.getText().equals("Guardar canvis")){
-            changeProfile(cliente);
+            changeProfile();
             jButtonModifProfile.setText("Modificar dades");
             jButtonCancelModifProfile.setVisible(false);
-            enableTextFields(false);
+            editProfileTextFields(false);
         }
     }//GEN-LAST:event_jButtonModifProfileActionPerformed
 
@@ -944,8 +949,20 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
+    //El mètode de cerca hauria d'existir en el servidor.
     private void jButtonSearchSurnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchSurnameActionPerformed
-        // TODO add your handling code here:
+        if(jTextFieldSurname.getText().equals("Cognom") || jTextFieldSurname.getText().isEmpty()){
+            fillClientsList();
+        }else{
+            String cognom = jTextFieldSurname.getText().toLowerCase();
+            List<Cliente> clientsSurname = new ArrayList<>();
+            for (Cliente c : clientes) {
+                if(c.getPrimerApellido().toLowerCase().contains(cognom)){
+                    clientsSurname.add(c);
+                }
+            }
+            fillClientsList(clientsSurname);
+        }
     }//GEN-LAST:event_jButtonSearchSurnameActionPerformed
 
     /**
@@ -953,67 +970,75 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
-    private void jButtonUserIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonUserIdActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButtonUserIdActionPerformed
+    private void jButtonClientIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClientIdActionPerformed
+        String id = jTextFieldClientId.getText();
+        rowSorter = new TableRowSorter<>(jTableClients.getModel());
+        jTableClients.setRowSorter(rowSorter);
+        if(id.length() == 9){
+            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + id));
+        }else{
+            rowSorter.setRowFilter(null);
+        }
+    }//GEN-LAST:event_jButtonClientIdActionPerformed
 
     /**
      * Mètode per introduir un usuari nou a la base de dades
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
-    private void jButtonNewUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewUserActionPerformed
-        UserDialog dialog = new UserDialog(this, true, usuario);
+    private void jButtonNewClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewClientActionPerformed
+        ClientDialog dialog = new ClientDialog(this, true, usuario);
         dialog.addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosed(WindowEvent e){
-                fillUsersList();
+                fillClientsList();
             }
         });
         dialog.setVisible(true);
-    }//GEN-LAST:event_jButtonNewUserActionPerformed
+    }//GEN-LAST:event_jButtonNewClientActionPerformed
 
     /**
      * Mètode per modificar un usuari seleccionat 
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
-    private void jButtonModifUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifUserActionPerformed
-        if(jTableUsers.getSelectedRowCount()==0){
+    private void jButtonModifClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifClientActionPerformed
+        if(jTableClients.getSelectedRowCount()==0){
             JOptionPane.showMessageDialog(null,"Selecciona un client a modificar","Alert !!",JOptionPane.WARNING_MESSAGE);
         }else{
-            int row = jTableUsers.getSelectedRow();
-            String idClient = (String) jTableUsers.getModel().getValueAt(row,0);
+            int row = jTableClients.getSelectedRow();
+            String idClient = (String) jTableClients.getModel().getValueAt(row,0);
             openClient();
             Cliente c = cClient.find_JSON(Cliente.class, idClient);
-            UserDialog dialog = new UserDialog(this, true, usuario, c);
+            cClient.close();
+            ClientDialog dialog = new ClientDialog(this, true, usuario, c);
                 dialog.addWindowListener(new WindowAdapter(){
                     @Override
                     public void windowClosed(WindowEvent e){
-                        fillUsersList();
+                        fillClientsList();
                     }
                 });
-            cClient.close();
             dialog.setVisible(true);
         }
-    }//GEN-LAST:event_jButtonModifUserActionPerformed
+    }//GEN-LAST:event_jButtonModifClientActionPerformed
 
     /**
      * Mètode per eliminar usuari 
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
-    private void jButtonDelUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelUserActionPerformed
-        if(jTableUsers.getSelectedRowCount()==0){
+    private void jButtonDelClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelClientActionPerformed
+        if(jTableClients.getSelectedRowCount()==0){
             JOptionPane.showMessageDialog(null,"Selecciona un client a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
         }else{
-            int row = jTableUsers.getSelectedRow();
-            String id = (String) jTableUsers.getModel().getValueAt(row,0);
+            int row = jTableClients.getSelectedRow();
+            String id = (String) jTableClients.getModel().getValueAt(row,0);
             openClient();
             cClient.remove(id);
             cClient.close();
+            fillClientsList();
         }
-    }//GEN-LAST:event_jButtonDelUserActionPerformed
+    }//GEN-LAST:event_jButtonDelClientActionPerformed
 
     /**
      * Mètode per cridar la finestra per canviar el password
@@ -1034,7 +1059,7 @@ public class GestLabFrame extends javax.swing.JFrame {
         jButtonModifProfile.setText("Modificar dades");
         jButtonCancelModifProfile.setVisible(false);
         fillProfile();
-        enableTextFields(false);
+        editProfileTextFields(false);
     }//GEN-LAST:event_jButtonCancelModifProfileActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -1042,26 +1067,26 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonBuyProduct;
     private javax.swing.JButton jButtonCancelModifProfile;
     private javax.swing.JButton jButtonChangePasswd;
+    private javax.swing.JButton jButtonClientId;
+    private javax.swing.JButton jButtonDelClient;
     private javax.swing.JButton jButtonDelEquip;
     private javax.swing.JButton jButtonDelProduct;
-    private javax.swing.JButton jButtonDelUser;
     private javax.swing.JButton jButtonEquipId;
     private javax.swing.JButton jButtonEquipsAvailable;
     private javax.swing.JButton jButtonEquipsUsed;
+    private javax.swing.JButton jButtonModifClient;
     private javax.swing.JButton jButtonModifEquip;
     private javax.swing.JButton jButtonModifProduct;
     private javax.swing.JButton jButtonModifProfile;
-    private javax.swing.JButton jButtonModifUser;
+    private javax.swing.JButton jButtonNewClient;
     private javax.swing.JButton jButtonNewEquip;
     private javax.swing.JButton jButtonNewProduct;
-    private javax.swing.JButton jButtonNewUser;
     private javax.swing.JButton jButtonProductId;
     private javax.swing.JButton jButtonProductsAvailable;
     private javax.swing.JButton jButtonProductsUsed;
     private javax.swing.JButton jButtonSearchEquipName;
     private javax.swing.JButton jButtonSearchProductName;
     private javax.swing.JButton jButtonSearchSurname;
-    private javax.swing.JButton jButtonUserId;
     private javax.swing.JLabel jLabelCognom1;
     private javax.swing.JLabel jLabelCognom2;
     private javax.swing.JLabel jLabelDni;
@@ -1087,7 +1112,8 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPaneProducts;
     private javax.swing.JScrollPane jScrollPaneUsers;
     private javax.swing.JTabbedPane jTabbedPaneMain;
-    private javax.swing.JTable jTableUsers;
+    private javax.swing.JTable jTableClients;
+    private javax.swing.JTextField jTextFieldClientId;
     private javax.swing.JTextField jTextFieldCognom1;
     private javax.swing.JTextField jTextFieldCognom2;
     private javax.swing.JTextField jTextFieldDni;
@@ -1099,7 +1125,6 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldProductId;
     private javax.swing.JTextField jTextFieldSurname;
     private javax.swing.JTextField jTextFieldTelf;
-    private javax.swing.JTextField jTextFieldUserId;
     // End of variables declaration//GEN-END:variables
 
     /*
@@ -1112,13 +1137,12 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     private void fillProfile(){
         openClient();
-        //Gson gson = new GsonBuilder().create();
         cliente = cClient.find_JSON(Cliente.class, usuario.getId());
         jTextFieldNom.setText(cliente.getNombre());
         jTextFieldDni.setText(cliente.getDni());
         jTextFieldCognom1.setText(cliente.getPrimerApellido());
         jTextFieldCognom2.setText(cliente.getSegundoApellido());
-        jTextFieldMail.setText(cliente.getEMail());
+        jTextFieldMail.setText(cliente.getEmail());
         jTextFieldTelf.setText(cliente.getTelefono());
         cClient.close();
     }
@@ -1128,12 +1152,12 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      * @param b Boolean
      */
-    public void enableTextFields(Boolean b){
-        jTextFieldNom.setEnabled(b);
-        jTextFieldCognom1.setEnabled(b);
-        jTextFieldCognom2.setEnabled(b);
-        jTextFieldMail.setEnabled(b);
-        jTextFieldTelf.setEnabled(b);
+    public void editProfileTextFields(Boolean b){
+        jTextFieldNom.setEditable(b);
+        jTextFieldCognom1.setEditable(b);
+        jTextFieldCognom2.setEditable(b);
+        jTextFieldMail.setEditable(b);
+        jTextFieldTelf.setEditable(b);
         jTextFieldNom.setEditable(b);
         jTextFieldCognom1.setEditable(b);
         jTextFieldCognom2.setEditable(b);
@@ -1144,19 +1168,18 @@ public class GestLabFrame extends javax.swing.JFrame {
      /**
      * Mètode per canviar els camps del client
      * @author manel bosch
-     * @param c Client
      */
-    public void changeProfile(Cliente c){
+    public void changeProfile(){
         openClient();
-        c.setNombre(jTextFieldNom.getText());
-        c.setPrimerApellido(jTextFieldCognom1.getText());
-        c.setSegundoApellido(jTextFieldCognom2.getText());
-        c.setEMail(jTextFieldMail.getText());
-        c.setTelefono(jTextFieldTelf.getText());
-        cClient.edit_JSON(c, c.getDni());
+        cliente.setNombre(jTextFieldNom.getText());
+        cliente.setPrimerApellido(jTextFieldCognom1.getText());
+        cliente.setSegundoApellido(jTextFieldCognom2.getText());
+        cliente.setEmail(jTextFieldMail.getText());
+        cliente.setTelefono(jTextFieldTelf.getText());
+        cClient.edit_JSON(cliente, cliente.getDni());
         cClient.close();
     }
-    
+
     
     /*
     Gestió d'usuaris
@@ -1166,12 +1189,20 @@ public class GestLabFrame extends javax.swing.JFrame {
      * Mètode per omplir la taula d'usuaris
      * @author manel bosch
      */
-    public void fillUsersList(){
+    public void fillClientsList(){
         openClient();
         clientes = cClient.findAll_JSON(gTypeClient);
-        jTableUsers.setModel(tFunc.createTableModel(Cliente.class, clientes));
+        jTableClients.setModel(tFunc.createTableModel(Cliente.class, clientes));
         cClient.close();
     }
     
+    /**
+     * Mètode per omplir la taula d'usuaris
+     * @author manel bosch
+     * @param l Llista de clients a mostrar
+     */
+    public void fillClientsList(List l){
+        jTableClients.setModel(tFunc.createTableModel(Cliente.class, l));
+    }
    
 }

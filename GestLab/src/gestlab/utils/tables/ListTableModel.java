@@ -1,5 +1,5 @@
 
-package gestlab.view.functionality;
+package gestlab.utils.tables;
 
 import gestlab.model.Cliente;
 import gestlab.model.Empresa;
@@ -75,7 +75,7 @@ public class ListTableModel <T> extends DefaultTableModel {
                     case 0: return c.getDni();
                     case 1: return c.getNombre();
                     case 2: return c.getPrimerApellido();
-                    case 3: return c.getEMail();
+                    case 3: return c.getEmail();
                     case 4: return c.getTelefono();
                     default: return null;
                 }

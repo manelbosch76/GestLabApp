@@ -5,7 +5,7 @@
  */
 package gestlab.restfulclient;
 
-import gestlab.helper.PathConstants;
+import gestlab.utils.connection.PathConstants;
 import gestlab.model.Empresa;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;

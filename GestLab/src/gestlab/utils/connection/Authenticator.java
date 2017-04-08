@@ -1,5 +1,5 @@
 
-package gestlab.helper;
+package gestlab.utils.connection;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;

@@ -5,8 +5,8 @@
  */
 package gestlab.restfulclient;
 
-import gestlab.helper.Authenticator;
-import gestlab.helper.PathConstants;
+import gestlab.utils.connection.Authenticator;
+import gestlab.utils.connection.PathConstants;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.ws.rs.ClientErrorException;
@@ -29,6 +29,7 @@ import javax.ws.rs.client.WebTarget;
  * @author manel bosch
  */
 public class UsuarioClientSsl {
+    
     private WebTarget webTarget;
     private Client client;
     private Authenticator auth;
@@ -145,14 +146,7 @@ public class UsuarioClientSsl {
         return auth.getBasicAuthentication();
         
         /*
-        String token = log + ":" + pass;
-        try {
-            return "BASIC " + DatatypeConverter.printBase64Binary(token.getBytes("UTF-8"));
-        } catch (UnsupportedEncodingException ex) {
-            throw new IllegalStateException("Cannot encode with UTF-8", ex);
-        }
-        
-        //Possible mètode a implementar en el servidor per genera el token
+        Possible mètode a implementar en el servidor per genera el token
         
         HmacSHA256Signer signer;
         try{

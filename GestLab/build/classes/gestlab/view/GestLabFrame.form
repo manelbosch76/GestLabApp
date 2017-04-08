@@ -303,8 +303,8 @@
             <Container class="javax.swing.JPanel" name="jPanelUsuaris">
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Usuaris">
-                    <Property name="tabTitle" type="java.lang.String" value="Usuaris"/>
+                  <JTabbedPaneConstraints tabName="Clients">
+                    <Property name="tabTitle" type="java.lang.String" value="Clients"/>
                   </JTabbedPaneConstraints>
                 </Constraint>
               </Constraints>
@@ -345,15 +345,16 @@
                   <Properties>
                     <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
                       <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                        <TitledBorder title="Llista Usuaris"/>
+                        <TitledBorder title="Llista Clients"/>
                       </Border>
                     </Property>
                   </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="jTableUsers">
+                    <Component class="javax.swing.JTable" name="jTableClients">
                       <Properties>
+                        <Property name="autoCreateRowSorter" type="boolean" value="true"/>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
                           <Connection code="tFunc.createTableModel(Cliente.class, clientes)" type="code"/>
                         </Property>
@@ -375,9 +376,9 @@
                           <Group type="102" attributes="0">
                               <EmptySpace max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jButtonNewUser" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonModifUser" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonDelUser" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonNewClient" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonModifClient" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonDelClient" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -387,39 +388,39 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButtonNewUser" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButtonNewClient" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButtonModifUser" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButtonModifClient" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButtonDelUser" min="-2" max="-2" attributes="0"/>
+                              <Component id="jButtonDelClient" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
                   </Layout>
                   <SubComponents>
-                    <Component class="javax.swing.JButton" name="jButtonNewUser">
+                    <Component class="javax.swing.JButton" name="jButtonNewClient">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Nou Usuari"/>
+                        <Property name="text" type="java.lang.String" value="Nou Client"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonNewUserActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonNewClientActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButtonModifUser">
+                    <Component class="javax.swing.JButton" name="jButtonModifClient">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Modificar Usuari"/>
+                        <Property name="text" type="java.lang.String" value="Modificar Client"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonModifUserActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonModifClientActionPerformed"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButtonDelUser">
+                    <Component class="javax.swing.JButton" name="jButtonDelClient">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Eliminar Usuari"/>
+                        <Property name="text" type="java.lang.String" value="Eliminar Client"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDelUserActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDelClientActionPerformed"/>
                       </Events>
                     </Component>
                   </SubComponents>
@@ -433,12 +434,12 @@
                               <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jTextFieldSurname" pref="130" max="32767" attributes="0"/>
-                                  <Component id="jTextFieldUserId" max="32767" attributes="0"/>
+                                  <Component id="jTextFieldClientId" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
                                   <Component id="jButtonSearchSurname" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonUserId" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonClientId" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="32767" attributes="0"/>
                           </Group>
@@ -454,8 +455,8 @@
                               </Group>
                               <EmptySpace pref="32" max="32767" attributes="0"/>
                               <Group type="103" groupAlignment="3" attributes="0">
-                                  <Component id="jTextFieldUserId" alignment="3" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonUserId" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jTextFieldClientId" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonClientId" alignment="3" min="-2" max="-2" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -472,21 +473,21 @@
                         <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldSurnameFocusLost"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JTextField" name="jTextFieldUserId">
+                    <Component class="javax.swing.JTextField" name="jTextFieldClientId">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Id"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldUserIdFocusGained"/>
-                        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldUserIdFocusLost"/>
+                        <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldClientIdFocusGained"/>
+                        <EventHandler event="focusLost" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldClientIdFocusLost"/>
                       </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButtonUserId">
+                    <Component class="javax.swing.JButton" name="jButtonClientId">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Buscar"/>
                       </Properties>
                       <Events>
-                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonUserIdActionPerformed"/>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonClientIdActionPerformed"/>
                       </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonSearchSurname">

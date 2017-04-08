@@ -4,7 +4,7 @@ package gestlab.model;
 import java.io.Serializable;
 
 /**
- * Classe que represnta els clients
+ * Classe que reprsenta els clients
  * @author manel bosch
  */
 
@@ -20,11 +20,11 @@ public class Cliente implements Serializable {
     
     private String segundoApellido;
     
-    private String eMail;
+    private String email;
     
     private String telefono;
     
-    private Empresa iDEmpresa;
+    private Empresa idempresa;
 
     /**
      * Constructor per defecte
@@ -49,15 +49,15 @@ public class Cliente implements Serializable {
      * @param nombre nom del client
      * @param primerApellido primer cognom del client
      * @param segundoApellido segon cognom del client
-     * @param eMail Email del client
+     * @param email Email del client
      * @param telefono Telèfon del client
      */
-    public Cliente(String dni, String nombre, String primerApellido, String segundoApellido, String eMail, String telefono) {
+    public Cliente(String dni, String nombre, String primerApellido, String segundoApellido, String email, String telefono) {
         this.dni = dni;
         this.nombre = nombre;
         this.primerApellido = primerApellido;
         this.segundoApellido = segundoApellido;
-        this.eMail = eMail;
+        this.email = email;
         this.telefono = telefono;
     }
 
@@ -138,17 +138,17 @@ public class Cliente implements Serializable {
      * @author manel bosch
      * @return email Email del client
      */
-    public String getEMail() {
-        return eMail;
+    public String getEmail() {
+        return email;
     }
 
     /**
      * Entra el email del cient
      * @author manel bosch
-     * @param eMail Email del client
+     * @param email Email del client
      */
-    public void setEMail(String eMail) {
-        this.eMail = eMail;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
      /**
@@ -174,8 +174,8 @@ public class Cliente implements Serializable {
      * @author manel bosch
      * @return Empresa on està vinculat el client
      */
-    public Empresa getIDEmpresa() {
-        return iDEmpresa;
+    public Empresa getIdempresa() {
+        return idempresa;
     }
 
     /**
@@ -183,8 +183,8 @@ public class Cliente implements Serializable {
      * @author manel bosch
      * @param iDEmpresa Empresa on està vinculat el client
      */
-    public void setIDEmpresa(Empresa iDEmpresa) {
-        this.iDEmpresa = iDEmpresa;
+    public void setIdempresa(Empresa iDEmpresa) {
+        this.idempresa = iDEmpresa;
     }
 
     @Override

@@ -254,6 +254,7 @@ public class PasswordDialog extends javax.swing.JDialog {
     private boolean checkPasswd(){
         return String.valueOf(jPasswordFieldOld.getPassword()).equals(usuario.getContrasena())
                 && !Arrays.equals(jPasswordFieldOld.getPassword(), jPasswordFieldNew.getPassword())
-                && Arrays.equals(jPasswordFieldNew.getPassword(), jPasswordFieldNew2.getPassword());
+                && Arrays.equals(jPasswordFieldNew.getPassword(), jPasswordFieldNew2.getPassword())
+                && jPasswordFieldNew.getPassword().length>=5;
     }
 }

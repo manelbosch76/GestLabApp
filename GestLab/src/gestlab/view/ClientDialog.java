@@ -7,9 +7,10 @@ import gestlab.model.Usuario;
 import gestlab.restfulclient.ClienteClientSsl;
 import gestlab.restfulclient.EmpresaClientSsl;
 import gestlab.restfulclient.UsuarioClientSsl;
-import gestlab.view.functionality.TablesFunctionality;
+import gestlab.utils.tables.TableCreator;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.ws.rs.core.GenericType;
@@ -18,7 +19,7 @@ import javax.ws.rs.core.GenericType;
  * Classe que gestiona la finestra d'entrada/modificació de dades d'un usuari
  * @author manel bosch
  */
-public class UserDialog extends javax.swing.JDialog {
+public class ClientDialog extends javax.swing.JDialog {
     
     private final Usuario usuario;
     private Cliente cliente;
@@ -31,7 +32,7 @@ public class UserDialog extends javax.swing.JDialog {
     private UsuarioClientSsl uClient;
     private EmpresaClientSsl eClient;
 
-    TablesFunctionality tFunc = new TablesFunctionality();
+    TableCreator tableCreator = new TableCreator();
 
     /**
      * Crea un nou formulari per entrar dades d'un nou usuari
@@ -40,7 +41,7 @@ public class UserDialog extends javax.swing.JDialog {
      * @param modal manté el focus fins a tancar la finestra
      * @param usuario Usuari que està connectat al programa
      */
-    public UserDialog(java.awt.Frame parent, boolean modal, Usuario usuario) {
+    public ClientDialog(java.awt.Frame parent, boolean modal, Usuario usuario) {
         super(parent, modal);
         this.usuario = usuario;
         initClients();
@@ -57,18 +58,18 @@ public class UserDialog extends javax.swing.JDialog {
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
      * @param usuario Usuari que està connectat al programa
-     * @param c Cliente a modificar
+     * @param cliente Cliente a modificar
      */
-    public UserDialog(java.awt.Frame parent, boolean modal, Usuario usuario, Cliente c) {
+    public ClientDialog(java.awt.Frame parent, boolean modal, Usuario usuario, Cliente cliente) {
         super(parent, modal);
         this.usuario = usuario;
         initClients();
         empreses = eClient.findAll_JSON(gTypeUser);
         initComponents();
         isNew();
-        this.cliente = c;
-        empresa = c.getIDEmpresa();
-        fillUserData(c);//Omple camps de client i d'empresa
+        this.cliente = cliente;
+        empresa = cliente.getIdempresa();
+        fillClientData(cliente);//Omple camps de client i d'empresa
         fillCompanyTable();
     }
     
@@ -79,9 +80,9 @@ public class UserDialog extends javax.swing.JDialog {
     private void isNew(){
         if(newClient){
             jButtonModifCompany.setVisible(false);
-            jTextFieldLogin.setEnabled(false);
+            jTextFieldLogin.setEditable(false);
         }else{
-            jTextFieldDni.setEnabled(false);
+            jTextFieldDni.setEditable(false);
             jPasswordField1.setVisible(false);
             jLabelPasswd.setVisible(false);
             jTextFieldLogin.setVisible(false);
@@ -288,7 +289,7 @@ public class UserDialog extends javax.swing.JDialog {
 
         jScrollPaneCompany.setBorder(javax.swing.BorderFactory.createTitledBorder("Llista Empreses"));
 
-        jTableCompanies.setModel(tFunc.createTableModel(Empresa.class, empreses));
+        jTableCompanies.setModel(tableCreator.createTableModel(Empresa.class, empreses));
         jScrollPaneCompany.setViewportView(jTableCompanies);
 
         jButtonAddCompany.setText("Afegir empresa a Client");
@@ -452,17 +453,25 @@ public class UserDialog extends javax.swing.JDialog {
             if(newClient){
                 c = getClientData();
                 e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
-                c.setIDEmpresa(e);
+                c.setIdempresa(e);
+                //e.getClienteCollection().add(c);
                 jTextFieldLogin.setText(jTextFieldDni.getText());
                 u = getUserData();
                 cClient.create_JSON(c);
                 uClient.create_JSON(u);
+                //eClient.edit_JSON(e, jTextFieldNif.getText());
             }else{
                 cliente = getClientData();
                 e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
-                cliente.setIDEmpresa(e);
+                cliente.setIdempresa(e);
                 String id = cliente.getDni();
                 cClient.edit_JSON(cliente, id);
+                /*Inserció del client a la llista de clietns que té l'empresa
+                if(!existClientInCompany(e)){
+                    e.getClienteCollection().add(cliente);
+                    eClient.edit_JSON(e, jTextFieldNif.getText());
+                }
+                */
                 u = uClient.find_JSON(Usuario.class, id);
                 if(u.getAdministrador() != jCheckBoxAdmin.isSelected()){ //Comprovo si se li ha canviat la condició d'administrador
                     u.setAdministrador(jCheckBoxAdmin.isSelected());
@@ -482,7 +491,6 @@ public class UserDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
-        jTextFieldDni.setText("");
         jTextFieldNom.setText("");
         jTextFieldCognom1.setText("");
         jTextFieldCognom2.setText("");
@@ -532,7 +540,8 @@ public class UserDialog extends javax.swing.JDialog {
         dialog.addWindowListener(new WindowAdapter(){
             @Override
             public void windowClosed(WindowEvent e){
-                fillCompanyData(empresa);
+                Empresa emp = eClient.find_JSON(Empresa.class, empresa.getNif());
+                fillCompanyData(emp);
                 fillCompanyTable();
             }
         });
@@ -547,22 +556,20 @@ public class UserDialog extends javax.swing.JDialog {
     private void jButtonAddCompanyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddCompanyActionPerformed
         if(newClient){
             if(checkFilledFields()){
-                JOptionPane.showMessageDialog(null,"Falten les dades del client","Alert !!",JOptionPane.WARNING_MESSAGE);
-            }else{
                 cliente = getClientData();
                 if(jTableCompanies.getSelectedRowCount() == 0){
                     JOptionPane.showMessageDialog(null,"Selecciona una empresa a afegir al client","Alert !!",JOptionPane.WARNING_MESSAGE);
                 }else{
-                    Empresa e = getCompanyFromTable();
-                    cliente.setIDEmpresa(e);
-                    fillCompanyData(e);
+                   addCompany(cliente);
                 }
+            }else{
+                JOptionPane.showMessageDialog(null,"Falten les dades del client","Alert !!",JOptionPane.WARNING_MESSAGE);
             }
         }else{
             if(jTableCompanies.getSelectedRowCount() == 0){
                 JOptionPane.showMessageDialog(null,"Selecciona una empresa a afegir al client","Alert !!",JOptionPane.WARNING_MESSAGE);
             }else{
-                cliente.setIDEmpresa(getCompanyFromTable());
+                addCompany(cliente);
             }
         }
     }//GEN-LAST:event_jButtonAddCompanyActionPerformed
@@ -633,7 +640,7 @@ public class UserDialog extends javax.swing.JDialog {
      */
     private void fillCompanyTable(){
         empreses = eClient.findAll_JSON(gTypeUser);
-        jTableCompanies.setModel(tFunc.createTableModel(Empresa.class, empreses));
+        jTableCompanies.setModel(tableCreator.createTableModel(Empresa.class, empreses));
     }
     
     /**
@@ -641,16 +648,16 @@ public class UserDialog extends javax.swing.JDialog {
      * @author manel bosch
      * @param c Client
      */
-    private void fillUserData(Cliente c){
+    private void fillClientData(Cliente c){
         jTextFieldDni.setText(c.getDni());
         jTextFieldNom.setText(c.getNombre());
         jTextFieldCognom1.setText(c.getPrimerApellido());
         jTextFieldCognom2.setText(c.getSegundoApellido());
-        jTextFieldMail.setText(c.getEMail());
+        jTextFieldMail.setText(c.getEmail());
         jTextFieldTelf.setText(c.getTelefono());
         Usuario u = uClient.find_JSON(Usuario.class, c.getDni());
         jCheckBoxAdmin.setSelected(u.getAdministrador());
-        fillCompanyData(c.getIDEmpresa());
+        fillCompanyData(c.getIdempresa());
     }
     
     /**
@@ -675,7 +682,7 @@ public class UserDialog extends javax.swing.JDialog {
             c.setNombre(jTextFieldNom.getText());
             c.setPrimerApellido(jTextFieldCognom1.getText());
             c.setSegundoApellido(jTextFieldCognom2.getText());
-            c.setEMail(jTextFieldMail.getText());
+            c.setEmail(jTextFieldMail.getText());
             c.setTelefono(jTextFieldTelf.getText());
             return c;
         }else{
@@ -715,6 +722,17 @@ public class UserDialog extends javax.swing.JDialog {
     }
     
     /**
+     * Mètode per afegir una empresa a un client passat per paràmetre
+     * @author manel bosch
+     * @param c Client a qui afegir l'empresa
+     */
+    private void addCompany(Cliente c){
+        Empresa e = getCompanyFromTable();
+        c.setIdempresa(e);
+        fillCompanyData(e);
+    }
+    
+    /**
      * Mètode per saber si tots els camps necessaris estan plens
      * @author manel bosch
      * @return true si els camps estan plens, false si no
@@ -726,7 +744,7 @@ public class UserDialog extends javax.swing.JDialog {
                     ||jTextFieldCognom1.getText().equals("")
                     ||jTextFieldMail.getText().equals("")
                     ||jTextFieldTelf.getText().equals("")
-                    ||jPasswordField1.getText().equals(""));
+                    ||jPasswordField1.getPassword().length<5);
         }else{//Si el client no és nou no es comproven els camps login ni passwd
             return !(jTextFieldDni.getText().equals("")
                     ||jTextFieldNom.getText().equals("")
@@ -745,5 +763,27 @@ public class UserDialog extends javax.swing.JDialog {
         return !(jTextFieldNif.getText().equals("")
                 ||jTextFieldNomEmpresa.getText().equals("")
                 ||jTextFieldAdreca.getText().equals(""));
+    }
+    
+    /**
+     * Mètode per comprovar si un client ja existeix a la llista de clients d'una empresa
+     * Si la llista no existeix la inicialitza
+     * @param e Empresa a mirar
+     * @return true o false
+     */
+    private boolean existClientInCompany(Empresa e){
+        boolean exists = false;
+        List<Cliente> clientesEmpresa = (List<Cliente>) e.getClienteCollection();
+        if(clientesEmpresa != null && !clientesEmpresa.isEmpty()){
+            for(Cliente c: clientesEmpresa){
+                if(c.getDni().equals(cliente.getDni())){
+                    exists = true;
+                }
+            }
+        }else if(clientesEmpresa == null){
+            clientesEmpresa = new ArrayList<>();
+            e.setClienteCollection(clientesEmpresa);
+        }
+        return exists;
     }
 }

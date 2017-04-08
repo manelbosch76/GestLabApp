@@ -1,5 +1,5 @@
 
-package gestlab.view.functionality;
+package gestlab.utils.tables;
 
 import java.util.List;
 
@@ -7,7 +7,7 @@ import java.util.List;
  * Classe que permet crear les diferents taules a mostrar a la interfície
  * @author manel bosch
  */
-public class TablesFunctionality {
+public class TableCreator {
     
     private static final String[] CLIENTHEADERS = {"DNI","Nom","Cognom","E-mail","Telefon"};
     private static final String[] COMPANYHEADERS = {"NIF","Nom","Adreça"};

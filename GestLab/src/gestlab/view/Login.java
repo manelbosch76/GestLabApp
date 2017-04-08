@@ -1,24 +1,8 @@
 package gestlab.view;
 
 
-import com.google.common.collect.Lists;
-import com.google.gson.JsonObject;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.UsuarioClientSsl;
-import static io.jsonwebtoken.Jwts.parser;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.SignatureException;
-import java.util.Base64;
-import java.util.List;
-import net.oauth.jsontoken.JsonToken;
-import net.oauth.jsontoken.JsonTokenParser;
-import net.oauth.jsontoken.crypto.HmacSHA256Signer;
-import net.oauth.jsontoken.crypto.HmacSHA256Verifier;
-import net.oauth.jsontoken.crypto.SignatureAlgorithm;
-import net.oauth.jsontoken.crypto.Verifier;
-import net.oauth.jsontoken.discovery.VerifierProvider;
-import net.oauth.jsontoken.discovery.VerifierProviders;
 
 /**
  * Classe que representa l'interfície d'entrada al programa
@@ -28,13 +12,11 @@ public class Login extends javax.swing.JFrame {
     
     private String login;
     private char[] passwd;
-    private boolean admin;
 
-    Usuario usuario;
-
-    UsuarioClientSsl client;
+    private Usuario usuario;
+    private UsuarioClientSsl client;
     
-    GestLabFrame gestlabFrame;
+    private GestLabFrame gestlabFrame;
     
 
     /**
@@ -210,25 +192,28 @@ public class Login extends javax.swing.JFrame {
     private void jButtonEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnterActionPerformed
         jLabelMessage.setText("");
         getData();
-        
-        client = new UsuarioClientSsl(login, String.valueOf(passwd));
-        
-        if(checkData()){ 
-            //Crear el token i afegir-lo a l'usuari ho hauria de fer el servidor
-            //L'app només hauria d'obtenir l'usuari amb totes les dades per passar-lo a la finestra principal
-            String token = client.getToken();
-            usuario.setToken(token);
-            client.edit_JSON(usuario, login);
-            
-            client.close();
-            this.dispose();
+        if(checkPassword(passwd)){
+            if(checkData()){ 
+                //Crear el token i afegir-lo a l'usuari ho hauria de fer el servidor
+                //L'app només hauria d'obtenir l'usuari amb totes les dades per passar-lo a la finestra principal
+                String token = client.getToken();
+                usuario.setToken(token);
+                client.edit_JSON(usuario, login);
 
-            gestlabFrame = new GestLabFrame(usuario);
-            gestlabFrame.setVisible(true);
+                client.close();
+                this.dispose();
+
+                gestlabFrame = new GestLabFrame(usuario);
+                gestlabFrame.setVisible(true);
+            }else{
+                jLabelMessage.setText("Usuari y password incorrectes");
+                cleanFields();
+            }
         }else{
-            jLabelMessage.setText("Usuari y password incorrectes");
+            jLabelMessage.setText("Password ha de ser de 5 caràcters mínim");
             cleanFields();
         }
+        
     }//GEN-LAST:event_jButtonEnterActionPerformed
 
     /**
@@ -246,6 +231,9 @@ public class Login extends javax.swing.JFrame {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
+        if (client != null){
+            client.close();
+        }
         this.dispose();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
@@ -280,11 +268,21 @@ public class Login extends javax.swing.JFrame {
     // En teoria la comprovació es farà al servidor 
     public boolean checkData(){
         boolean acces = false;
+        client = new UsuarioClientSsl(login, String.valueOf(passwd));
         usuario = client.find_JSON(Usuario.class, login);
-        if(usuario!=null && usuario.getContrasena().equals(String.valueOf(passwd))){
+        if(usuario != null && usuario.getContrasena().equals(String.valueOf(passwd))){
             acces = true;
         }
         return acces;
+    }
+    
+    /**
+     * mètode per comprovar si el password entrat té més de 8 caràcters
+     * @param pass Password entrat
+     * @return true o false
+     */
+    public Boolean checkPassword(char[] pass){
+        return pass.length>=5;
     }
     
     /**
