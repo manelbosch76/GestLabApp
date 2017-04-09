@@ -3,40 +3,64 @@ package gestlab.view;
 
 //import gestlab.model.Producto;
 
+import gestlab.model.Producto;
+import gestlab.model.Usuario;
+import gestlab.restfulclient.ProductoClientSsl;
+import javax.swing.JOptionPane;
+
+
 /**
  * Classe per gestionar l'entrada/modificació de dades d'un producte
  * @author manel bosch
  */
 public class ProductDialog extends javax.swing.JDialog {
     
-    //Producto producto;
+    Producto producto;
+    Usuario usuario;
+    private ProductoClientSsl pClient;
 
     /**
      * Crea una finestra per entrar un nou producte
      * @author manel bosch
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
+     * @param usuario que està connectat al programa
      */
-    public ProductDialog(java.awt.Frame parent, boolean modal) {
+    public ProductDialog(java.awt.Frame parent, boolean modal, Usuario usuario) {
         super(parent, modal);
+        this.usuario = usuario;
+        openClient();
         initComponents();
+        hideFields();
     }
-    
     
     /**
      * Crea un nou formulari per modificar dades d'un producte passat per paràmetre
-     * @param parent
-     * @param modal
-     * @param p Producte a modificar
+     * @author manel bosch
+     * @param parent finestra mare
+     * @param modal manté el focus fins a tancar la finestra
+     * @param usuario que està connectat al programa
+     * @param producto Producte a modificar
      */
-    /*
-    public EquipDialog(java.awt.Frame parent, boolean modal, Producto p) {
+    public ProductDialog(java.awt.Frame parent, boolean modal, Usuario usuario, Producto producto) {
         super(parent, modal);
+        this.usuario = usuario;
+        openClient();
         initComponents();
-        //equipo = e;
-        fillEquipData(e);
+        jTextFieldIdProducte.setEditable(false);
+        this.producto = producto;
+        fillProductData(producto);
     }
-    */
+    
+    /**
+     * Mètode per amagar els camps referents al ID del producte en cas de ser un producte nou
+     * @author manel bosch
+     */
+    private void hideFields(){
+        jLabelIdProducte.setVisible(false);
+        jTextFieldIdProducte.setVisible(false);
+    }
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -65,7 +89,6 @@ public class ProductDialog extends javax.swing.JDialog {
         jButtonSave = new javax.swing.JButton();
         jButtonClear = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
-        jLabelMessage = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -104,19 +127,19 @@ public class ProductDialog extends javax.swing.JDialog {
                             .addComponent(jLabelUnits)
                             .addComponent(jLabelQuantity))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldReference, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
-                    .addComponent(jTextFieldCompany)
-                    .addComponent(jTextFieldNom)
-                    .addComponent(jTextFieldIdProducte)
-                    .addComponent(jTextFieldUnits, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jTextFieldUnits, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                    .addComponent(jTextFieldReference, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextFieldCompany, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextFieldNom, javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jTextFieldIdProducte, javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jTextFieldQuantity))
                 .addContainerGap())
         );
         jPanelDadesProducteLayout.setVerticalGroup(
             jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesProducteLayout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelIdProducte)
                     .addComponent(jTextFieldIdProducte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -168,30 +191,27 @@ public class ProductDialog extends javax.swing.JDialog {
         jPanelBotons.setLayout(jPanelBotonsLayout);
         jPanelBotonsLayout.setHorizontalGroup(
             jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBotonsLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelMessage)
-                    .addGroup(jPanelBotonsLayout.createSequentialGroup()
-                        .addComponent(jButtonSave)
-                        .addGap(40, 40, 40)
-                        .addComponent(jButtonClear)
-                        .addGap(31, 31, 31)
-                        .addComponent(jButtonCancel)))
-                .addGap(168, 168, 168))
+            .addGroup(jPanelBotonsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonSave)
+                .addGap(18, 18, 18)
+                .addComponent(jButtonClear)
+                .addGap(18, 18, 18)
+                .addComponent(jButtonCancel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jPanelBotonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonCancel, jButtonClear, jButtonSave});
 
         jPanelBotonsLayout.setVerticalGroup(
             jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBotonsLayout.createSequentialGroup()
-                .addComponent(jLabelMessage)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
+            .addGroup(jPanelBotonsLayout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButtonSave)
                     .addComponent(jButtonClear)
-                    .addComponent(jButtonCancel)))
+                    .addComponent(jButtonCancel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -201,12 +221,14 @@ public class ProductDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelTitol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabelTitol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanelBotons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addContainerGap())
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jPanelDadesProducte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanelBotons, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -216,15 +238,29 @@ public class ProductDialog extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jPanelDadesProducte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelBotons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(32, 32, 32))
+                .addComponent(jPanelBotons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Mètode per guardar els canvis
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
+        if(producto == null){
+            Producto p = getProductData();
+            pClient.create_JSON(p);
+        }else{
+            producto = getProductData();
+            String id = jTextFieldIdProducte.getText();
+            pClient.edit_JSON(producto, id);
+        }
+        pClient.close();
+        this.dispose(); 
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     /**
@@ -233,7 +269,6 @@ public class ProductDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
-        jTextFieldIdProducte.setText("");
         jTextFieldNom.setText("");
         jTextFieldCompany.setText("");
         jTextFieldReference.setText("");
@@ -246,6 +281,7 @@ public class ProductDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
+        pClient.close();
         this.dispose();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
@@ -255,7 +291,6 @@ public class ProductDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButtonSave;
     private javax.swing.JLabel jLabelCompany;
     private javax.swing.JLabel jLabelIdProducte;
-    private javax.swing.JLabel jLabelMessage;
     private javax.swing.JLabel jLabelName;
     private javax.swing.JLabel jLabelQuantity;
     private javax.swing.JLabel jLabelReference;
@@ -272,47 +307,59 @@ public class ProductDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
+     * Mètode per inicialitzar el ProductoClientSsl que accedirà al servei RESTful
+     * @author manel bosch
+     */
+    private void openClient(){
+        pClient = new ProductoClientSsl(usuario.getToken());
+    }
+    
+    /**
      * Mètode per omplir els camps amb les dades del producte passat com a paràmetre
      * @author manel bosch
      * @param p Producte
      */
-    /*
-    private void fillEquipData(Producto p){
-        jTextFieldIdEquip.setText();
-        jTextFieldNom.setText();
-        jTextFieldMarca.setText();
-        jTextFieldModel.setText();
-        jTextFieldInventari.setText();
+    private void fillProductData(Producto p){
+        jTextFieldIdProducte.setText(String.valueOf(p.getId()));
+        jTextFieldNom.setText(p.getNombre());
+        jTextFieldCompany.setText(p.getCasaComercial());
+        jTextFieldReference.setText(p.getReferencia());
+        jTextFieldUnits.setText(p.getUnidades());
+        jTextFieldQuantity.setText(String.valueOf(p.getCantidad()));
     }
-    */
     
     /**
      * Mètode per llegir els camps amb les dades entrades per crear el producte
      * @author manel bosch
      * @return Producte amb les dades entrades
      */
-    /*
-    private Usuario getEquipData(){
+    private Producto getProductData(){
         if(checkFilledFields()){
-            Equipo e = new Equipo();
-            
-            return e;
+            Producto p = new Producto();
+            p.setNombre(jTextFieldNom.getText());
+            p.setCasaComercial(jTextFieldCompany.getText());
+            p.setReferencia(jTextFieldReference.getText());
+            p.setUnidades(jTextFieldUnits.getText());
+            p.setCantidad(Float.parseFloat(jTextFieldQuantity.getText()));
+            if(producto != null){
+                p.setId(producto.getId());
+            }
+            return p;
         }else{
-            jLabelMessage.setText("Siusplau, omple tots els camps obligatoris");
+            JOptionPane.showMessageDialog(null,"Omplir tots els camps","Alert !!",JOptionPane.WARNING_MESSAGE);
             return null;
         }
     }
-    */
     
     /**
      * Mètode per saber si tots els camps necessaris estan plens
+     * @author manel bosch
      * @return true o false
      */
     private boolean checkFilledFields(){
-        return !(jTextFieldIdProducte.getText().equals("")
-                ||jTextFieldNom.getText().equals("")
+        return !(jTextFieldNom.getText().equals("")
                 ||jTextFieldCompany.getText().equals("")
-                ||jTextFieldUnits.getText().equals(""));
-        //Falta acabar
+                ||jTextFieldUnits.getText().equals("")
+                ||jTextFieldQuantity.getText().equals(""));
     }
 }

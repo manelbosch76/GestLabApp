@@ -1,8 +1,12 @@
 package gestlab.view;
 
 import gestlab.model.Cliente;
+import gestlab.model.Equipo;
+import gestlab.model.Producto;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.ClienteClientSsl;
+import gestlab.restfulclient.EquipoClientSsl;
+import gestlab.restfulclient.ProductoClientSsl;
 import gestlab.utils.tables.TableCreator;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -26,13 +30,22 @@ public class GestLabFrame extends javax.swing.JFrame {
     private final Usuario usuario;
     private final String token;
     
+    private ClienteClientSsl cClient;
+    private ProductoClientSsl pClient;
+    private EquipoClientSsl eqClient;
+    
     Cliente cliente;
     private List<Cliente> clientes;
-    private ClienteClientSsl cClient;
     GenericType<List<Cliente>> gTypeClient = new GenericType<List<Cliente>>(){};
     
+    private List<Producto> productos;
+    GenericType<List<Producto>> gTypeProduct = new GenericType<List<Producto>>(){};
+    
+    private List<Equipo> equipos;
+    GenericType<List<Equipo>> gTypeEquip = new GenericType<List<Equipo>>(){};
+    
     private TableRowSorter<TableModel> rowSorter;
-    TableCreator tFunc = new TableCreator();
+    TableCreator tableCreator = new TableCreator();
 
     /**
      * Crea un nou frame GestLabFrame
@@ -58,8 +71,24 @@ public class GestLabFrame extends javax.swing.JFrame {
      * Mètode per obrir la connexió al servei Cliente
      * @author manel bosch
      */
-    private void openClient(){
+    private void openClienteClient(){
         cClient = new ClienteClientSsl(token);
+    }
+    
+    /**
+     * Mètode per obrir la connexió al servei Producto
+     * @author manel bosch
+     */
+    private void openProductoClient(){
+        pClient = new ProductoClientSsl(token);
+    }
+    
+    /**
+     * Mètode per obrir la connexió al servei Equipo
+     * @author manel bosch
+     */
+    private void openEquipoClient(){
+        eqClient = new EquipoClientSsl(token);
     }
     
     /**
@@ -85,8 +114,10 @@ public class GestLabFrame extends javax.swing.JFrame {
                 fillClientsList();
                 break;
             case "Productes":
+                fillProductsList();
                 break;
             case "Equipament":
+                //fillEquipsList();
                 break;
             case "Perfil":
                 fillProfile();
@@ -141,6 +172,7 @@ public class GestLabFrame extends javax.swing.JFrame {
         jButtonModifProduct = new javax.swing.JButton();
         jButtonDelProduct = new javax.swing.JButton();
         jScrollPaneProducts = new javax.swing.JScrollPane();
+        jTableProducts = new javax.swing.JTable();
         jPanelProductSearch = new javax.swing.JPanel();
         jTextFieldProduct = new javax.swing.JTextField();
         jTextFieldProductId = new javax.swing.JTextField();
@@ -317,7 +349,7 @@ public class GestLabFrame extends javax.swing.JFrame {
         jScrollPaneUsers.setBorder(javax.swing.BorderFactory.createTitledBorder("Llista Clients"));
 
         jTableClients.setAutoCreateRowSorter(true);
-        jTableClients.setModel(tFunc.createTableModel(Cliente.class, clientes));
+        jTableClients.setModel(tableCreator.createTableModel(Cliente.class, clientes));
         jScrollPaneUsers.setViewportView(jTableClients);
 
         jButtonNewClient.setText("Nou Client");
@@ -459,10 +491,25 @@ public class GestLabFrame extends javax.swing.JFrame {
         jTabbedPaneMain.addTab("Clients", jPanelUsuaris);
 
         jButtonNewProduct.setText("Nou Producte");
+        jButtonNewProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNewProductActionPerformed(evt);
+            }
+        });
 
         jButtonModifProduct.setText("Modificar Producte");
+        jButtonModifProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModifProductActionPerformed(evt);
+            }
+        });
 
         jButtonDelProduct.setText("Eliminar Producte");
+        jButtonDelProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelProductActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelAdminProductsLayout = new javax.swing.GroupLayout(jPanelAdminProducts);
         jPanelAdminProducts.setLayout(jPanelAdminProductsLayout);
@@ -493,6 +540,10 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jScrollPaneProducts.setBorder(javax.swing.BorderFactory.createTitledBorder("Llista Productes"));
 
+        jTableProducts.setAutoCreateRowSorter(true);
+        jTableProducts.setModel(tableCreator.createTableModel(Producto.class, productos));
+        jScrollPaneProducts.setViewportView(jTableProducts);
+
         jTextFieldProduct.setText("Nom Producte");
         jTextFieldProduct.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
@@ -503,7 +554,7 @@ public class GestLabFrame extends javax.swing.JFrame {
             }
         });
 
-        jTextFieldProductId.setText("Id");
+        jTextFieldProductId.setText("0");
         jTextFieldProductId.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jTextFieldProductIdFocusGained(evt);
@@ -514,8 +565,18 @@ public class GestLabFrame extends javax.swing.JFrame {
         });
 
         jButtonProductId.setText("Buscar");
+        jButtonProductId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProductIdActionPerformed(evt);
+            }
+        });
 
         jButtonSearchProductName.setText("Buscar");
+        jButtonSearchProductName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSearchProductNameActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelProductSearchLayout = new javax.swing.GroupLayout(jPanelProductSearch);
         jPanelProductSearch.setLayout(jPanelProductSearchLayout);
@@ -547,10 +608,25 @@ public class GestLabFrame extends javax.swing.JFrame {
         );
 
         jButtonProductsUsed.setText("Productes consumits");
+        jButtonProductsUsed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProductsUsedActionPerformed(evt);
+            }
+        });
 
         jButtonProductsAvailable.setText("Productes disponibles");
+        jButtonProductsAvailable.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonProductsAvailableActionPerformed(evt);
+            }
+        });
 
         jButtonBuyProduct.setText("Comprar Producte");
+        jButtonBuyProduct.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuyProductActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelProductGlobalLayout = new javax.swing.GroupLayout(jPanelProductGlobal);
         jPanelProductGlobal.setLayout(jPanelProductGlobalLayout);
@@ -850,6 +926,17 @@ public class GestLabFrame extends javax.swing.JFrame {
            jTextFieldProduct.setText("");
     }//GEN-LAST:event_jTextFieldProductFocusGained
 
+	/**
+     * Mètode per controlar l'aparició del text per defecte
+     * @author manel bosch
+     * @param evt Event que es produeix en perdre el focus
+     */
+    private void jTextFieldProductFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldProductFocusLost
+       if(jTextFieldProduct.getText().trim().equals("")){
+           jTextFieldProduct.setText("Nom Producte");
+        }
+    }//GEN-LAST:event_jTextFieldProductFocusLost
+
     /**
      * Mètode per controlar l'aparició del text per defecte
      * @author manel bosch
@@ -857,9 +944,20 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     private void jTextFieldProductIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldProductIdFocusLost
         if(jTextFieldProductId.getText().trim().equals("")){
-           jTextFieldProductId.setText("Id");
+           jTextFieldProductId.setText(String.valueOf(0));
         }
     }//GEN-LAST:event_jTextFieldProductIdFocusLost
+
+    /**
+     * Mètode per controlar desaparició del text per defecte
+     * @author manel bosch
+     * @param evt Event que es produeix en guanyar el focus
+     */
+    private void jTextFieldProductIdFocusGained(java.awt.event.FocusEvent evt) {                                                  
+        if(jTextFieldProductId.getText().trim().equals(0)){
+           jTextFieldProductId.setText("");
+        }
+    }                                               
 
     /**
      * Mètode per controlar desaparició del text per defecte
@@ -883,28 +981,6 @@ public class GestLabFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextFieldEquipFocusLost
 
     /**
-     * Mètode per controlar l'aparició del text per defecte
-     * @author manel bosch
-     * @param evt Event que es produeix en perdre el focus
-     */
-    private void jTextFieldProductFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldProductFocusLost
-       if(jTextFieldProduct.getText().trim().equals("")){
-           jTextFieldProduct.setText("Nom Producte");
-        }
-    }//GEN-LAST:event_jTextFieldProductFocusLost
-
-    /**
-     * Mètode per controlar desaparició del text per defecte
-     * @author manel bosch
-     * @param evt Event que es produeix en guanyar el focus
-     */
-    private void jTextFieldProductIdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldProductIdFocusGained
-        if(jTextFieldProductId.getText().trim().equals("Id")){
-           jTextFieldProductId.setText("");
-        }
-    }//GEN-LAST:event_jTextFieldProductIdFocusGained
-
-    /**
      * Mètode per controlar desaparició del text per defecte
      * @author manel bosch
      * @param evt Event que es produeix en guanyar el focus
@@ -926,6 +1002,12 @@ public class GestLabFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTextFieldEquipIdFocusLost
 
+
+
+    /*---------------------
+    Accions sobre el perfil
+    */
+
     /**
      * Mètode per modificar les dades del perfil
      * @author manel bosch
@@ -943,102 +1025,6 @@ public class GestLabFrame extends javax.swing.JFrame {
             editProfileTextFields(false);
         }
     }//GEN-LAST:event_jButtonModifProfileActionPerformed
-
-    /**
-     * Mètode per buscar un usuari a la base de dades pel seu cognom
-     * @author manel bosch
-     * @param evt Event que representa prémer el botó
-     */
-    //El mètode de cerca hauria d'existir en el servidor.
-    private void jButtonSearchSurnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchSurnameActionPerformed
-        if(jTextFieldSurname.getText().equals("Cognom") || jTextFieldSurname.getText().isEmpty()){
-            fillClientsList();
-        }else{
-            String cognom = jTextFieldSurname.getText().toLowerCase();
-            List<Cliente> clientsSurname = new ArrayList<>();
-            for (Cliente c : clientes) {
-                if(c.getPrimerApellido().toLowerCase().contains(cognom)){
-                    clientsSurname.add(c);
-                }
-            }
-            fillClientsList(clientsSurname);
-        }
-    }//GEN-LAST:event_jButtonSearchSurnameActionPerformed
-
-    /**
-     * Mètode per buscar un usuari a la base de dades pel seu identificador
-     * @author manel bosch
-     * @param evt Event que representa prémer el botó
-     */
-    private void jButtonClientIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClientIdActionPerformed
-        String id = jTextFieldClientId.getText();
-        rowSorter = new TableRowSorter<>(jTableClients.getModel());
-        jTableClients.setRowSorter(rowSorter);
-        if(id.length() == 9){
-            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + id));
-        }else{
-            rowSorter.setRowFilter(null);
-        }
-    }//GEN-LAST:event_jButtonClientIdActionPerformed
-
-    /**
-     * Mètode per introduir un usuari nou a la base de dades
-     * @author manel bosch
-     * @param evt Event que representa prémer el botó
-     */
-    private void jButtonNewClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewClientActionPerformed
-        ClientDialog dialog = new ClientDialog(this, true, usuario);
-        dialog.addWindowListener(new WindowAdapter(){
-            @Override
-            public void windowClosed(WindowEvent e){
-                fillClientsList();
-            }
-        });
-        dialog.setVisible(true);
-    }//GEN-LAST:event_jButtonNewClientActionPerformed
-
-    /**
-     * Mètode per modificar un usuari seleccionat 
-     * @author manel bosch
-     * @param evt Event que representa prémer el botó
-     */
-    private void jButtonModifClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifClientActionPerformed
-        if(jTableClients.getSelectedRowCount()==0){
-            JOptionPane.showMessageDialog(null,"Selecciona un client a modificar","Alert !!",JOptionPane.WARNING_MESSAGE);
-        }else{
-            int row = jTableClients.getSelectedRow();
-            String idClient = (String) jTableClients.getModel().getValueAt(row,0);
-            openClient();
-            Cliente c = cClient.find_JSON(Cliente.class, idClient);
-            cClient.close();
-            ClientDialog dialog = new ClientDialog(this, true, usuario, c);
-                dialog.addWindowListener(new WindowAdapter(){
-                    @Override
-                    public void windowClosed(WindowEvent e){
-                        fillClientsList();
-                    }
-                });
-            dialog.setVisible(true);
-        }
-    }//GEN-LAST:event_jButtonModifClientActionPerformed
-
-    /**
-     * Mètode per eliminar usuari 
-     * @author manel bosch
-     * @param evt Event que representa prémer el botó
-     */
-    private void jButtonDelClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelClientActionPerformed
-        if(jTableClients.getSelectedRowCount()==0){
-            JOptionPane.showMessageDialog(null,"Selecciona un client a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
-        }else{
-            int row = jTableClients.getSelectedRow();
-            String id = (String) jTableClients.getModel().getValueAt(row,0);
-            openClient();
-            cClient.remove(id);
-            cClient.close();
-            fillClientsList();
-        }
-    }//GEN-LAST:event_jButtonDelClientActionPerformed
 
     /**
      * Mètode per cridar la finestra per canviar el password
@@ -1061,6 +1047,229 @@ public class GestLabFrame extends javax.swing.JFrame {
         fillProfile();
         editProfileTextFields(false);
     }//GEN-LAST:event_jButtonCancelModifProfileActionPerformed
+
+
+    /*-----------------------
+    Accions sobre els clients
+    */
+
+    /**
+     * Mètode per buscar un client a la base de dades pel seu cognom
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    //El mètode de cerca hauria d'existir en el servidor.
+    private void jButtonSearchSurnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchSurnameActionPerformed
+        if(jTextFieldSurname.getText().equals("Cognom") || jTextFieldSurname.getText().isEmpty()){
+            fillClientsList();
+        }else{
+            String cognom = jTextFieldSurname.getText().toLowerCase();
+            List<Cliente> clientsSurname = new ArrayList<>();
+            for (Cliente c : clientes) {
+                if(c.getPrimerApellido().toLowerCase().contains(cognom)){
+                    clientsSurname.add(c);
+                }
+            }
+            fillClientsList(clientsSurname);
+        }
+    }//GEN-LAST:event_jButtonSearchSurnameActionPerformed
+
+    /**
+     * Mètode per buscar un client a la base de dades pel seu identificador
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonClientIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClientIdActionPerformed
+        String id = jTextFieldClientId.getText();
+        rowSorter = new TableRowSorter<>(jTableClients.getModel());
+        jTableClients.setRowSorter(rowSorter);
+        if(id.length() == 9){
+            rowSorter.setRowFilter(RowFilter.regexFilter("(?i)" + id));
+        }else{
+            rowSorter.setRowFilter(null);
+        }
+    }//GEN-LAST:event_jButtonClientIdActionPerformed
+
+    /**
+     * Mètode per introduir un client nou a la base de dades
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonNewClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewClientActionPerformed
+        ClientDialog dialog = new ClientDialog(this, true, usuario);
+        dialog.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent e){
+                fillClientsList();
+            }
+        });
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButtonNewClientActionPerformed
+
+    /**
+     * Mètode per modificar un client seleccionat 
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonModifClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifClientActionPerformed
+        if(jTableClients.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un client a modificar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableClients.getSelectedRow();
+            String idClient = (String) jTableClients.getModel().getValueAt(row,0);
+            openClienteClient();
+            Cliente c = cClient.find_JSON(Cliente.class, idClient);
+            cClient.close();
+            ClientDialog dialog = new ClientDialog(this, true, usuario, c);
+                dialog.addWindowListener(new WindowAdapter(){
+                    @Override
+                    public void windowClosed(WindowEvent e){
+                        fillClientsList();
+                    }
+                });
+            dialog.setVisible(true);
+        }
+    }//GEN-LAST:event_jButtonModifClientActionPerformed
+
+    /**
+     * Mètode per eliminar el client 
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonDelClientActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelClientActionPerformed
+        if(jTableClients.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un client a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableClients.getSelectedRow();
+            String id = (String) jTableClients.getModel().getValueAt(row,0);
+            openClienteClient();
+            cClient.remove(id);
+            cClient.close();
+            fillClientsList();
+        }
+    }//GEN-LAST:event_jButtonDelClientActionPerformed
+    
+
+    
+    /*-------------------------
+    Accions sobre els productes
+    */
+    
+    /**
+     * Mètode per buscar un producte a la base de dades pel seu cognom
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    //El mètode de cerca hauria d'existir en el servidor.
+    private void jButtonSearchProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchProductNameActionPerformed
+        if(jTextFieldProduct.getText().equals("Nom Producte") || jTextFieldProduct.getText().isEmpty()){
+            fillProductsList();
+        }else{
+            String nom = jTextFieldProduct.getText().toLowerCase();
+            List<Producto> productsName = new ArrayList<>();
+            for (Producto p : productos) {
+                if(p.getNombre().toLowerCase().contains(nom)){
+                    productsName.add(p);
+                }
+            }
+            fillProductsList(productsName);
+        }
+    }//GEN-LAST:event_jButtonSearchProductNameActionPerformed
+
+    /**
+     * Mètode per buscar un producte a la base de dades pel seu identificador
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonProductIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProductIdActionPerformed
+        String id = jTextFieldProductId.getText();
+        int idInt = Integer.parseInt(jTextFieldProductId.getText());
+        rowSorter = new TableRowSorter<>(jTableProducts.getModel());
+        jTableProducts.setRowSorter(rowSorter);
+        if(idInt == 0 || id.isEmpty()){
+            fillProductsList();
+        }else if(id.length() != 0 && idInt != 0){
+            rowSorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, idInt));
+        }else{
+            rowSorter.setRowFilter(null);
+        }
+    }//GEN-LAST:event_jButtonProductIdActionPerformed
+ 
+    private void jButtonProductsUsedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProductsUsedActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonProductsUsedActionPerformed
+
+    /**
+     * Mètode per mostrar la llista de productes amb les quantitats disponibles que n'hi ha
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonProductsAvailableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProductsAvailableActionPerformed
+        fillProductsList();
+    }//GEN-LAST:event_jButtonProductsAvailableActionPerformed
+
+    private void jButtonBuyProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuyProductActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButtonBuyProductActionPerformed
+
+    /**
+     * Mètode per afegir un producte nou a la llista de productes
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonNewProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewProductActionPerformed
+        ProductDialog dialog = new ProductDialog(this, true, usuario);
+        dialog.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent e){
+                fillProductsList();
+            }
+        });
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButtonNewProductActionPerformed
+
+    /**
+     * Mètode per modificar un producte de la llista
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonModifProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifProductActionPerformed
+        if(jTableProducts.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un producte a modificar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableProducts.getSelectedRow();
+            String idProduct = String.valueOf(jTableProducts.getModel().getValueAt(row,0));
+            openProductoClient();
+            Producto p = pClient.find_JSON(Producto.class, idProduct);
+            pClient.close();
+            ProductDialog dialog = new ProductDialog(this, true, usuario, p);
+            dialog.addWindowListener(new WindowAdapter(){
+                @Override
+                public void windowClosed(WindowEvent e){
+                    fillProductsList();
+                }
+            });
+            dialog.setVisible(true);
+        }
+    }//GEN-LAST:event_jButtonModifProductActionPerformed
+
+    /**
+     * Mètode per eliminar un producte de la llista
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonDelProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelProductActionPerformed
+        if(jTableProducts.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un producte a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableProducts.getSelectedRow();
+            String id = String.valueOf(jTableProducts.getModel().getValueAt(row,0));
+            openProductoClient();
+            pClient.remove(id);
+            pClient.close();
+            fillProductsList();
+        }
+    }//GEN-LAST:event_jButtonDelProductActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBook;
@@ -1113,6 +1322,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPaneUsers;
     private javax.swing.JTabbedPane jTabbedPaneMain;
     private javax.swing.JTable jTableClients;
+    private javax.swing.JTable jTableProducts;
     private javax.swing.JTextField jTextFieldClientId;
     private javax.swing.JTextField jTextFieldCognom1;
     private javax.swing.JTextField jTextFieldCognom2;
@@ -1127,7 +1337,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldTelf;
     // End of variables declaration//GEN-END:variables
 
-    /*
+    /*---------------
     Gestió del perfil
     */
     
@@ -1136,7 +1346,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      */
     private void fillProfile(){
-        openClient();
+        openClienteClient();
         cliente = cClient.find_JSON(Cliente.class, usuario.getId());
         jTextFieldNom.setText(cliente.getNombre());
         jTextFieldDni.setText(cliente.getDni());
@@ -1170,7 +1380,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      */
     public void changeProfile(){
-        openClient();
+        openClienteClient();
         cliente.setNombre(jTextFieldNom.getText());
         cliente.setPrimerApellido(jTextFieldCognom1.getText());
         cliente.setSegundoApellido(jTextFieldCognom2.getText());
@@ -1181,28 +1391,55 @@ public class GestLabFrame extends javax.swing.JFrame {
     }
 
     
-    /*
-    Gestió d'usuaris
+    /*---------------
+    Gestió de clients
     */
     
     /**
-     * Mètode per omplir la taula d'usuaris
+     * Mètode per omplir la taula de clients
      * @author manel bosch
      */
     public void fillClientsList(){
-        openClient();
+        openClienteClient();
         clientes = cClient.findAll_JSON(gTypeClient);
-        jTableClients.setModel(tFunc.createTableModel(Cliente.class, clientes));
+        jTableClients.setModel(tableCreator.createTableModel(Cliente.class, clientes));
         cClient.close();
     }
     
     /**
-     * Mètode per omplir la taula d'usuaris
+     * Mètode per omplir la taula de clients amb una llista passada per paràmetre
      * @author manel bosch
      * @param l Llista de clients a mostrar
      */
     public void fillClientsList(List l){
-        jTableClients.setModel(tFunc.createTableModel(Cliente.class, l));
+        jTableClients.setModel(tableCreator.createTableModel(Cliente.class, l));
     }
    
+    
+    /*-----------------
+    Gestió de productes
+    */
+    
+    /**
+     * Mètode per omplir la taula de productes
+     * @author manel bosch
+     */
+    public void fillProductsList(){
+        openProductoClient();
+        productos = pClient.findAll_JSON(gTypeProduct);
+        jTableProducts.setModel(tableCreator.createTableModel(Producto.class, productos));
+        pClient.close();
+    }
+    
+    /**
+     * Mètode per omplir la taula de productes amb una llista passada per paràmetre
+     * @author manel bosch
+     * @param l Llista d eproductes a mostrar
+     */
+    public void fillProductsList(List l){
+        openProductoClient();
+        productos = pClient.findAll_JSON(gTypeProduct);
+        jTableProducts.setModel(tableCreator.createTableModel(Producto.class, l));
+        pClient.close();
+    }
 }

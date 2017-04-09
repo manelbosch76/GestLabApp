@@ -1,8 +1,12 @@
-
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package gestlab.restfulclient;
 
+import gestlab.model.Producto;
 import gestlab.utils.connection.PathConstants;
-import gestlab.model.Cliente;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -12,38 +16,38 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.GenericType;
 
 /**
- * Jersey REST client generated for REST resource:ClienteFacadeREST
- * [model.cliente]<br>
+ * Jersey REST client generated for REST resource:ProductoFacadeREST
+ * [model.producto]<br>
  * USAGE:
  * <pre>
-        ClienteClientSsl client = new ClienteClientSsl();
-        Object response = client.XXX(...);
-        // do whatever with response
-        client.close();
- </pre>
+ *        ProductoClientSsl client = new ProductoClientSsl();
+ *        Object response = client.XXX(...);
+ *        // do whatever with response
+ *        client.close();
+ * </pre>
  *
- * @author manel bosch
+ * @author manel
  */
-public class ClienteClientSsl {
+public class ProductoClientSsl {
     private WebTarget webTarget;
     private Client client;
 
-    public ClienteClientSsl() {
+    public ProductoClientSsl() {
         client = javax.ws.rs.client.ClientBuilder.newBuilder().sslContext(getSSLContext()).hostnameVerifier(getHostnameVerifier()).build();
-        webTarget = client.target(PathConstants.SERVICE_SSL).path(PathConstants.CLIENTE_SERVICE);
+        webTarget = client.target(PathConstants.SERVICE_SSL).path(PathConstants.PRODUCTO_SERVICE);
     }
 
-    public ClienteClientSsl(String username, String password) {
+    public ProductoClientSsl(String username, String password) {
         this();
         setUsernamePassword(username, password);
     }
     
     /**
-     * Constructor per generar un client al servei de clientes amb el token associat a l'usuari
+     * Constructor per generar un client al servei de productes amb el token associat a l'usuari
      * @author manel bosch
      * @param token token amb el id i password de l'usuari codificats
      */
-    public ClienteClientSsl(String token) {
+    public ProductoClientSsl(String token) {
         this();
         webTarget.register(token);
     }
@@ -54,8 +58,18 @@ public class ClienteClientSsl {
         return resource.request(javax.ws.rs.core.MediaType.TEXT_PLAIN).get(String.class);
     }
 
+    public void edit_XML(Object requestEntity, String id) throws ClientErrorException {
+        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    }
+
     public void edit_JSON(Object requestEntity, String id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
+    }
+
+    public <T> T find_XML(Class<T> responseType, String id) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("{0}", new Object[]{id}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     public <T> T find_JSON(Class<T> responseType, String id) throws ClientErrorException {
@@ -64,14 +78,29 @@ public class ClienteClientSsl {
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
+    public <T> T findRange_XML(Class<T> responseType, String from, String to) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        resource = resource.path(java.text.MessageFormat.format("{0}/{1}", new Object[]{from, to}));
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
+    }
+
     public <T> T findRange_JSON(Class<T> responseType, String from, String to) throws ClientErrorException {
         WebTarget resource = webTarget;
         resource = resource.path(java.text.MessageFormat.format("{0}/{1}", new Object[]{from, to}));
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(responseType);
     }
 
+    public void create_XML(Object requestEntity) throws ClientErrorException {
+        webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_XML).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
+    }
+
     public void create_JSON(Object requestEntity) throws ClientErrorException {
         webTarget.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).post(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
+    }
+
+    public <T> T findAll_XML(Class<T> responseType) throws ClientErrorException {
+        WebTarget resource = webTarget;
+        return resource.request(javax.ws.rs.core.MediaType.APPLICATION_XML).get(responseType);
     }
 
     public <T> T findAll_JSON(Class<T> responseType) throws ClientErrorException {
@@ -80,13 +109,13 @@ public class ClienteClientSsl {
     }
     
     /**
-     * Mètode per poder obtenir llista de clients
+     * Mètode per poder obtenir llista de productes
      * @author manel bosch
-     * @param genericType tipus genèric que representa la llista de clients
-     * @return llista de clients
+     * @param genericType tipus genèric que representa la llista de productes
+     * @return llista de productes
      * @throws ClientErrorException Excepció generada pel client del servei RESTful
      */
-    public List<Cliente> findAll_JSON(GenericType<List<Cliente>> genericType) throws ClientErrorException{
+    public List<Producto> findAll_JSON(GenericType<List<Producto>> genericType) throws ClientErrorException{
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(genericType);
     }

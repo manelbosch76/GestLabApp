@@ -3,6 +3,7 @@ package gestlab.utils.tables;
 
 import gestlab.model.Cliente;
 import gestlab.model.Empresa;
+import gestlab.model.Producto;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
@@ -87,7 +88,16 @@ public class ListTableModel <T> extends DefaultTableModel {
                     case 2: return e.getDireccionEmpresa();
                     default: return null;
                 }
-            //case "Producte":
+            case "Producto":
+                Producto p = (Producto) list.get(row);
+                switch(col){
+                    case 0: return p.getId();
+                    case 1: return p.getNombre();
+                    case 2: return p.getCasaComercial();
+                    case 3: return p.getReferencia();
+                    case 4: return p.getCantidad();
+                    case 5: return p.getUnidades();
+                }
             //case "Equip":
         default: return null;
         }

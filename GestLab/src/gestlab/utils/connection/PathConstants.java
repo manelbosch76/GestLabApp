@@ -12,5 +12,7 @@ public class PathConstants {
     public static final String USUARIO_SERVICE = "model.usuario";
     public static final String CLIENTE_SERVICE = "model.cliente";
     public static final String EMPRESA_SERVICE = "model.empresa";
+    public static final String PRODUCTO_SERVICE = "model.producto";
+    public static final String EQUIPO_SERVICE = "model.equipo";
 
 }

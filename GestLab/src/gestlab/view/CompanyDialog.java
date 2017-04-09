@@ -247,7 +247,7 @@ public class CompanyDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
-     * Mètode per inicialitzar el EmpresaClient que accedirà al servei RESTful
+     * Mètode per inicialitzar el EmpresaClientSsl que accedirà al servei RESTful
      * @author manel bosch
      */
     private void openClient(){
