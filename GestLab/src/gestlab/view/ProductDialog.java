@@ -253,11 +253,11 @@ public class ProductDialog extends javax.swing.JDialog {
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         if(producto == null){
             Producto p = getProductData();
-            pClient.create_JSON(p);
+            int done = pClient.create_JSON(p);//retorna 204
         }else{
             producto = getProductData();
             String id = jTextFieldIdProducte.getText();
-            pClient.edit_JSON(producto, id);
+            int done = pClient.edit_JSON(producto, id);//retorna 204
         }
         pClient.close();
         this.dispose(); 

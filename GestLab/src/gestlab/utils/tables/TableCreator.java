@@ -12,6 +12,8 @@ public class TableCreator {
     private static final String[] CLIENTHEADERS = {"DNI","Nom","Cognom","E-mail","Telefon"};
     private static final String[] COMPANYHEADERS = {"NIF","Nom","Adreça"};
     private static final String[] PRODUCTHEADERS = {"ID","Nom","Casa_Comercial","Referencia","Quantitat","Unitats"};
+    private static final String[] PRODUCTSCONSUMEDHEADERS = {"ID","Nom","Casa_Comercial","Referencia","Quantitat"
+                                                            ,"Unitats", "Data_Compra"};
     private static final String[] EQUIPHEADERS = {"ID","Nom","Marca","Model","Num_Inventari","Llogat"};
     
     /**
@@ -49,6 +51,8 @@ public class TableCreator {
             case "Empresa": headers = COMPANYHEADERS.clone();
                 break;
             case "Producto": headers = PRODUCTHEADERS.clone();
+                break;
+            case "HistorialProductos": headers = PRODUCTSCONSUMEDHEADERS.clone();
                 break;
             case "Equipo": headers = EQUIPHEADERS.clone();
                 break;

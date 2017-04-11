@@ -6,7 +6,7 @@
 package gestlab.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 
 /**
  *
@@ -23,9 +23,9 @@ public class HistorialProductos implements Serializable {
     
     private float cantidad;
     
-    private Producto iDProducto;
+    private Producto idproducto;
     
-    private Cliente iDCliente;
+    private Cliente idcliente;
 
     public HistorialProductos() {
     }
@@ -64,20 +64,20 @@ public class HistorialProductos implements Serializable {
         this.cantidad = cantidad;
     }
 
-    public Producto getIDProducto() {
-        return iDProducto;
+    public Producto getIdproducto() {
+        return idproducto;
     }
 
-    public void setIDProducto(Producto iDProducto) {
-        this.iDProducto = iDProducto;
+    public void setIdproducto(Producto idproducto) {
+        this.idproducto = idproducto;
     }
 
-    public Cliente getIDCliente() {
-        return iDCliente;
+    public Cliente getIdcliente() {
+        return idcliente;
     }
 
-    public void setIDCliente(Cliente iDCliente) {
-        this.iDCliente = iDCliente;
+    public void setIdcliente(Cliente idcliente) {
+        this.idcliente = idcliente;
     }
 
     @Override

@@ -5,7 +5,7 @@
  */
 package gestlab.restfulclient;
 
-import gestlab.model.Producto;
+import gestlab.model.HistorialProductos;
 import gestlab.utils.connection.PathConstants;
 import java.util.List;
 import javax.net.ssl.HostnameVerifier;
@@ -17,39 +17,39 @@ import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
 
 /**
- * Jersey REST client generated for REST resource:ProductoFacadeREST
- * [model.producto]<br>
+ * Jersey REST client generated for REST resource:HistorialProductosFacadeREST
+ * [model.historialproductos]<br>
  * USAGE:
  * <pre>
- *        ProductoClientSsl client = new ProductoClientSsl();
- *        Object response = client.XXX(...);
- *        // do whatever with response
- *        client.close();
- * </pre>
+        HistorialProductosClientSsl client = new HistorialProductosClientSsl();
+        Object response = client.XXX(...);
+        // do whatever with response
+        client.close();
+ </pre>
  *
  * @author manel
  */
-public class ProductoClientSsl {
+public class HistorialProductosClientSsl {
     private WebTarget webTarget;
     private Client client;
     private Response response;
 
-    public ProductoClientSsl() {
+    public HistorialProductosClientSsl() {
         client = javax.ws.rs.client.ClientBuilder.newBuilder().sslContext(getSSLContext()).hostnameVerifier(getHostnameVerifier()).build();
-        webTarget = client.target(PathConstants.SERVICE_SSL).path(PathConstants.PRODUCTO_SERVICE);
+        webTarget = client.target(PathConstants.SERVICE_SSL).path(PathConstants.HISTORIAL_PRODUCTO_SERVICE);
     }
 
-    public ProductoClientSsl(String username, String password) {
+    public HistorialProductosClientSsl(String username, String password) {
         this();
         setUsernamePassword(username, password);
     }
     
     /**
-     * Constructor per generar un client al servei de productes amb el token associat a l'usuari
+     * Constructor per generar un client amb el token associat a l'usuari
      * @author manel bosch
      * @param token token amb el id i password de l'usuari codificats
      */
-    public ProductoClientSsl(String token) {
+    public HistorialProductosClientSsl(String token) {
         this();
         webTarget.register(token);
     }
@@ -64,9 +64,8 @@ public class ProductoClientSsl {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_XML).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_XML));
     }
 
-    public int edit_JSON(Object requestEntity, String id) throws ClientErrorException {
-        response = webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
-        return response.getStatus();
+    public void edit_JSON(Object requestEntity, String id) throws ClientErrorException {
+        webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request(javax.ws.rs.core.MediaType.APPLICATION_JSON).put(javax.ws.rs.client.Entity.entity(requestEntity, javax.ws.rs.core.MediaType.APPLICATION_JSON));
     }
 
     public <T> T find_XML(Class<T> responseType, String id) throws ClientErrorException {
@@ -113,16 +112,16 @@ public class ProductoClientSsl {
     }
     
     /**
-     * Mètode per poder obtenir llista de productes
+     * Mètode per poder obtenir llista de productes adquirits
      * @author manel bosch
-     * @param genericType tipus genèric que representa la llista de productes
-     * @return llista de productes
+     * @param genericType tipus genèric que representa la llista de productes adquirits
+     * @return llista de productes adquirits
      * @throws ClientErrorException Excepció generada pel client del servei RESTful
      */
-    public List<Producto> findAll_JSON(GenericType<List<Producto>> genericType) throws ClientErrorException{
+    public List<HistorialProductos> findAll_JSON(GenericType<List<HistorialProductos>> genericType) throws ClientErrorException{
         WebTarget resource = webTarget;
         return resource.request(javax.ws.rs.core.MediaType.APPLICATION_JSON).get(genericType);
-    }
+    }    
 
     public void remove(String id) throws ClientErrorException {
         webTarget.path(java.text.MessageFormat.format("{0}", new Object[]{id})).request().delete();
@@ -172,5 +171,4 @@ public class ProductoClientSsl {
         }
         return ctx;
     }
-    
 }

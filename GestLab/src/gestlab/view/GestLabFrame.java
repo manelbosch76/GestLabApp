@@ -2,10 +2,14 @@ package gestlab.view;
 
 import gestlab.model.Cliente;
 import gestlab.model.Equipo;
+import gestlab.model.HistorialEquipos;
+import gestlab.model.HistorialProductos;
 import gestlab.model.Producto;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.ClienteClientSsl;
 import gestlab.restfulclient.EquipoClientSsl;
+import gestlab.restfulclient.HistorialEquiposClientSsl;
+import gestlab.restfulclient.HistorialProductosClientSsl;
 import gestlab.restfulclient.ProductoClientSsl;
 import gestlab.utils.tables.TableCreator;
 import java.awt.event.WindowAdapter;
@@ -33,6 +37,8 @@ public class GestLabFrame extends javax.swing.JFrame {
     private ClienteClientSsl cClient;
     private ProductoClientSsl pClient;
     private EquipoClientSsl eqClient;
+    private HistorialProductosClientSsl hpClient;
+    private HistorialEquiposClientSsl heClient;
     
     Cliente cliente;
     private List<Cliente> clientes;
@@ -41,8 +47,14 @@ public class GestLabFrame extends javax.swing.JFrame {
     private List<Producto> productos;
     GenericType<List<Producto>> gTypeProduct = new GenericType<List<Producto>>(){};
     
+    private List<HistorialProductos> hProductos;
+    GenericType<List<HistorialProductos>> gTypeHistorialProduct = new GenericType<List<HistorialProductos>>(){};
+    
     private List<Equipo> equipos;
     GenericType<List<Equipo>> gTypeEquip = new GenericType<List<Equipo>>(){};
+    
+    private List<HistorialEquipos> hEquipos;
+    GenericType<List<HistorialEquipos>> gTypeHistorialEquip = new GenericType<List<HistorialEquipos>>(){};
     
     private TableRowSorter<TableModel> rowSorter;
     TableCreator tableCreator = new TableCreator();
@@ -84,11 +96,27 @@ public class GestLabFrame extends javax.swing.JFrame {
     }
     
     /**
+     * Mètode per obrir la connexió al servei HistorialProductos
+     * @author manel bosch
+     */
+    private void openHistorialProductosClient(){
+        hpClient = new HistorialProductosClientSsl(token);
+    }
+    
+    /**
      * Mètode per obrir la connexió al servei Equipo
      * @author manel bosch
      */
     private void openEquipoClient(){
         eqClient = new EquipoClientSsl(token);
+    }
+
+     /**
+     * Mètode per obrir la connexió al servei Historial Equipos
+     * @author manel bosch
+     */
+    private void openHistorialEquiposClient(){
+        heClient = new HistorialEquiposClientSsl(token);
     }
     
     /**
@@ -1195,8 +1223,24 @@ public class GestLabFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonProductIdActionPerformed
  
+    /**
+     * Mètode per buscar tots els productes consumits pel client
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    //El mètode hauria de cridar a una consulta específica que retornés només l'historial del client. 
+    //A implementar en el sevidor
     private void jButtonProductsUsedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProductsUsedActionPerformed
-        // TODO add your handling code here:
+        openHistorialProductosClient();
+        hProductos = hpClient.findAll_JSON(gTypeHistorialProduct);
+        List<HistorialProductos> consumedProducts = new ArrayList<>();
+        for(HistorialProductos hp: hProductos){
+            if(hp.getIdcliente().equals(cliente)){
+                consumedProducts.add(hp);
+            }
+        }
+        fillHistorialProductos(consumedProducts);
+        hpClient.close();
     }//GEN-LAST:event_jButtonProductsUsedActionPerformed
 
     /**
@@ -1209,7 +1253,23 @@ public class GestLabFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonProductsAvailableActionPerformed
 
     private void jButtonBuyProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuyProductActionPerformed
-        // TODO add your handling code here:
+        if(jTableProducts.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un producte a comprar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableProducts.getSelectedRow();
+            String idProduct = String.valueOf(jTableProducts.getModel().getValueAt(row,0));
+            openProductoClient();
+            Producto p = pClient.find_JSON(Producto.class, idProduct);
+            pClient.close();
+            BuyProductDialog dialog = new BuyProductDialog(this, true, usuario, cliente, p);
+            dialog.addWindowListener(new WindowAdapter(){
+                @Override
+                public void windowClosed(WindowEvent e){
+                    fillProductsList();
+                }
+            });
+            dialog.setVisible(true);
+        }
     }//GEN-LAST:event_jButtonBuyProductActionPerformed
 
     /**
@@ -1347,7 +1407,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     private void fillProfile(){
         openClienteClient();
-        cliente = cClient.find_JSON(Cliente.class, usuario.getId());
+        this.cliente = cClient.find_JSON(Cliente.class, usuario.getId());
         jTextFieldNom.setText(cliente.getNombre());
         jTextFieldDni.setText(cliente.getDni());
         jTextFieldCognom1.setText(cliente.getPrimerApellido());
@@ -1437,9 +1497,15 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @param l Llista d eproductes a mostrar
      */
     public void fillProductsList(List l){
-        openProductoClient();
-        productos = pClient.findAll_JSON(gTypeProduct);
         jTableProducts.setModel(tableCreator.createTableModel(Producto.class, l));
-        pClient.close();
+    }
+    
+    /**
+     * Mètode per omplir la taula de productes amb la llista de productes consumits pel client passada per paràmetre
+     * @author manel bosch
+     * @param l Llista d eproductes a mostrar
+     */
+    public void fillHistorialProductos(List l){
+        jTableProducts.setModel(tableCreator.createTableModel(HistorialProductos.class, l));
     }
 }

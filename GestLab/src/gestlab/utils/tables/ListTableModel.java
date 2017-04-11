@@ -3,6 +3,7 @@ package gestlab.utils.tables;
 
 import gestlab.model.Cliente;
 import gestlab.model.Empresa;
+import gestlab.model.HistorialProductos;
 import gestlab.model.Producto;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
@@ -98,6 +99,17 @@ public class ListTableModel <T> extends DefaultTableModel {
                     case 4: return p.getCantidad();
                     case 5: return p.getUnidades();
                 }
+            case "HistorialProductos":
+                HistorialProductos hp = (HistorialProductos) list.get(row);
+                switch(col){
+                    case 0: return hp.getIdproducto().getId();
+                    case 1: return hp.getIdproducto().getNombre();
+                    case 2: return hp.getIdproducto().getCasaComercial();
+                    case 3: return hp.getIdproducto().getReferencia();
+                    case 4: return hp.getCantidad(); 
+                    case 5: return hp.getIdproducto().getUnidades();
+                    case 6: return hp.getFechaCompra();
+                }
             //case "Equip":
         default: return null;
         }
@@ -114,5 +126,4 @@ public class ListTableModel <T> extends DefaultTableModel {
     public boolean isCellEditable(int row, int column) {
         return false;
     }
-    
 }
