@@ -6,7 +6,8 @@
 package gestlab.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
+import java.util.Calendar;
 
 /**
  *
@@ -23,9 +24,12 @@ public class HistorialEquipos implements Serializable {
     
     private Date finalAlquiler;
     
-    private Equipo iDEquipo;
+    private Equipo idequipo;
     
-    private Cliente iDCliente;
+    private Cliente idcliente;
+    
+    private final Date date = new Date(Calendar.getInstance().getTimeInMillis());//Data del dia actualç
+    Date today = java.sql.Date.valueOf(date.toString());//Data del dia actual amb concepte temps a 0
 
     public HistorialEquipos() {
     }
@@ -64,20 +68,20 @@ public class HistorialEquipos implements Serializable {
         this.finalAlquiler = finalAlquiler;
     }
 
-    public Equipo getIDEquipo() {
-        return iDEquipo;
+    public Equipo getIdequipo() {
+        return idequipo;
     }
 
-    public void setIDEquipo(Equipo iDEquipo) {
-        this.iDEquipo = iDEquipo;
+    public void setIdequipo(Equipo idequipo) {
+        this.idequipo = idequipo;
     }
 
-    public Cliente getIDCliente() {
-        return iDCliente;
+    public Cliente getIdcliente() {
+        return idcliente;
     }
 
-    public void setIDCliente(Cliente iDCliente) {
-        this.iDCliente = iDCliente;
+    public void setIdcliente(Cliente idcliente) {
+        this.idcliente = idcliente;
     }
 
     @Override
@@ -105,4 +109,14 @@ public class HistorialEquipos implements Serializable {
         return "model.HistorialEquipos[ id=" + id + " ]";
     }
     
+    /**
+     * Mètode per comprovar si el dia actual un equip està reservat.
+     * @author manel bosch
+     * @param begining data d'inici de la reserva
+     * @param end data de fi de la reserva
+     * @return true o false
+     */
+    public boolean isBookedNow(Date begining, Date end){
+        return begining.compareTo(today) <= 0 && end.compareTo(today) >= 0;
+    }
 }

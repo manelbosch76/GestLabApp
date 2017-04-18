@@ -3,6 +3,8 @@ package gestlab.utils.tables;
 
 import gestlab.model.Cliente;
 import gestlab.model.Empresa;
+import gestlab.model.Equipo;
+import gestlab.model.HistorialEquipos;
 import gestlab.model.HistorialProductos;
 import gestlab.model.Producto;
 import java.util.List;
@@ -98,6 +100,7 @@ public class ListTableModel <T> extends DefaultTableModel {
                     case 3: return p.getReferencia();
                     case 4: return p.getCantidad();
                     case 5: return p.getUnidades();
+                    default: return null;
                 }
             case "HistorialProductos":
                 HistorialProductos hp = (HistorialProductos) list.get(row);
@@ -109,8 +112,30 @@ public class ListTableModel <T> extends DefaultTableModel {
                     case 4: return hp.getCantidad(); 
                     case 5: return hp.getIdproducto().getUnidades();
                     case 6: return hp.getFechaCompra();
+                    default: return null;
                 }
-            //case "Equip":
+            case "Equipo":
+                Equipo equipo = (Equipo) list.get(row);
+                switch(col){
+                    case 0: return equipo.getId();
+                    case 1: return equipo.getNombre();
+                    case 2: return equipo.getMarca();
+                    case 3: return equipo.getModelo();
+                    case 4: return equipo.getNumeroInventario();
+                    case 5: return isRented(equipo.getEstadoAlquiler());
+                    default: return null;
+                }
+            case "HistorialEquipos":
+                HistorialEquipos he = (HistorialEquipos) list.get(row);
+                switch(col){
+                    case 0: return he.getIdequipo().getId();
+                    case 1: return he.getId();
+                    case 2: return he.getIdequipo().getNombre();
+                    case 3: return he.getIdequipo().getNumeroInventario();
+                    case 4: return he.getInicioAlquiler();
+                    case 5: return he.getFinalAlquiler();
+                    default: return null;
+                }
         default: return null;
         }
     }
@@ -125,5 +150,18 @@ public class ListTableModel <T> extends DefaultTableModel {
     @Override
     public boolean isCellEditable(int row, int column) {
         return false;
+    }
+    
+    /**
+     * Mètode per convertir un booleà en text que indiqui Si o No
+     * @param b booleà
+     * @return Si o No essent Si que està llogat i no que està disponible
+     */
+    private String isRented(Boolean b){
+        if(b == true ){
+            return "Si";
+        }else{
+            return "No";
+        }
     }
 }

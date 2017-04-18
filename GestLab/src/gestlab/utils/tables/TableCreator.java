@@ -14,7 +14,8 @@ public class TableCreator {
     private static final String[] PRODUCTHEADERS = {"ID","Nom","Casa_Comercial","Referencia","Quantitat","Unitats"};
     private static final String[] PRODUCTSCONSUMEDHEADERS = {"ID","Nom","Casa_Comercial","Referencia","Quantitat"
                                                             ,"Unitats", "Data_Compra"};
-    private static final String[] EQUIPHEADERS = {"ID","Nom","Marca","Model","Num_Inventari","Llogat"};
+    private static final String[] EQUIPHEADERS = {"ID","Nom","Marca","Model","Num_Inventari","Reservat avui"};
+    private static final String[] EQUIPSBOOKEDHEADERS = {"ID_Equip","ID_Reserva","Nom","Num_Inventari","Inici_Lloguer","Fi_Lloguer"};
     
     /**
      * Crea una Taula model amb la llista de tots els usuaris a la base de dades
@@ -55,6 +56,8 @@ public class TableCreator {
             case "HistorialProductos": headers = PRODUCTSCONSUMEDHEADERS.clone();
                 break;
             case "Equipo": headers = EQUIPHEADERS.clone();
+                break;
+            case "HistorialEquipos": headers = EQUIPSBOOKEDHEADERS.clone();
                 break;
         }
         return headers;

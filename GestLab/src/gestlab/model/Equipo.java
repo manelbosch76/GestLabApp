@@ -31,7 +31,7 @@ public class Equipo implements Serializable {
     private boolean estadoAlquiler;
     
     private Collection<HistorialEquipos> historialEquiposCollection;
-
+    
     public Equipo() {
     }
 
@@ -129,5 +129,5 @@ public class Equipo implements Serializable {
     public String toString() {
         return "model.Equipo[ id=" + id + " ]";
     }
-    
+
 }

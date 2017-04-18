@@ -774,12 +774,12 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jPanelEquipSearch" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace min="-2" pref="81" max="-2" attributes="0"/>
-                                  <Component id="jPanelProductGlobal2" min="-2" max="-2" attributes="0"/>
-                                  <EmptySpace pref="94" max="32767" attributes="0"/>
+                                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                                  <Component id="jPanelProductBotons1" min="-2" max="-2" attributes="0"/>
+                                  <EmptySpace max="32767" attributes="0"/>
                                   <Component id="jPanelAdminEquips" min="-2" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="jScrollPaneEquips" alignment="0" max="32767" attributes="0"/>
+                              <Component id="jScrollPaneEquips" alignment="0" pref="713" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                       </Group>
@@ -789,9 +789,11 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" alignment="0" attributes="0">
                           <Group type="103" groupAlignment="1" attributes="0">
-                              <Component id="jPanelAdminEquips" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="jPanelEquipSearch" alignment="1" min="-2" max="-2" attributes="0"/>
-                              <Component id="jPanelProductGlobal2" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Component id="jPanelAdminEquips" alignment="0" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" alignment="1" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jPanelProductBotons1" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jPanelEquipSearch" alignment="1" max="32767" attributes="0"/>
+                              </Group>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="jScrollPaneEquips" pref="338" max="32767" attributes="0"/>
@@ -851,7 +853,7 @@
                     </Component>
                     <Component class="javax.swing.JTextField" name="jTextFieldEquipId">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Id"/>
+                        <Property name="text" type="java.lang.String" value="0"/>
                       </Properties>
                       <Events>
                         <EventHandler event="focusGained" listener="java.awt.event.FocusListener" parameters="java.awt.event.FocusEvent" handler="jTextFieldEquipIdFocusGained"/>
@@ -862,11 +864,17 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Buscar"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonEquipIdActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonSearchEquipName">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Buscar"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSearchEquipNameActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -877,10 +885,10 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="32767" attributes="0"/>
-                              <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jButtonNewEquip" linkSize="3" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonModifEquip" linkSize="3" alignment="1" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonDelEquip" linkSize="3" alignment="1" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                  <Component id="jButtonModifEquip" linkSize="3" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jButtonDelEquip" linkSize="3" alignment="1" max="32767" attributes="0"/>
+                                  <Component id="jButtonNewEquip" alignment="1" max="32767" attributes="0"/>
                               </Group>
                               <EmptySpace max="-2" attributes="0"/>
                           </Group>
@@ -905,16 +913,25 @@
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Nou Equip"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonNewEquipActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonModifEquip">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Modificar Equip"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonModifEquipActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonDelEquip">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Eliminar Equip"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDelEquipActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -928,20 +945,37 @@
                   </Properties>
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+                  <SubComponents>
+                    <Component class="javax.swing.JTable" name="jTableEquips">
+                      <Properties>
+                        <Property name="autoCreateRowSorter" type="boolean" value="true"/>
+                        <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
+                          <Connection code="tableCreator.createTableModel(Equipo.class, equipos)" type="code"/>
+                        </Property>
+                      </Properties>
+                    </Component>
+                  </SubComponents>
                 </Container>
-                <Container class="javax.swing.JPanel" name="jPanelProductGlobal2">
+                <Container class="javax.swing.JPanel" name="jPanelProductBotons1">
 
                   <Layout>
                     <DimensionLayout dim="0">
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" attributes="0">
-                              <EmptySpace max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="jButtonEquipsUsed" linkSize="5" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonEquipsAvailable" linkSize="5" alignment="0" min="-2" max="-2" attributes="0"/>
-                                  <Component id="jButtonBook" linkSize="5" alignment="0" min="-2" max="-2" attributes="0"/>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jButtonEquipsUsed" linkSize="5" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jButtonBook" max="32767" attributes="0"/>
+                                  </Group>
+                                  <Group type="102" attributes="0">
+                                      <Component id="jButtonAllEquips" linkSize="5" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="jButtonDelbooking" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                                  </Group>
                               </Group>
-                              <EmptySpace max="32767" attributes="0"/>
+                              <EmptySpace min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -949,11 +983,16 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButtonEquipsUsed" min="-2" max="-2" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jButtonEquipsUsed" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonBook" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
+                              <EmptySpace max="32767" attributes="0"/>
+                              <Group type="103" groupAlignment="3" attributes="0">
+                                  <Component id="jButtonAllEquips" alignment="3" min="-2" max="-2" attributes="0"/>
+                                  <Component id="jButtonDelbooking" alignment="3" min="-2" max="-2" attributes="0"/>
+                              </Group>
                               <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jButtonEquipsAvailable" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace pref="9" max="32767" attributes="0"/>
-                              <Component id="jButtonBook" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                     </DimensionLayout>
@@ -961,18 +1000,35 @@
                   <SubComponents>
                     <Component class="javax.swing.JButton" name="jButtonEquipsUsed">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Equips utilitzats"/>
+                        <Property name="text" type="java.lang.String" value="Reserves"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonEquipsUsedActionPerformed"/>
+                      </Events>
                     </Component>
-                    <Component class="javax.swing.JButton" name="jButtonEquipsAvailable">
+                    <Component class="javax.swing.JButton" name="jButtonAllEquips">
                       <Properties>
-                        <Property name="text" type="java.lang.String" value="Equips disponibles"/>
+                        <Property name="text" type="java.lang.String" value="Equips"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAllEquipsActionPerformed"/>
+                      </Events>
                     </Component>
                     <Component class="javax.swing.JButton" name="jButtonBook">
                       <Properties>
                         <Property name="text" type="java.lang.String" value="Reservar equip"/>
                       </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonBookActionPerformed"/>
+                      </Events>
+                    </Component>
+                    <Component class="javax.swing.JButton" name="jButtonDelbooking">
+                      <Properties>
+                        <Property name="text" type="java.lang.String" value="Eliminar reserva"/>
+                      </Properties>
+                      <Events>
+                        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonDelbookingActionPerformed"/>
+                      </Events>
                     </Component>
                   </SubComponents>
                 </Container>

@@ -14,7 +14,9 @@ import gestlab.restfulclient.ProductoClientSsl;
 import gestlab.utils.tables.TableCreator;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.sql.Date;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
@@ -23,6 +25,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.GenericType;
 
 /**
@@ -46,15 +49,16 @@ public class GestLabFrame extends javax.swing.JFrame {
     
     private List<Producto> productos;
     GenericType<List<Producto>> gTypeProduct = new GenericType<List<Producto>>(){};
-    
     private List<HistorialProductos> hProductos;
     GenericType<List<HistorialProductos>> gTypeHistorialProduct = new GenericType<List<HistorialProductos>>(){};
     
     private List<Equipo> equipos;
     GenericType<List<Equipo>> gTypeEquip = new GenericType<List<Equipo>>(){};
-    
     private List<HistorialEquipos> hEquipos;
     GenericType<List<HistorialEquipos>> gTypeHistorialEquip = new GenericType<List<HistorialEquipos>>(){};
+    
+    private final Date date = new Date(Calendar.getInstance().getTimeInMillis());//Data del dia actual
+    Date today = java.sql.Date.valueOf(date.toString());//Data del dia actual amb concepte temps a 0
     
     private TableRowSorter<TableModel> rowSorter;
     TableCreator tableCreator = new TableCreator();
@@ -145,7 +149,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                 fillProductsList();
                 break;
             case "Equipament":
-                //fillEquipsList();
+                fillEquipsList();
                 break;
             case "Perfil":
                 fillProfile();
@@ -221,10 +225,12 @@ public class GestLabFrame extends javax.swing.JFrame {
         jButtonModifEquip = new javax.swing.JButton();
         jButtonDelEquip = new javax.swing.JButton();
         jScrollPaneEquips = new javax.swing.JScrollPane();
-        jPanelProductGlobal2 = new javax.swing.JPanel();
+        jTableEquips = new javax.swing.JTable();
+        jPanelProductBotons1 = new javax.swing.JPanel();
         jButtonEquipsUsed = new javax.swing.JButton();
-        jButtonEquipsAvailable = new javax.swing.JButton();
+        jButtonAllEquips = new javax.swing.JButton();
         jButtonBook = new javax.swing.JButton();
+        jButtonDelbooking = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -722,7 +728,7 @@ public class GestLabFrame extends javax.swing.JFrame {
             }
         });
 
-        jTextFieldEquipId.setText("Id");
+        jTextFieldEquipId.setText("0");
         jTextFieldEquipId.addFocusListener(new java.awt.event.FocusAdapter() {
             public void focusGained(java.awt.event.FocusEvent evt) {
                 jTextFieldEquipIdFocusGained(evt);
@@ -733,8 +739,18 @@ public class GestLabFrame extends javax.swing.JFrame {
         });
 
         jButtonEquipId.setText("Buscar");
+        jButtonEquipId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEquipIdActionPerformed(evt);
+            }
+        });
 
         jButtonSearchEquipName.setText("Buscar");
+        jButtonSearchEquipName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSearchEquipNameActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelEquipSearchLayout = new javax.swing.GroupLayout(jPanelEquipSearch);
         jPanelEquipSearch.setLayout(jPanelEquipSearchLayout);
@@ -766,10 +782,25 @@ public class GestLabFrame extends javax.swing.JFrame {
         );
 
         jButtonNewEquip.setText("Nou Equip");
+        jButtonNewEquip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonNewEquipActionPerformed(evt);
+            }
+        });
 
         jButtonModifEquip.setText("Modificar Equip");
+        jButtonModifEquip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonModifEquipActionPerformed(evt);
+            }
+        });
 
         jButtonDelEquip.setText("Eliminar Equip");
+        jButtonDelEquip.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelEquipActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanelAdminEquipsLayout = new javax.swing.GroupLayout(jPanelAdminEquips);
         jPanelAdminEquips.setLayout(jPanelAdminEquipsLayout);
@@ -777,14 +808,14 @@ public class GestLabFrame extends javax.swing.JFrame {
             jPanelAdminEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelAdminEquipsLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelAdminEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonNewEquip, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButtonModifEquip, javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButtonDelEquip, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addGroup(jPanelAdminEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButtonModifEquip, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonDelEquip, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonNewEquip, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
-        jPanelAdminEquipsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonDelEquip, jButtonModifEquip, jButtonNewEquip});
+        jPanelAdminEquipsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonDelEquip, jButtonModifEquip});
 
         jPanelAdminEquipsLayout.setVerticalGroup(
             jPanelAdminEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -800,36 +831,70 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jScrollPaneEquips.setBorder(javax.swing.BorderFactory.createTitledBorder("Llista Equips"));
 
-        jButtonEquipsUsed.setText("Equips utilitzats");
+        jTableEquips.setAutoCreateRowSorter(true);
+        jTableEquips.setModel(tableCreator.createTableModel(Equipo.class, equipos));
+        jScrollPaneEquips.setViewportView(jTableEquips);
 
-        jButtonEquipsAvailable.setText("Equips disponibles");
+        jButtonEquipsUsed.setText("Reserves");
+        jButtonEquipsUsed.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonEquipsUsedActionPerformed(evt);
+            }
+        });
+
+        jButtonAllEquips.setText("Equips");
+        jButtonAllEquips.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonAllEquipsActionPerformed(evt);
+            }
+        });
 
         jButtonBook.setText("Reservar equip");
+        jButtonBook.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBookActionPerformed(evt);
+            }
+        });
 
-        javax.swing.GroupLayout jPanelProductGlobal2Layout = new javax.swing.GroupLayout(jPanelProductGlobal2);
-        jPanelProductGlobal2.setLayout(jPanelProductGlobal2Layout);
-        jPanelProductGlobal2Layout.setHorizontalGroup(
-            jPanelProductGlobal2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelProductGlobal2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanelProductGlobal2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonEquipsUsed)
-                    .addComponent(jButtonEquipsAvailable)
-                    .addComponent(jButtonBook))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        jButtonDelbooking.setText("Eliminar reserva");
+        jButtonDelbooking.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDelbookingActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanelProductBotons1Layout = new javax.swing.GroupLayout(jPanelProductBotons1);
+        jPanelProductBotons1.setLayout(jPanelProductBotons1Layout);
+        jPanelProductBotons1Layout.setHorizontalGroup(
+            jPanelProductBotons1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelProductBotons1Layout.createSequentialGroup()
+                .addGroup(jPanelProductBotons1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanelProductBotons1Layout.createSequentialGroup()
+                        .addComponent(jButtonEquipsUsed)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonBook, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanelProductBotons1Layout.createSequentialGroup()
+                        .addComponent(jButtonAllEquips)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButtonDelbooking)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
-        jPanelProductGlobal2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonBook, jButtonEquipsAvailable, jButtonEquipsUsed});
+        jPanelProductBotons1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonAllEquips, jButtonEquipsUsed});
 
-        jPanelProductGlobal2Layout.setVerticalGroup(
-            jPanelProductGlobal2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelProductGlobal2Layout.createSequentialGroup()
+        jPanelProductBotons1Layout.setVerticalGroup(
+            jPanelProductBotons1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanelProductBotons1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jButtonEquipsUsed)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButtonEquipsAvailable)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
-                .addComponent(jButtonBook))
+                .addGroup(jPanelProductBotons1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonEquipsUsed)
+                    .addComponent(jButtonBook))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanelProductBotons1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonAllEquips)
+                    .addComponent(jButtonDelbooking))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout jPanelEquipsLayout = new javax.swing.GroupLayout(jPanelEquips);
@@ -841,20 +906,21 @@ public class GestLabFrame extends javax.swing.JFrame {
                 .addGroup(jPanelEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelEquipsLayout.createSequentialGroup()
                         .addComponent(jPanelEquipSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(81, 81, 81)
-                        .addComponent(jPanelProductGlobal2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 94, Short.MAX_VALUE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanelProductBotons1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanelAdminEquips, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPaneEquips))
+                    .addComponent(jScrollPaneEquips, javax.swing.GroupLayout.DEFAULT_SIZE, 713, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanelEquipsLayout.setVerticalGroup(
             jPanelEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelEquipsLayout.createSequentialGroup()
                 .addGroup(jPanelEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jPanelAdminEquips, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanelEquipSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanelProductGlobal2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPanelAdminEquips, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanelEquipsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jPanelProductBotons1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jPanelEquipSearch, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPaneEquips, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
                 .addContainerGap())
@@ -902,6 +968,11 @@ public class GestLabFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    /*--------------------------------
+    Control del focus en els TextField
+    */
+    
     /**
      * Mètode per controlar desaparició del text per defecte
      * @author manel bosch
@@ -1014,7 +1085,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @param evt Event que es produeix en guanyar el focus
      */
     private void jTextFieldEquipIdFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldEquipIdFocusGained
-        if(jTextFieldEquipId.getText().trim().equals("Id")){
+        if(jTextFieldEquipId.getText().trim().equals(0)){
            jTextFieldEquipId.setText("");
         }
     }//GEN-LAST:event_jTextFieldEquipIdFocusGained
@@ -1026,7 +1097,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     private void jTextFieldEquipIdFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_jTextFieldEquipIdFocusLost
         if(jTextFieldEquipId.getText().trim().equals("")){
-           jTextFieldEquipId.setText("Id");
+           jTextFieldEquipId.setText(String.valueOf(0));
         }
     }//GEN-LAST:event_jTextFieldEquipIdFocusLost
 
@@ -1184,7 +1255,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     */
     
     /**
-     * Mètode per buscar un producte a la base de dades pel seu cognom
+     * Mètode per buscar un producte a la base de dades pel seu nom
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
@@ -1210,16 +1281,13 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonProductIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProductIdActionPerformed
-        String id = jTextFieldProductId.getText();
         int idInt = Integer.parseInt(jTextFieldProductId.getText());
         rowSorter = new TableRowSorter<>(jTableProducts.getModel());
         jTableProducts.setRowSorter(rowSorter);
-        if(idInt == 0 || id.isEmpty()){
+        if(idInt == 0){
             fillProductsList();
-        }else if(id.length() != 0 && idInt != 0){
-            rowSorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, idInt));
         }else{
-            rowSorter.setRowFilter(null);
+            rowSorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, idInt));
         }
     }//GEN-LAST:event_jButtonProductIdActionPerformed
  
@@ -1244,7 +1312,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonProductsUsedActionPerformed
 
     /**
-     * Mètode per mostrar la llista de productes amb les quantitats disponibles que n'hi ha
+     * Mètode per mostrar la llista de productes amb les quantitats disponibles que hi ha
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
@@ -1252,6 +1320,12 @@ public class GestLabFrame extends javax.swing.JFrame {
         fillProductsList();
     }//GEN-LAST:event_jButtonProductsAvailableActionPerformed
 
+    /**
+     * Mètode per comprar un producte. 
+     * Crida a la finestra per especificar la quantitat a comprar del producte seleccionat
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
     private void jButtonBuyProductActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuyProductActionPerformed
         if(jTableProducts.getSelectedRowCount()==0){
             JOptionPane.showMessageDialog(null,"Selecciona un producte a comprar","Alert !!",JOptionPane.WARNING_MESSAGE);
@@ -1331,7 +1405,183 @@ public class GestLabFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonDelProductActionPerformed
 
+    
+    
+     /*-------------------------
+    Accions sobre els equips
+    */
+    
+    /**
+     * Mètode per buscar un equip a la base de dades pel seu nom
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    //El mètode de cerca hauria d'existir en el servidor.
+    private void jButtonSearchEquipNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchEquipNameActionPerformed
+        jTableEquips.setRowSorter(null);
+        if(jTextFieldEquip.getText().equals("Nom Equip")){
+            fillEquipsList();
+        }else{
+            String nom = jTextFieldEquip.getText().toLowerCase();
+            List<Equipo> equipsName = new ArrayList<>();
+            for (Equipo e : equipos) {
+                if(e.getNombre().toLowerCase().contains(nom)){
+                    equipsName.add(e);
+                }
+            }
+            fillEquipsList(equipsName);
+        }
+    }//GEN-LAST:event_jButtonSearchEquipNameActionPerformed
+
+     /**
+     * Mètode per buscar un equip a la base de dades pel seu identificador
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonEquipIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEquipIdActionPerformed
+        int idInt = Integer.parseInt(jTextFieldEquipId.getText());
+        rowSorter = new TableRowSorter<>(jTableEquips.getModel());
+        jTableEquips.setRowSorter(rowSorter);
+        if(idInt == 0){
+            fillEquipsList();
+        }else{
+            rowSorter.setRowFilter(RowFilter.numberFilter(RowFilter.ComparisonType.EQUAL, idInt));
+        }
+    }//GEN-LAST:event_jButtonEquipIdActionPerformed
+
+    /**
+     * Mètode per mostrar la llista d'equips reservats pel client
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonEquipsUsedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEquipsUsedActionPerformed
+        List<HistorialEquipos> rentedEquips = new ArrayList<>();
+        for(HistorialEquipos he: hEquipos){
+            if(he.getIdcliente().equals(cliente)){
+                rentedEquips.add(he);
+            }
+        }
+        fillHistorialEquipos(rentedEquips);
+    }//GEN-LAST:event_jButtonEquipsUsedActionPerformed
+
+    /**
+     * Mètode per reservar un equip
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonBookActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBookActionPerformed
+        if(jTableEquips.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un equip a reservar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableEquips.getSelectedRow();
+            String idEquip = String.valueOf(jTableEquips.getModel().getValueAt(row,0));
+            openEquipoClient();
+            Equipo e = eqClient.find_JSON(Equipo.class, idEquip);
+            eqClient.close();
+            BookEquipDialog dialog = new BookEquipDialog(this, true, usuario, cliente, e);
+            dialog.addWindowListener(new WindowAdapter(){
+                @Override
+                public void windowClosed(WindowEvent e){
+                    fillEquipsList();
+                }
+            });
+            dialog.setVisible(true);
+        }
+    }//GEN-LAST:event_jButtonBookActionPerformed
+
+    /**
+     * Mètode per afegir un equip nou a la llista d'equips
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonNewEquipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewEquipActionPerformed
+        EquipDialog dialog = new EquipDialog(this, true, usuario);
+        dialog.addWindowListener(new WindowAdapter(){
+            @Override
+            public void windowClosed(WindowEvent e){
+                fillEquipsList();
+            }
+        });
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jButtonNewEquipActionPerformed
+
+    /**
+     * Mètode per modificar un equip de la llista
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonModifEquipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonModifEquipActionPerformed
+        if(jTableEquips.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un equip a modificar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableEquips.getSelectedRow();
+            String idEquip = String.valueOf(jTableEquips.getModel().getValueAt(row,0));
+            openEquipoClient();
+            Equipo e = eqClient.find_JSON(Equipo.class, idEquip);
+            eqClient.close();
+            EquipDialog dialog = new EquipDialog(this, true, usuario, e);
+            dialog.addWindowListener(new WindowAdapter(){
+                @Override
+                public void windowClosed(WindowEvent e){
+                    fillEquipsList();
+                }
+            });
+            dialog.setVisible(true);
+        }
+    }//GEN-LAST:event_jButtonModifEquipActionPerformed
+
+     /**
+     * Mètode per eliminar un equip de la llista
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonDelEquipActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelEquipActionPerformed
+        if(jTableEquips.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un equip a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableEquips.getSelectedRow();
+            String id = String.valueOf(jTableEquips.getModel().getValueAt(row,0));
+            openEquipoClient();
+            eqClient.remove(id);
+            eqClient.close();
+            fillEquipsList();
+        }
+    }//GEN-LAST:event_jButtonDelEquipActionPerformed
+
+    /**
+     * Mètode per llistar tots els equips del laboratori
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonAllEquipsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAllEquipsActionPerformed
+        fillEquipsList();
+    }//GEN-LAST:event_jButtonAllEquipsActionPerformed
+
+    /**
+     * Mètode per eliminar una reserva d'un equip
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
+    private void jButtonDelbookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelbookingActionPerformed
+        if(jTableEquips.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona una reserva a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableEquips.getSelectedRow();
+            String id = String.valueOf(jTableEquips.getModel().getValueAt(row,1));
+            openHistorialEquiposClient();
+            try{
+                HistorialEquipos he = heClient.find_JSON(HistorialEquipos.class, id);
+                heClient.remove(id);
+            }catch(NotFoundException e){
+                JOptionPane.showMessageDialog(null,"La fila seleccionada no és una reserva","Alert !!",JOptionPane.WARNING_MESSAGE);
+            }
+            heClient.close();
+            fillEquipsList();
+        }
+    }//GEN-LAST:event_jButtonDelbookingActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonAllEquips;
     private javax.swing.JButton jButtonBook;
     private javax.swing.JButton jButtonBuyProduct;
     private javax.swing.JButton jButtonCancelModifProfile;
@@ -1340,8 +1590,8 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButtonDelClient;
     private javax.swing.JButton jButtonDelEquip;
     private javax.swing.JButton jButtonDelProduct;
+    private javax.swing.JButton jButtonDelbooking;
     private javax.swing.JButton jButtonEquipId;
-    private javax.swing.JButton jButtonEquipsAvailable;
     private javax.swing.JButton jButtonEquipsUsed;
     private javax.swing.JButton jButtonModifClient;
     private javax.swing.JButton jButtonModifEquip;
@@ -1371,8 +1621,8 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JPanel jPanelEquips;
     private javax.swing.JPanel jPanelMain;
     private javax.swing.JPanel jPanelPerfil;
+    private javax.swing.JPanel jPanelProductBotons1;
     private javax.swing.JPanel jPanelProductGlobal;
-    private javax.swing.JPanel jPanelProductGlobal2;
     private javax.swing.JPanel jPanelProductSearch;
     private javax.swing.JPanel jPanelProductes;
     private javax.swing.JPanel jPanelUserSearch;
@@ -1382,6 +1632,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPaneUsers;
     private javax.swing.JTabbedPane jTabbedPaneMain;
     private javax.swing.JTable jTableClients;
+    private javax.swing.JTable jTableEquips;
     private javax.swing.JTable jTableProducts;
     private javax.swing.JTextField jTextFieldClientId;
     private javax.swing.JTextField jTextFieldCognom1;
@@ -1494,7 +1745,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     /**
      * Mètode per omplir la taula de productes amb una llista passada per paràmetre
      * @author manel bosch
-     * @param l Llista d eproductes a mostrar
+     * @param l Llista de productes a mostrar
      */
     public void fillProductsList(List l){
         jTableProducts.setModel(tableCreator.createTableModel(Producto.class, l));
@@ -1503,9 +1754,74 @@ public class GestLabFrame extends javax.swing.JFrame {
     /**
      * Mètode per omplir la taula de productes amb la llista de productes consumits pel client passada per paràmetre
      * @author manel bosch
-     * @param l Llista d eproductes a mostrar
+     * @param l Llista de productes consumits a mostrar
      */
     public void fillHistorialProductos(List l){
         jTableProducts.setModel(tableCreator.createTableModel(HistorialProductos.class, l));
+    }
+    
+    
+    
+    /*-----------------
+    Gestió d'equips
+    */
+    
+    /**
+     * Mètode per omplir la taula d'equips
+     * @author manel bosch
+     */
+    public void fillEquipsList(){
+        updateBookingOfEquips();
+        jTableEquips.setModel(tableCreator.createTableModel(Equipo.class, equipos));
+    }
+    
+    /**
+     * Mètode per omplir la taula d'equips amb una llista passada per paràmetre
+     * @author manel bosch
+     * @param l Llista d'equips a mostrar
+     */
+    public void fillEquipsList(List l){
+        jTableEquips.setModel(tableCreator.createTableModel(Equipo.class, l));
+    }
+    
+    /**
+     * Mètode per omplir la taula d'equips amb la llista d'equips llogats pel client passada per paràmetre
+     * @author manel bosch
+     * @param l Llista d'equips llogats a mostrar
+     */
+    public void fillHistorialEquipos(List l){
+       jTableEquips.setModel(tableCreator.createTableModel(HistorialEquipos.class, l));
+    }
+    
+    /**
+     * Mètode per actualitzar l'estat de reserva de tots els equips
+     * @author manel bosch
+     */
+    public void updateBookingOfEquips(){
+        openEquipoClient();
+        equipos = eqClient.findAll_JSON(gTypeEquip);
+        openHistorialEquiposClient();
+        hEquipos = heClient.findAll_JSON(gTypeHistorialEquip);
+        for (Equipo e : equipos) {
+            for (HistorialEquipos he : hEquipos) {
+                if (e.equals(he.getIdequipo())){
+                    //Només cal revisar les reserves que encara no han prescrit 
+                    if(he.getFinalAlquiler().compareTo(today) >= 0){
+                        if(he.isBookedNow(he.getInicioAlquiler(), he.getFinalAlquiler())){
+                            e.setEstadoAlquiler(true);
+                            eqClient.edit_JSON(e, String.valueOf(e.getId()));
+                        }
+                    }else{
+                        if(e.getEstadoAlquiler()){
+                            e.setEstadoAlquiler(false);
+                            eqClient.edit_JSON(e, String.valueOf(e.getId()));
+                        }
+                    }
+                }
+            }
+        }
+        equipos = eqClient.findAll_JSON(gTypeEquip);
+        eqClient.close();
+        heClient.close();
     }
 }

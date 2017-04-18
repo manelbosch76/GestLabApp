@@ -3,40 +3,63 @@ package gestlab.view;
 
 //import gestlab.model.Equipo;
 
+import gestlab.model.Equipo;
+import gestlab.model.Usuario;
+import gestlab.restfulclient.EquipoClientSsl;
+import javax.swing.JOptionPane;
+
+
 /**
  * Classe per gestionar l'entrada/modificació de dades d'un equip
  * @author manel bosch
  */
 public class EquipDialog extends javax.swing.JDialog {
     
-    //Equipo equipo;
+    Equipo equipo;
+    Usuario usuario;
+    private EquipoClientSsl eqClient;
 
     /**
      * Crea una finestra per entrar un nou equip
      * @author manel bosch
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
+     * @param usuario usuari que està connectat al programa
      */
-    public EquipDialog(java.awt.Frame parent, boolean modal) {
+    public EquipDialog(java.awt.Frame parent, boolean modal, Usuario usuario) {
         super(parent, modal);
+        this.usuario = usuario;
+        openClient();
         initComponents();
+        hideFields();
     }
-    
     
     /**
      * Crea un nou formulari per modificar dades d'un equip passat per paràmetre
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
-     * @param e Equipo a modificar
+     * @param usuario usuari que està connectat al programa
+     * @param equipo Equipo a modificar
      */
-    /*
-    public EquipDialog(java.awt.Frame parent, boolean modal, Equipo e) {
+    
+    public EquipDialog(java.awt.Frame parent, boolean modal, Usuario usuario, Equipo equipo) {
         super(parent, modal);
+        this.usuario = usuario;
+        this.equipo = equipo;
+        openClient();
         initComponents();
-        //equipo = e;
-        fillEquipData(e);
+        jTextFieldIdEquip.setEditable(false);
+        fillEquipData(equipo);
     }
-    */
+    
+    /**
+     * Mètode per amagar els camps referents al ID de l'equip en cas de ser un equip nou
+     * @author manel bosch
+     */
+    private void hideFields(){
+        jLabelIdEquip.setVisible(false);
+        jTextFieldIdEquip.setVisible(false);
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -57,15 +80,13 @@ public class EquipDialog extends javax.swing.JDialog {
         jTextFieldModel = new javax.swing.JTextField();
         jLabelInventari = new javax.swing.JLabel();
         jTextFieldInventari = new javax.swing.JTextField();
-        jLabelReservat = new javax.swing.JLabel();
         jLabelIdEquip = new javax.swing.JLabel();
         jTextFieldIdEquip = new javax.swing.JTextField();
-        jCheckBox1 = new javax.swing.JCheckBox();
         jPanelBotons = new javax.swing.JPanel();
-        jButtonSave = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
         jButtonClear = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
-        jLabelMessage = new javax.swing.JLabel();
+        jButtonSave = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
@@ -81,8 +102,6 @@ public class EquipDialog extends javax.swing.JDialog {
         jLabelModel.setText("Model:");
 
         jLabelInventari.setText("Nº Inventari:");
-
-        jLabelReservat.setText("Reservat:");
 
         jLabelIdEquip.setText("ID:");
 
@@ -101,8 +120,7 @@ public class EquipDialog extends javax.swing.JDialog {
                             .addComponent(jLabelName)
                             .addComponent(jLabelMarca)
                             .addComponent(jLabelModel)
-                            .addComponent(jLabelInventari)
-                            .addComponent(jLabelReservat))
+                            .addComponent(jLabelInventari))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGroup(jPanelDadesEquipLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanelDadesEquipLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -110,14 +128,13 @@ public class EquipDialog extends javax.swing.JDialog {
                         .addComponent(jTextFieldMarca)
                         .addComponent(jTextFieldNom)
                         .addComponent(jTextFieldIdEquip))
-                    .addComponent(jCheckBox1)
                     .addComponent(jTextFieldInventari, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         jPanelDadesEquipLayout.setVerticalGroup(
             jPanelDadesEquipLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesEquipLayout.createSequentialGroup()
-                .addContainerGap(26, Short.MAX_VALUE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanelDadesEquipLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelIdEquip)
                     .addComponent(jTextFieldIdEquip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -137,19 +154,8 @@ public class EquipDialog extends javax.swing.JDialog {
                 .addGroup(jPanelDadesEquipLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldInventari, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelInventari))
-                .addGap(18, 18, 18)
-                .addGroup(jPanelDadesEquipLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jLabelReservat))
-                .addGap(31, 31, 31))
+                .addContainerGap())
         );
-
-        jButtonSave.setText("Guardar");
-        jButtonSave.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonSaveActionPerformed(evt);
-            }
-        });
 
         jButtonClear.setText("Netejar");
         jButtonClear.addActionListener(new java.awt.event.ActionListener() {
@@ -165,34 +171,55 @@ public class EquipDialog extends javax.swing.JDialog {
             }
         });
 
+        jButtonSave.setText("Guardar");
+        jButtonSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonSaveActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButtonSave)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButtonClear)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButtonCancel)
+                .addContainerGap())
+        );
+
+        jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonCancel, jButtonClear, jButtonSave});
+
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButtonSave)
+                    .addComponent(jButtonClear)
+                    .addComponent(jButtonCancel))
+                .addContainerGap())
+        );
+
         javax.swing.GroupLayout jPanelBotonsLayout = new javax.swing.GroupLayout(jPanelBotons);
         jPanelBotons.setLayout(jPanelBotonsLayout);
         jPanelBotonsLayout.setHorizontalGroup(
             jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBotonsLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelMessage)
-                    .addGroup(jPanelBotonsLayout.createSequentialGroup()
-                        .addComponent(jButtonSave)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonClear)
-                        .addGap(18, 18, 18)
-                        .addComponent(jButtonCancel)))
-                .addGap(203, 203, 203))
+            .addGroup(jPanelBotonsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
-
-        jPanelBotonsLayout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {jButtonCancel, jButtonClear, jButtonSave});
-
         jPanelBotonsLayout.setVerticalGroup(
             jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelBotonsLayout.createSequentialGroup()
-                .addComponent(jLabelMessage)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                .addGroup(jPanelBotonsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButtonSave)
-                    .addComponent(jButtonClear)
-                    .addComponent(jButtonCancel)))
+            .addGroup(jPanelBotonsLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -204,10 +231,10 @@ public class EquipDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabelTitol, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jPanelDadesEquip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jPanelBotons, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jPanelDadesEquip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jPanelBotons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -217,15 +244,29 @@ public class EquipDialog extends javax.swing.JDialog {
                 .addGap(18, 18, 18)
                 .addComponent(jPanelDadesEquip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanelBotons, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGap(32, 32, 32))
+                .addComponent(jPanelBotons, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * Mètode per guardar els canvis
+     * @author manel bosch
+     * @param evt Event que representa prémer el botó
+     */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
-        // TODO add your handling code here:
+        if(equipo == null){
+            Equipo e = getEquipData();
+            int done = eqClient.create_JSON(e);//retorna 204
+        }else{
+            equipo = getEquipData();
+            String id = jTextFieldIdEquip.getText();
+            int done = eqClient.edit_JSON(equipo, id);//retorna 204
+        }
+        eqClient.close();
+        this.dispose(); 
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     /**
@@ -234,7 +275,6 @@ public class EquipDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonClearActionPerformed
-        jTextFieldIdEquip.setText("");
         jTextFieldNom.setText("");
         jTextFieldMarca.setText("");
         jTextFieldModel.setText("");
@@ -247,6 +287,7 @@ public class EquipDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
+        eqClient.close();
         this.dispose();
     }//GEN-LAST:event_jButtonCancelActionPerformed
 
@@ -254,15 +295,13 @@ public class EquipDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonClear;
     private javax.swing.JButton jButtonSave;
-    private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JLabel jLabelIdEquip;
     private javax.swing.JLabel jLabelInventari;
     private javax.swing.JLabel jLabelMarca;
-    private javax.swing.JLabel jLabelMessage;
     private javax.swing.JLabel jLabelModel;
     private javax.swing.JLabel jLabelName;
-    private javax.swing.JLabel jLabelReservat;
     private javax.swing.JLabel jLabelTitol;
+    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanelBotons;
     private javax.swing.JPanel jPanelDadesEquip;
     private javax.swing.JTextField jTextFieldIdEquip;
@@ -273,46 +312,58 @@ public class EquipDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     /**
+     * Mètode per inicialitzar el EquipoClientSsl que accedirà al servei RESTful
+     * @author manel bosch
+     */
+    private void openClient(){
+        eqClient = new EquipoClientSsl(usuario.getToken());
+    }
+    
+    /**
      * Mètode per omplir els camps amb les dades de l'equip passat com a paràmetre
      * @author manel bosch
      * @param e Equip
      */
-    /*
     private void fillEquipData(Equipo e){
-        jTextFieldIdEquip.setText();
-        jTextFieldNom.setText();
-        jTextFieldMarca.setText();
-        jTextFieldModel.setText();
-        jTextFieldInventari.setText();
+        jTextFieldIdEquip.setText(String.valueOf(e.getId()));
+        jTextFieldNom.setText(e.getNombre());
+        jTextFieldMarca.setText(e.getMarca());
+        jTextFieldModel.setText(e.getModelo());
+        jTextFieldInventari.setText(e.getNumeroInventario());
     }
-    */
     
     /**
      * Mètode per llegir els camps amb les dades entrades per crear l'equip
      * @author manel bosch
      * @return Equip amb les dades entrades
      */
-    /*
-    private Usuario getEquipData(){
+    private Equipo getEquipData(){
         if(checkFilledFields()){
             Equipo e = new Equipo();
-            
+            e.setNombre(jTextFieldNom.getText());
+            e.setMarca(jTextFieldMarca.getText());
+            e.setModelo(jTextFieldModel.getText());
+            e.setNumeroInventario(jTextFieldInventari.getText());
+            e.setEstadoAlquiler(false);
+            if(equipo != null){
+                e.setId(equipo.getId());
+                e.setEstadoAlquiler(equipo.getEstadoAlquiler());
+            }
             return e;
         }else{
-            jLabelMessage.setText("Siusplau, omple tots els camps obligatoris");
+            JOptionPane.showMessageDialog(null,"Omplir tots els camps","Alert !!",JOptionPane.WARNING_MESSAGE);
             return null;
         }
     }
-    */
     
     /**
      * Mètode per saber si tots els camps necessaris estan plens
      * @return true o false
      */
     private boolean checkFilledFields(){
-        return !(jTextFieldIdEquip.getText().equals("")
-                ||jTextFieldNom.getText().equals("")
+        return !(jTextFieldNom.getText().equals("")
                 ||jTextFieldMarca.getText().equals("")
+                ||jTextFieldModel.getText().equals("")
                 ||jTextFieldInventari.getText().equals(""));
     }
 }
