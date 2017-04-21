@@ -1243,9 +1243,13 @@ public class GestLabFrame extends javax.swing.JFrame {
         }else{
             int row = jTableClients.getSelectedRow();
             String id = (String) jTableClients.getModel().getValueAt(row,0);
-            openClienteClient();
-            cClient.remove(id);
-            cClient.close();
+            if(!id.equals(cliente.getDni())){
+                openClienteClient();
+                cClient.remove(id);
+                cClient.close();
+            }else{
+                JOptionPane.showMessageDialog(null,"No et pots eliminar a tu mateix/a","Alert !!",JOptionPane.WARNING_MESSAGE);
+            }
             fillClientsList();
         }
     }//GEN-LAST:event_jButtonDelClientActionPerformed

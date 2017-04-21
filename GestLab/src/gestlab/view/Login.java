@@ -3,6 +3,8 @@ package gestlab.view;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.UsuarioClientSsl;
 import gestlab.utils.GestlabConstants;
+import org.apache.commons.codec.binary.Base64;
+
 
 /**
  * Classe que representa l'interfície d'entrada al programa
@@ -193,7 +195,8 @@ public class Login extends javax.swing.JFrame {
         jLabelMessage.setText("");
         getData();
         if(checkPassword(passwd)){
-            if(checkData()){ 
+            String pass = encodePasswd(passwd);
+            if(checkData(login, pass)){ 
                 //Crear el token i afegir-lo a l'usuari ho hauria de fer el servidor
                 //L'app només hauria d'obtenir l'usuari amb totes les dades per passar-lo a la finestra principal
                 String token = uClient.getToken();
@@ -262,14 +265,16 @@ public class Login extends javax.swing.JFrame {
     /**
      * Mètode per comprovar les dades entrades per pantalla
      * @author manel bosch
+     * @param log login de l'usuari
+     * @param pass password de l'usuari codificat amb base64
      * @return true o false
      */
     // En teoria la comprovació es farà al servidor 
-    public boolean checkData(){
+    public boolean checkData(String log, String pass){
         boolean acces = false;
-        uClient = new UsuarioClientSsl(login, String.valueOf(passwd));
-        usuario = uClient.find_JSON(Usuario.class, login);
-        if(usuario != null && usuario.getContrasena().equals(String.valueOf(passwd))){
+        uClient = new UsuarioClientSsl(log, pass);
+        usuario = uClient.find_JSON(Usuario.class, log);
+        if(usuario != null && usuario.getContrasena().equals(pass)){
             acces = true;
         }
         return acces;
@@ -282,6 +287,17 @@ public class Login extends javax.swing.JFrame {
      */
     public Boolean checkPassword(char[] pass){
         return pass.length >= GestlabConstants.PASSWD_MIN_SIZE;
+    }
+    
+    /**
+     * Mètode per codificar el password de l'usuari
+     * @author manel bosch
+     * @param pass password a codificar
+     * @return String amb el password codificat
+     */
+    public String encodePasswd(char[] pass){
+        byte[]  bytesEncoded = Base64.encodeBase64(String.valueOf(pass).getBytes());
+        return new String(bytesEncoded);
     }
     
     /**
