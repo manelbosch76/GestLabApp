@@ -1,8 +1,6 @@
 
 package gestlab.view;
 
-//import gestlab.model.Producto;
-
 import gestlab.model.Producto;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.ProductoClientSsl;
@@ -15,8 +13,8 @@ import javax.swing.JOptionPane;
  */
 public class ProductDialog extends javax.swing.JDialog {
     
-    Producto producto;
-    Usuario usuario;
+    private Producto producto;
+    private final Usuario usuario;
     private ProductoClientSsl pClient;
 
     /**

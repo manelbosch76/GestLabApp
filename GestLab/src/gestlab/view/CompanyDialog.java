@@ -12,8 +12,8 @@ import javax.swing.JOptionPane;
  */
 public class CompanyDialog extends javax.swing.JDialog {
     
-    Empresa empresa;
-    Usuario usuario;
+    private Empresa empresa;
+    private final Usuario usuario;
     private EmpresaClientSsl eClient;
 
     /**
@@ -257,6 +257,7 @@ public class CompanyDialog extends javax.swing.JDialog {
     /**
      * Mètode per omplir els camps amb les dades de l'empresa passada com a paràmetre
      * @author manel bosch
+     * @param empresa 
      */
     private void fillCompanyData(Empresa empresa){
         jTextFieldNif.setText(empresa.getNif());

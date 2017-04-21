@@ -7,7 +7,6 @@ import java.io.Serializable;
  * Classe que reprsenta els clients
  * @author manel bosch
  */
-
 public class Cliente implements Serializable {
     
     private static final long serialVersionUID = 1L;

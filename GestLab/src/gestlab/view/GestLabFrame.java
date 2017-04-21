@@ -11,6 +11,7 @@ import gestlab.restfulclient.EquipoClientSsl;
 import gestlab.restfulclient.HistorialEquiposClientSsl;
 import gestlab.restfulclient.HistorialProductosClientSsl;
 import gestlab.restfulclient.ProductoClientSsl;
+import gestlab.utils.tables.MyTableRenderer;
 import gestlab.utils.tables.TableCreator;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -23,6 +24,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.RowFilter;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.table.TableColumn;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 import javax.ws.rs.NotFoundException;
@@ -43,7 +45,7 @@ public class GestLabFrame extends javax.swing.JFrame {
     private HistorialProductosClientSsl hpClient;
     private HistorialEquiposClientSsl heClient;
     
-    Cliente cliente;
+    private Cliente cliente;
     private List<Cliente> clientes;
     GenericType<List<Cliente>> gTypeClient = new GenericType<List<Cliente>>(){};
     
@@ -58,10 +60,10 @@ public class GestLabFrame extends javax.swing.JFrame {
     GenericType<List<HistorialEquipos>> gTypeHistorialEquip = new GenericType<List<HistorialEquipos>>(){};
     
     private final Date date = new Date(Calendar.getInstance().getTimeInMillis());//Data del dia actual
-    Date today = java.sql.Date.valueOf(date.toString());//Data del dia actual amb concepte temps a 0
+    private final Date today = java.sql.Date.valueOf(date.toString());//Data del dia actual amb concepte temps a 0
     
     private TableRowSorter<TableModel> rowSorter;
-    TableCreator tableCreator = new TableCreator();
+    private final TableCreator tableCreator = new TableCreator();
 
     /**
      * Crea un nou frame GestLabFrame
@@ -1157,7 +1159,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
-    //El mètode de cerca hauria d'existir en el servidor.
+    //El mètode de cerca hauria de ser una query en el servidor.
     private void jButtonSearchSurnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchSurnameActionPerformed
         if(jTextFieldSurname.getText().equals("Cognom") || jTextFieldSurname.getText().isEmpty()){
             fillClientsList();
@@ -1259,7 +1261,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
-    //El mètode de cerca hauria d'existir en el servidor.
+    //El mètode de cerca hauria de ser una query en el servidor.
     private void jButtonSearchProductNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchProductNameActionPerformed
         if(jTextFieldProduct.getText().equals("Nom Producte") || jTextFieldProduct.getText().isEmpty()){
             fillProductsList();
@@ -1416,7 +1418,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
-    //El mètode de cerca hauria d'existir en el servidor.
+    //El mètode de cerca hauria de ser una query en el servidor.
     private void jButtonSearchEquipNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSearchEquipNameActionPerformed
         jTableEquips.setRowSorter(null);
         if(jTextFieldEquip.getText().equals("Nom Equip")){
@@ -1739,6 +1741,7 @@ public class GestLabFrame extends javax.swing.JFrame {
         openProductoClient();
         productos = pClient.findAll_JSON(gTypeProduct);
         jTableProducts.setModel(tableCreator.createTableModel(Producto.class, productos));
+        checkProductStock();
         pClient.close();
     }
     
@@ -1749,6 +1752,7 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     public void fillProductsList(List l){
         jTableProducts.setModel(tableCreator.createTableModel(Producto.class, l));
+        checkProductStock();
     }
     
     /**
@@ -1758,6 +1762,16 @@ public class GestLabFrame extends javax.swing.JFrame {
      */
     public void fillHistorialProductos(List l){
         jTableProducts.setModel(tableCreator.createTableModel(HistorialProductos.class, l));
+    }
+    
+    /**
+     * Mètode per afegir el renderitzador de la taula a la columna de quantitat de producte
+     * @author manel bosch
+     */
+    public void checkProductStock(){
+            MyTableRenderer renderer = new MyTableRenderer();
+            TableColumn column = jTableProducts.getColumnModel().getColumn(4);
+            column.setCellRenderer(renderer);
     }
     
     

@@ -1,8 +1,8 @@
 package gestlab.view;
 
-
 import gestlab.model.Usuario;
 import gestlab.restfulclient.UsuarioClientSsl;
+import gestlab.utils.GestlabConstants;
 
 /**
  * Classe que representa l'interfície d'entrada al programa
@@ -14,7 +14,7 @@ public class Login extends javax.swing.JFrame {
     private char[] passwd;
 
     private Usuario usuario;
-    private UsuarioClientSsl client;
+    private UsuarioClientSsl uClient;
     
     private GestLabFrame gestlabFrame;
     
@@ -196,13 +196,12 @@ public class Login extends javax.swing.JFrame {
             if(checkData()){ 
                 //Crear el token i afegir-lo a l'usuari ho hauria de fer el servidor
                 //L'app només hauria d'obtenir l'usuari amb totes les dades per passar-lo a la finestra principal
-                String token = client.getToken();
+                String token = uClient.getToken();
                 usuario.setToken(token);
-                client.edit_JSON(usuario, login);
+                uClient.edit_JSON(usuario, login);
 
-                client.close();
+                uClient.close();
                 this.dispose();
-
                 gestlabFrame = new GestLabFrame(usuario);
                 gestlabFrame.setVisible(true);
             }else{
@@ -210,7 +209,7 @@ public class Login extends javax.swing.JFrame {
                 cleanFields();
             }
         }else{
-            jLabelMessage.setText("Password ha de ser de 5 caràcters mínim");
+            jLabelMessage.setText("Password ha de ser de "+ GestlabConstants.PASSWD_MIN_SIZE +" caràcters mínim");
             cleanFields();
         }
         
@@ -231,8 +230,8 @@ public class Login extends javax.swing.JFrame {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
-        if (client != null){
-            client.close();
+        if (uClient != null){
+            uClient.close();
         }
         this.dispose();
     }//GEN-LAST:event_jButtonCancelActionPerformed
@@ -268,8 +267,8 @@ public class Login extends javax.swing.JFrame {
     // En teoria la comprovació es farà al servidor 
     public boolean checkData(){
         boolean acces = false;
-        client = new UsuarioClientSsl(login, String.valueOf(passwd));
-        usuario = client.find_JSON(Usuario.class, login);
+        uClient = new UsuarioClientSsl(login, String.valueOf(passwd));
+        usuario = uClient.find_JSON(Usuario.class, login);
         if(usuario != null && usuario.getContrasena().equals(String.valueOf(passwd))){
             acces = true;
         }
@@ -277,12 +276,12 @@ public class Login extends javax.swing.JFrame {
     }
     
     /**
-     * mètode per comprovar si el password entrat té més de 8 caràcters
+     * Mètode per comprovar si el password entrat té més de 8 caràcters
      * @param pass Password entrat
      * @return true o false
      */
     public Boolean checkPassword(char[] pass){
-        return pass.length>=5;
+        return pass.length >= GestlabConstants.PASSWD_MIN_SIZE;
     }
     
     /**

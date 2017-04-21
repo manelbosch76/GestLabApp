@@ -3,11 +3,12 @@ package gestlab.view;
 
 import gestlab.model.Usuario;
 import gestlab.restfulclient.UsuarioClientSsl;
+import gestlab.utils.GestlabConstants;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
 
 /**
- * Classe que gestiona la finestra d'entrada/modificació de dades d'una empresa
+ * Classe que gestiona la finestra d'entrada/modificació del password de l'usuari
  * @author manel bosch
  */
 public class PasswordDialog extends javax.swing.JDialog {
@@ -189,6 +190,7 @@ public class PasswordDialog extends javax.swing.JDialog {
 
     /**
      * Mètode per guardar les noves dades
+     * @author manel bosch
      * @param evt Event que es produeix en prémer el botó
      */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
@@ -255,6 +257,6 @@ public class PasswordDialog extends javax.swing.JDialog {
         return String.valueOf(jPasswordFieldOld.getPassword()).equals(usuario.getContrasena())
                 && !Arrays.equals(jPasswordFieldOld.getPassword(), jPasswordFieldNew.getPassword())
                 && Arrays.equals(jPasswordFieldNew.getPassword(), jPasswordFieldNew2.getPassword())
-                && jPasswordFieldNew.getPassword().length>=5;
+                && jPasswordFieldNew.getPassword().length >= GestlabConstants.PASSWD_MIN_SIZE;
     }
 }

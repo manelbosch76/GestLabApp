@@ -1,8 +1,6 @@
 
 package gestlab.view;
 
-//import gestlab.model.Equipo;
-
 import gestlab.model.Equipo;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.EquipoClientSsl;
@@ -15,8 +13,8 @@ import javax.swing.JOptionPane;
  */
 public class EquipDialog extends javax.swing.JDialog {
     
-    Equipo equipo;
-    Usuario usuario;
+    private Equipo equipo;
+    private final Usuario usuario;
     private EquipoClientSsl eqClient;
 
     /**
@@ -36,6 +34,7 @@ public class EquipDialog extends javax.swing.JDialog {
     
     /**
      * Crea un nou formulari per modificar dades d'un equip passat per paràmetre
+     * @author manel bosch
      * @param parent finestra mare
      * @param modal manté el focus fins a tancar la finestra
      * @param usuario usuari que està connectat al programa
@@ -358,6 +357,7 @@ public class EquipDialog extends javax.swing.JDialog {
     
     /**
      * Mètode per saber si tots els camps necessaris estan plens
+     * @author manel bosch
      * @return true o false
      */
     private boolean checkFilledFields(){

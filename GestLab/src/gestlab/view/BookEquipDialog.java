@@ -20,9 +20,9 @@ import javax.swing.JOptionPane;
  */
 public class BookEquipDialog extends javax.swing.JDialog {
     
-    Equipo equipo;
-    Usuario usuario;
-    Cliente cliente;
+    private final Equipo equipo;
+    private final Usuario usuario;
+    private final Cliente cliente;
     
     private HistorialEquiposClientSsl heClient;
     private EquipoClientSsl eqClient;
@@ -70,6 +70,7 @@ public class BookEquipDialog extends javax.swing.JDialog {
         jTextFieldBeginingDate = new javax.swing.JTextField();
         jLabelEndDate = new javax.swing.JLabel();
         jTextFieldEndDate = new javax.swing.JTextField();
+        jLabelDateFormat = new javax.swing.JLabel();
         jPanelBotons = new javax.swing.JPanel();
         jButtonSave = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
@@ -87,21 +88,26 @@ public class BookEquipDialog extends javax.swing.JDialog {
 
         jLabelEndDate.setText("Data fi:");
 
+        jLabelDateFormat.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
+        jLabelDateFormat.setText("(aaaa-mm-dd)");
+
         javax.swing.GroupLayout jPanelDadesProducteLayout = new javax.swing.GroupLayout(jPanelDadesProducte);
         jPanelDadesProducte.setLayout(jPanelDadesProducteLayout);
         jPanelDadesProducteLayout.setHorizontalGroup(
             jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelDadesProducteLayout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelDadesProducteLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabelEquipName)
                     .addComponent(jLabelBeginingDate)
                     .addComponent(jLabelEndDate))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
-                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jTextFieldEndDate, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
-                    .addComponent(jTextFieldBeginingDate)
-                    .addComponent(jTextFieldEquip))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabelDateFormat)
+                    .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jTextFieldEndDate, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
+                        .addComponent(jTextFieldBeginingDate)
+                        .addComponent(jTextFieldEquip)))
                 .addContainerGap())
         );
         jPanelDadesProducteLayout.setVerticalGroup(
@@ -115,7 +121,9 @@ public class BookEquipDialog extends javax.swing.JDialog {
                 .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextFieldBeginingDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelBeginingDate))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabelDateFormat)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabelEndDate)
                     .addComponent(jTextFieldEndDate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -143,7 +151,7 @@ public class BookEquipDialog extends javax.swing.JDialog {
             .addGroup(jPanelBotonsLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jButtonSave)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 104, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 113, Short.MAX_VALUE)
                 .addComponent(jButtonCancel)
                 .addContainerGap())
         );
@@ -203,12 +211,18 @@ public class BookEquipDialog extends javax.swing.JDialog {
         if(checkDates()){
             he.setInicioAlquiler(begining);
             he.setFinalAlquiler(end);
-            int done = heClient.create_JSON(he);
-            if(done == 200 || done == 204){
+            int doneReserva = heClient.create_JSON(he);
+            if(doneReserva == 200 || doneReserva == 204){
                 equipo.setEstadoAlquiler(he.isBookedNow(begining, end));
-                eqClient.edit_JSON(equipo, String.valueOf(equipo.getId()));
+                int doneEquipo = eqClient.edit_JSON(equipo, String.valueOf(equipo.getId()));
+                if(doneEquipo == 200 || doneEquipo == 204){
+                    this.dispose();
+                }else{
+                    JOptionPane.showMessageDialog(null,"No s'ha pogut modificar l'estat de disponibilitat de l'equip","Alert !!",JOptionPane.WARNING_MESSAGE);
+                }
+            }else{
+                JOptionPane.showMessageDialog(null,"No s'ha pogut fer la reserva","Alert !!",JOptionPane.WARNING_MESSAGE);
             }
-            this.dispose(); 
         }else{
             JOptionPane.showMessageDialog(null,"No s'ha pogut fer la reserva","Alert !!",JOptionPane.WARNING_MESSAGE);
         }
@@ -229,6 +243,7 @@ public class BookEquipDialog extends javax.swing.JDialog {
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonSave;
     private javax.swing.JLabel jLabelBeginingDate;
+    private javax.swing.JLabel jLabelDateFormat;
     private javax.swing.JLabel jLabelEndDate;
     private javax.swing.JLabel jLabelEquipName;
     private javax.swing.JLabel jLabelTitol;

@@ -1,6 +1,5 @@
 package gestlab;
 
-import gestlab.model.Usuario;
 import gestlab.view.GestLabFrame;
 import gestlab.view.Login;
 
@@ -12,7 +11,6 @@ public class GestLab {
     
     public static GestLabFrame gestlabFrame;
     public static Login login;
-    public static Usuario usuario;
 
     /**
      * Mètode principal

@@ -4,7 +4,7 @@ package gestlab.utils.tables;
 import java.util.List;
 
 /**
- * Classe que permet crear les diferents taules a mostrar a la interfície
+ * Classe que permet crear les diferents taules a mostrar a la interfície del programa
  * @author manel bosch
  */
 public class TableCreator {
@@ -18,7 +18,7 @@ public class TableCreator {
     private static final String[] EQUIPSBOOKEDHEADERS = {"ID_Equip","ID_Reserva","Nom","Num_Inventari","Inici_Lloguer","Fi_Lloguer"};
     
     /**
-     * Crea una Taula model amb la llista de tots els usuaris a la base de dades
+     * Crea una Taula model amb la llista dels objectes passada com a paràmetre
      * @author manel bosch
      * @param objectClass tipus de classe sobre la que fer la taula
      * @param l lista d'objectes a afegir a la taula
@@ -39,7 +39,7 @@ public class TableCreator {
     }
     
     /**
-     * Mètode per obtenir les capçaleres en funció de la classe a mostrar
+     * Mètode per obtenir les capçaleres de la taula en funció de la classe a mostrar
      * @author manel bosch
      * @param name nom simple de la classe a mostrar
      * @return array amb els noms de les columnes

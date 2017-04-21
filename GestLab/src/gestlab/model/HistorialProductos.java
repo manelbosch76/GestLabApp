@@ -1,18 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gestlab.model;
 
 import java.io.Serializable;
 import java.sql.Date;
 
 /**
- *
- * @author manel
+ * Classe que representa la compra d'un producte per part d'un client
+ * @author manel bosch
  */
-
 public class HistorialProductos implements Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -27,55 +22,121 @@ public class HistorialProductos implements Serializable {
     
     private Cliente idcliente;
 
+    /**
+     * Constructor per defecte
+     * @author manel bosch
+     */
     public HistorialProductos() {
     }
 
+    /**
+     * Constructor entrant id de la compra
+     * @author manel bosch
+     * @param id de la compra
+     */
     public HistorialProductos(Integer id) {
         this.id = id;
     }
 
+    /**
+     * Constructor entrant totes les dades de la compra com a paràmetre
+     * @author manel bosch
+     * @param id identificador de la compra
+     * @param fechaCompra data de la compra
+     * @param cantidad quantita comprada
+     */
     public HistorialProductos(Integer id, Date fechaCompra, float cantidad) {
         this.id = id;
         this.fechaCompra = fechaCompra;
         this.cantidad = cantidad;
     }
 
+    /**
+     * Obté l'identificador de la compra
+     * @author manel bosch
+     * @return identificador de la compra
+     */
     public Integer getId() {
         return id;
     }
 
+    /**
+     * Entra l'identificador de la compra
+     * @author manel bosch
+     * @param id identificador de la compra
+     */
     public void setId(Integer id) {
         this.id = id;
     }
 
+    /**
+     * Obté la data de la compra
+     * @author manel bosch
+     * @return Date de la compra
+     */
     public Date getFechaCompra() {
         return fechaCompra;
     }
 
+    /**
+     * Entra la data de la compra
+     * @author manel bosch
+     * @param fechaCompra Date de la compra
+     */
     public void setFechaCompra(Date fechaCompra) {
         this.fechaCompra = fechaCompra;
     }
 
+    /**
+     * Obté la quantitat comprada
+     * @author manel bosch
+     * @return float amb la quantitat comprada
+     */
     public float getCantidad() {
         return cantidad;
     }
 
+    /**
+     * Entra la quantitat comprada
+     * @author manel bosch
+     * @param cantidad float amb la quantitat comprada
+     */
     public void setCantidad(float cantidad) {
         this.cantidad = cantidad;
     }
 
+    /**
+     * Obté el producte comprat
+     * @author manel bosch
+     * @return Producto comprat
+     */
     public Producto getIdproducto() {
         return idproducto;
     }
 
+    /**
+     * Entra el producte comprat
+     * @author manel bosch
+     * @param idproducto Producto comprat
+     */
     public void setIdproducto(Producto idproducto) {
         this.idproducto = idproducto;
     }
 
+    /**
+     * Obté el client que fa la compra
+     * @author manel bosch
+     * @return Cliente que compra
+     */
     public Cliente getIdcliente() {
         return idcliente;
     }
 
+    /**
+     * Obté el client que fa la compra
+     * @author manel bosch
+     * @param idcliente Cliente que compra
+     */
     public void setIdcliente(Cliente idcliente) {
         this.idcliente = idcliente;
     }

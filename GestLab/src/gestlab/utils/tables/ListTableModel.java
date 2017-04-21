@@ -10,11 +10,6 @@ import gestlab.model.Producto;
 import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
-/**
- * Classe que estableix com seran les taules model a mostrar en la interfície
- * @author manel bosch
- */
-   
  /**
  * Classe que estableix com seran les taules model a mostrar en la interfície 
  * independentment de l'element a mostrar
@@ -155,7 +150,7 @@ public class ListTableModel <T> extends DefaultTableModel {
     /**
      * Mètode per convertir un booleà en text que indiqui Si o No
      * @param b booleà
-     * @return Si o No essent Si que està llogat i no que està disponible
+     * @return Si o No essent Si que està reservat i No que està disponible
      */
     private String isRented(Boolean b){
         if(b == true ){

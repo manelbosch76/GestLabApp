@@ -71,18 +71,21 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" attributes="0">
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Component id="jLabelEquipName" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabelBeginingDate" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabelEndDate" alignment="0" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="25" max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                      <Component id="jTextFieldEndDate" pref="177" max="32767" attributes="0"/>
-                      <Component id="jTextFieldBeginingDate" alignment="0" max="32767" attributes="0"/>
-                      <Component id="jTextFieldEquip" alignment="0" max="32767" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <Component id="jLabelDateFormat" min="-2" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="jTextFieldEndDate" pref="177" max="32767" attributes="0"/>
+                          <Component id="jTextFieldBeginingDate" alignment="0" max="32767" attributes="0"/>
+                          <Component id="jTextFieldEquip" alignment="0" max="32767" attributes="0"/>
+                      </Group>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -101,7 +104,9 @@
                       <Component id="jTextFieldBeginingDate" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabelBeginingDate" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="jLabelDateFormat" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="jLabelEndDate" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jTextFieldEndDate" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -133,6 +138,14 @@
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldEndDate">
         </Component>
+        <Component class="javax.swing.JLabel" name="jLabelDateFormat">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Ubuntu" size="12" style="0"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="(aaaa-mm-dd)"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="jPanelBotons">
@@ -143,7 +156,7 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Component id="jButtonSave" linkSize="2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="104" max="32767" attributes="0"/>
+                  <EmptySpace pref="113" max="32767" attributes="0"/>
                   <Component id="jButtonCancel" linkSize="2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>

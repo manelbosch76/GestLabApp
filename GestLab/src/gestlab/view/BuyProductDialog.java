@@ -18,14 +18,14 @@ import javax.swing.JOptionPane;
  */
 public class BuyProductDialog extends javax.swing.JDialog {
     
-    Producto producto;
-    Usuario usuario;
-    Cliente cliente;
+    private final Producto producto;
+    private final Usuario usuario;
+    private final Cliente cliente;
     
     private HistorialProductosClientSsl hpClient;
     private ProductoClientSsl pClient;
     
-    Date date = new Date(Calendar.getInstance().getTimeInMillis());//Data del dia actual
+    private final Date date = new Date(Calendar.getInstance().getTimeInMillis());//Data del dia actual
 
     /**
      * Crea una finestra per comprar un nou producte

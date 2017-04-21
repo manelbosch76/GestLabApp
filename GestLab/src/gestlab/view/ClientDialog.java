@@ -10,13 +10,12 @@ import gestlab.restfulclient.UsuarioClientSsl;
 import gestlab.utils.tables.TableCreator;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.ws.rs.core.GenericType;
 
 /**
- * Classe que gestiona la finestra d'entrada/modificació de dades d'un usuari
+ * Classe que gestiona la finestra d'entrada/modificació de dades d'un client
  * @author manel bosch
  */
 public class ClientDialog extends javax.swing.JDialog {
@@ -32,7 +31,7 @@ public class ClientDialog extends javax.swing.JDialog {
     private UsuarioClientSsl uClient;
     private EmpresaClientSsl eClient;
 
-    TableCreator tableCreator = new TableCreator();
+    private final TableCreator tableCreator = new TableCreator();
 
     /**
      * Crea un nou formulari per entrar dades d'un nou usuari
@@ -454,24 +453,16 @@ public class ClientDialog extends javax.swing.JDialog {
                 c = getClientData();
                 e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
                 c.setIdempresa(e);
-                //e.getClienteCollection().add(c);
                 jTextFieldLogin.setText(jTextFieldDni.getText());
                 u = getUserData();
                 cClient.create_JSON(c);
                 uClient.create_JSON(u);
-                //eClient.edit_JSON(e, jTextFieldNif.getText());
             }else{
                 cliente = getClientData();
                 e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
                 cliente.setIdempresa(e);
                 String id = cliente.getDni();
                 cClient.edit_JSON(cliente, id);
-                /*Inserció del client a la llista de clietns que té l'empresa
-                if(!existClientInCompany(e)){
-                    e.getClienteCollection().add(cliente);
-                    eClient.edit_JSON(e, jTextFieldNif.getText());
-                }
-                */
                 u = uClient.find_JSON(Usuario.class, id);
                 if(u.getAdministrador() != jCheckBoxAdmin.isSelected()){ //Comprovo si se li ha canviat la condició d'administrador
                     u.setAdministrador(jCheckBoxAdmin.isSelected());
@@ -764,26 +755,5 @@ public class ClientDialog extends javax.swing.JDialog {
                 ||jTextFieldNomEmpresa.getText().equals("")
                 ||jTextFieldAdreca.getText().equals(""));
     }
-    
-    /**
-     * Mètode per comprovar si un client ja existeix a la llista de clients d'una empresa
-     * Si la llista no existeix la inicialitza
-     * @param e Empresa a mirar
-     * @return true o false
-     */
-    private boolean existClientInCompany(Empresa e){
-        boolean exists = false;
-        List<Cliente> clientesEmpresa = (List<Cliente>) e.getClienteCollection();
-        if(clientesEmpresa != null && !clientesEmpresa.isEmpty()){
-            for(Cliente c: clientesEmpresa){
-                if(c.getDni().equals(cliente.getDni())){
-                    exists = true;
-                }
-            }
-        }else if(clientesEmpresa == null){
-            clientesEmpresa = new ArrayList<>();
-            e.setClienteCollection(clientesEmpresa);
-        }
-        return exists;
-    }
+
 }

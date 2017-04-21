@@ -9,7 +9,6 @@ import javax.xml.bind.annotation.XmlTransient;
  * Classe que representa les empreses
  * @author manel bosch
  */
-
 public class Empresa implements Serializable {
     
     private static final long serialVersionUID = 1L;
@@ -116,7 +115,7 @@ public class Empresa implements Serializable {
     }
 
     /**
-     * Entra la llista de clients registrat que pertanyen a l'empresa
+     * Entra la llista de clients registrats que pertanyen a l'empresa
      * @author manel bosch
      * @param clienteCollection llista de clients de l'empresa
      */

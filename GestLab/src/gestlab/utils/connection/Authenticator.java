@@ -18,6 +18,12 @@ public class Authenticator implements ClientRequestFilter {
     private final String user;
     private final String password;
 
+    /**
+     * Constructor amb les dades d'autenticació
+     * @author manel bosch
+     * @param user dni de l'usuari
+     * @param password password de l'usuari
+     */
     public Authenticator(String user, String password) {
         this.user = user;
         this.password = password;
