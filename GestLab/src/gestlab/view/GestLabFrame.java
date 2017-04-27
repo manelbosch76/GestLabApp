@@ -377,7 +377,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                     .addComponent(jButtonCancelModifProfile))
                 .addGap(18, 18, 18)
                 .addComponent(jButtonChangePasswd)
-                .addContainerGap(109, Short.MAX_VALUE))
+                .addContainerGap(133, Short.MAX_VALUE))
         );
 
         jTabbedPaneMain.addTab("Perfil", jPanelPerfil);
@@ -520,7 +520,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                     .addComponent(jPanelAdminUser, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanelUserSearch, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPaneUsers, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                .addComponent(jScrollPaneUsers, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -714,7 +714,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                     .addComponent(jPanelProductSearch, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanelProductGlobal, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPaneProducts, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                .addComponent(jScrollPaneProducts, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -851,14 +851,14 @@ public class GestLabFrame extends javax.swing.JFrame {
             }
         });
 
-        jButtonBook.setText("Reservar equip");
+        jButtonBook.setText("Reservar Equip");
         jButtonBook.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonBookActionPerformed(evt);
             }
         });
 
-        jButtonDelbooking.setText("Eliminar reserva");
+        jButtonDelbooking.setText("Eliminar Reserva");
         jButtonDelbooking.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonDelbookingActionPerformed(evt);
@@ -924,7 +924,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                         .addComponent(jPanelProductBotons1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(jPanelEquipSearch, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPaneEquips, javax.swing.GroupLayout.DEFAULT_SIZE, 338, Short.MAX_VALUE)
+                .addComponent(jScrollPaneEquips, javax.swing.GroupLayout.DEFAULT_SIZE, 362, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -941,10 +941,7 @@ public class GestLabFrame extends javax.swing.JFrame {
         );
         jPanelMainLayout.setVerticalGroup(
             jPanelMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanelMainLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jTabbedPaneMain)
-                .addContainerGap())
+            .addComponent(jTabbedPaneMain, javax.swing.GroupLayout.Alignment.TRAILING)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -1299,18 +1296,31 @@ public class GestLabFrame extends javax.swing.JFrame {
  
     /**
      * Mètode per buscar tots els productes consumits pel client
+     * En cas de ser administrador es llistaran pel client seleccionat
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
     //El mètode hauria de cridar a una consulta específica que retornés només l'historial del client. 
     //A implementar en el sevidor
     private void jButtonProductsUsedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonProductsUsedActionPerformed
+        Cliente c = null;
+        List<HistorialProductos> consumedProducts = new ArrayList<>();
         openHistorialProductosClient();
         hProductos = hpClient.findAll_JSON(gTypeHistorialProduct);
-        List<HistorialProductos> consumedProducts = new ArrayList<>();
-        for(HistorialProductos hp: hProductos){
-            if(hp.getIdcliente().equals(cliente)){
-                consumedProducts.add(hp);
+        if(usuario.getAdministrador()){
+            c = askForClient();
+            if(c != null){
+                for(HistorialProductos hp: hProductos){
+                    if(hp.getIdcliente().equals(c)){
+                        consumedProducts.add(hp);
+                    }
+                }
+            }
+        }else{
+            for(HistorialProductos hp: hProductos){
+                if(hp.getIdcliente().equals(cliente)){
+                    consumedProducts.add(hp);
+                }
             }
         }
         fillHistorialProductos(consumedProducts);
@@ -1456,15 +1466,28 @@ public class GestLabFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonEquipIdActionPerformed
 
     /**
-     * Mètode per mostrar la llista d'equips reservats pel client
+     * Mètode per mostrar la llista d'equips reservats pel client 
+     * En cas de ser administrador es llistaran pel client seleccionat
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
     private void jButtonEquipsUsedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEquipsUsedActionPerformed
+        Cliente c = null;
         List<HistorialEquipos> rentedEquips = new ArrayList<>();
-        for(HistorialEquipos he: hEquipos){
-            if(he.getIdcliente().equals(cliente)){
-                rentedEquips.add(he);
+        if(usuario.getAdministrador()){
+            c = askForClient();
+            if(c != null){
+                for(HistorialEquipos he: hEquipos){
+                    if(he.getIdcliente().equals(c)){
+                        rentedEquips.add(he);
+                    }
+                }
+            }
+        }else{
+            for(HistorialEquipos he: hEquipos){
+                if(he.getIdcliente().equals(cliente)){
+                        rentedEquips.add(he);
+                    }
             }
         }
         fillHistorialEquipos(rentedEquips);
@@ -1565,24 +1588,29 @@ public class GestLabFrame extends javax.swing.JFrame {
 
     /**
      * Mètode per eliminar una reserva d'un equip
+     * Només és viable si l'usuari és administrador
      * @author manel bosch
      * @param evt Event que representa prémer el botó
      */
     private void jButtonDelbookingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDelbookingActionPerformed
-        if(jTableEquips.getSelectedRowCount()==0){
-            JOptionPane.showMessageDialog(null,"Selecciona una reserva a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
-        }else{
-            int row = jTableEquips.getSelectedRow();
-            String id = String.valueOf(jTableEquips.getModel().getValueAt(row,1));
-            openHistorialEquiposClient();
-            try{
-                HistorialEquipos he = heClient.find_JSON(HistorialEquipos.class, id);
-                heClient.remove(id);
-            }catch(NotFoundException e){
-                JOptionPane.showMessageDialog(null,"La fila seleccionada no és una reserva","Alert !!",JOptionPane.WARNING_MESSAGE);
+        if(usuario.getAdministrador()){
+            if(jTableEquips.getSelectedRowCount()==0){
+                JOptionPane.showMessageDialog(null,"Selecciona una reserva a eliminar","Alert !!",JOptionPane.WARNING_MESSAGE);
+            }else{
+                int row = jTableEquips.getSelectedRow();
+                String id = String.valueOf(jTableEquips.getModel().getValueAt(row,1));
+                openHistorialEquiposClient();
+                try{
+                    HistorialEquipos he = heClient.find_JSON(HistorialEquipos.class, id);
+                    heClient.remove(id);
+                }catch(NotFoundException e){
+                    JOptionPane.showMessageDialog(null,"La fila seleccionada no és una reserva","Alert !!",JOptionPane.WARNING_MESSAGE);
+                }
+                heClient.close();
+                fillEquipsList();
             }
-            heClient.close();
-            fillEquipsList();
+        }else{
+            JOptionPane.showMessageDialog(null,"Només un administrador pot eliminar una reserva","Alert !!",JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jButtonDelbookingActionPerformed
 
@@ -1841,5 +1869,25 @@ public class GestLabFrame extends javax.swing.JFrame {
         equipos = eqClient.findAll_JSON(gTypeEquip);
         eqClient.close();
         heClient.close();
+    }
+    
+    /**
+     * Mètode per seleccionar un client de la base de dades del qual es vol veure l'historial
+     * de productes consumits o equips reservats
+     * @author manel bosch
+     * @return Cliente
+     */
+    public Cliente askForClient(){
+        Cliente c = null;
+        if(jTableClients.getSelectedRowCount()==0){
+            JOptionPane.showMessageDialog(null,"Selecciona un client de la pestanya clients per mostrar el seu historial","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }else{
+            int row = jTableClients.getSelectedRow();
+            String idClient = (String) jTableClients.getModel().getValueAt(row,0);
+            openClienteClient();
+            c = cClient.find_JSON(Cliente.class, idClient);
+            cClient.close();
+        }
+        return c;
     }
 }
