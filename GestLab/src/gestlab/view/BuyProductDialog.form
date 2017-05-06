@@ -146,6 +146,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="jTextFieldQuantity">
+          <Properties>
+            <Property name="name" type="java.lang.String" value="quantityText" noResource="true"/>
+          </Properties>
         </Component>
       </SubComponents>
     </Container>

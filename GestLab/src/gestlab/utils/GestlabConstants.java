@@ -19,6 +19,7 @@ public class GestlabConstants {
     
     //Constant per controlar el número de caràcters mínim que ha de tenir el password
     public static final int PASSWD_MIN_SIZE = 5;// A la realitat serien més
+    public static final int LOGIN_MIN_SIZE = 9;
     
     //Constant per controlar la quantitat mínima d'stock d'un producte
     public static final float MIN_STOCK = 100;

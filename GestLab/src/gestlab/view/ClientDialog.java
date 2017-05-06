@@ -7,12 +7,14 @@ import gestlab.model.Usuario;
 import gestlab.restfulclient.ClienteClientSsl;
 import gestlab.restfulclient.EmpresaClientSsl;
 import gestlab.restfulclient.UsuarioClientSsl;
+import gestlab.utils.GestlabConstants;
 import gestlab.utils.tables.TableCreator;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.ws.rs.core.GenericType;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Classe que gestiona la finestra d'entrada/modificació de dades d'un client
@@ -24,7 +26,7 @@ public class ClientDialog extends javax.swing.JDialog {
     private Cliente cliente;
     private Empresa empresa;
     private List<Empresa> empreses;
-    GenericType<List<Empresa>> gTypeUser = new GenericType<List<Empresa>>(){};
+    GenericType<List<Empresa>> gTypeCompany = new GenericType<List<Empresa>>(){};
     Boolean newClient = false;
     
     private ClienteClientSsl cClient;
@@ -44,7 +46,7 @@ public class ClientDialog extends javax.swing.JDialog {
         super(parent, modal);
         this.usuario = usuario;
         initClients();
-        empreses = eClient.findAll_JSON(gTypeUser);
+        empreses = eClient.findAll_JSON(gTypeCompany);
         initComponents();
         newClient = true;
         isNew();
@@ -63,7 +65,7 @@ public class ClientDialog extends javax.swing.JDialog {
         super(parent, modal);
         this.usuario = usuario;
         initClients();
-        empreses = eClient.findAll_JSON(gTypeUser);
+        empreses = eClient.findAll_JSON(gTypeCompany);
         initComponents();
         isNew();
         this.cliente = cliente;
@@ -148,6 +150,8 @@ public class ClientDialog extends javax.swing.JDialog {
         jLabelCognom1.setText("Primer cognom:");
 
         jLabelCognom2.setText("Segon cognom:");
+
+        jTextFieldCognom2.setText(" ");
 
         jLabelMail.setText("email:");
 
@@ -448,32 +452,53 @@ public class ClientDialog extends javax.swing.JDialog {
      */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         Cliente c; Usuario u; Empresa e;
+        int done = 0;
         if(checkFilledFields() && checkCompanyFields()){
             if(newClient){
                 c = getClientData();
-                e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
-                c.setIdempresa(e);
-                jTextFieldLogin.setText(jTextFieldDni.getText());
-                u = getUserData();
-                cClient.create_JSON(c);
-                uClient.create_JSON(u);
+                if(c != null){
+                    e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
+                    c.setIdempresa(e);
+                    jTextFieldLogin.setText(jTextFieldDni.getText());
+                    u = getUserData();
+                    if(u != null){
+                        done = cClient.create_JSON(c);
+                        if(done == 200 || done == 204){
+                            done = uClient.create_JSON(u);
+                        }
+                    }else{
+                        JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris correctament","Alert !!",JOptionPane.WARNING_MESSAGE);
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris correctament","Alert !!",JOptionPane.WARNING_MESSAGE);
+                }
             }else{
                 cliente = getClientData();
-                e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
-                cliente.setIdempresa(e);
-                String id = cliente.getDni();
-                cClient.edit_JSON(cliente, id);
-                u = uClient.find_JSON(Usuario.class, id);
-                if(u.getAdministrador() != jCheckBoxAdmin.isSelected()){ //Comprovo si se li ha canviat la condició d'administrador
-                    u.setAdministrador(jCheckBoxAdmin.isSelected());
-                    uClient.edit_JSON(u, id);
+                if(cliente != null){
+                    e = eClient.find_JSON(Empresa.class, jTextFieldNif.getText());
+                    cliente.setIdempresa(e);
+                    String id = cliente.getDni();
+                    done = cClient.edit_JSON(cliente, id);
+                    if(done == 200 || done == 204){
+                        u = uClient.find_JSON(Usuario.class, id);
+                        if(u.getAdministrador() != jCheckBoxAdmin.isSelected()){ //Comprovo si se li ha canviat la condició d'administrador
+                            u.setAdministrador(jCheckBoxAdmin.isSelected());
+                            done = uClient.edit_JSON(u, id);
+                        }
+                    }
+                }else{
+                    JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris correctament","Alert !!",JOptionPane.WARNING_MESSAGE);
                 }
             }
         }else{
-            JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris","Alert !!",JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris correctament","Alert !!",JOptionPane.WARNING_MESSAGE);
         }
-        closeClients();
-        this.dispose(); 
+        if(done == 200 || done == 204){
+            closeClients();
+            this.dispose();
+        }else{
+            JOptionPane.showMessageDialog(null,"No s'ha pogut realitzar l'ordre","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     /**
@@ -630,7 +655,7 @@ public class ClientDialog extends javax.swing.JDialog {
      * @author manel bosch
      */
     private void fillCompanyTable(){
-        empreses = eClient.findAll_JSON(gTypeUser);
+        empreses = eClient.findAll_JSON(gTypeCompany);
         jTableCompanies.setModel(tableCreator.createTableModel(Empresa.class, empreses));
     }
     
@@ -677,7 +702,6 @@ public class ClientDialog extends javax.swing.JDialog {
             c.setTelefono(jTextFieldTelf.getText());
             return c;
         }else{
-            JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris","Alert !!",JOptionPane.WARNING_MESSAGE);
             return null;
         }
     }
@@ -690,11 +714,10 @@ public class ClientDialog extends javax.swing.JDialog {
     private Usuario getUserData(){
         if(checkFilledFields()){
             Usuario u = new Usuario(jTextFieldDni.getText());
-            u.setContrasena(String.valueOf(jPasswordField1.getPassword()));//Falta encriptació
+            u.setContrasena(encodePasswd(jPasswordField1.getPassword()));
             u.setAdministrador(jCheckBoxAdmin.isSelected());
             return u;
         }else{
-            JOptionPane.showMessageDialog(null,"Omplir tots els camps obligatoris","Alert !!",JOptionPane.WARNING_MESSAGE);
             return null;
         }
     }
@@ -731,16 +754,16 @@ public class ClientDialog extends javax.swing.JDialog {
     private boolean checkFilledFields(){
         if(newClient){
             return !(jTextFieldDni.getText().equals("")
+                    ||jTextFieldDni.getText().length() != GestlabConstants.LOGIN_MIN_SIZE
                     ||jTextFieldNom.getText().equals("")
                     ||jTextFieldCognom1.getText().equals("")
-                    ||jTextFieldMail.getText().equals("")
+                    ||!checkMail(jTextFieldMail.getText())
                     ||jTextFieldTelf.getText().equals("")
-                    ||jPasswordField1.getPassword().length<5);
-        }else{//Si el client no és nou no es comproven els camps login ni passwd
-            return !(jTextFieldDni.getText().equals("")
-                    ||jTextFieldNom.getText().equals("")
+                    ||jPasswordField1.getPassword().length < GestlabConstants.PASSWD_MIN_SIZE);
+        }else{//Si el client no és nou no es comproven els camps dni, login ni passwd
+            return !(jTextFieldNom.getText().equals("")
                     ||jTextFieldCognom1.getText().equals("")
-                    ||jTextFieldMail.getText().equals("")
+                    ||!checkMail(jTextFieldMail.getText())
                     ||jTextFieldTelf.getText().equals(""));
         }
     }
@@ -756,4 +779,24 @@ public class ClientDialog extends javax.swing.JDialog {
                 ||jTextFieldAdreca.getText().equals(""));
     }
 
+    /**
+     * Mètode per comprovar que el camp e-mail pugui ser un email correcte
+     * @author manel bosch
+     * @param mail String entrat per text
+     * @return true o false
+     */
+    private boolean checkMail(String mail){
+        return mail.contains("@") && jTextFieldMail.getText().length() > 5;
+    }
+    
+    /**
+     * Mètode per codificar el password de l'usuari
+     * @author manel bosch
+     * @param pass password a codificar
+     * @return String amb el password codificat
+     */
+    public String encodePasswd(char[] pass){
+        byte[]  bytesEncoded = Base64.encodeBase64(String.valueOf(pass).getBytes());
+        return new String(bytesEncoded);
+    }
 }

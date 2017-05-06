@@ -84,6 +84,8 @@ public class BuyProductDialog extends javax.swing.JDialog {
 
         jLabelQuantity.setText("Quantitat:");
 
+        jTextFieldQuantity.setName("quantityText"); // NOI18N
+
         javax.swing.GroupLayout jPanelDadesProducteLayout = new javax.swing.GroupLayout(jPanelDadesProducte);
         jPanelDadesProducte.setLayout(jPanelDadesProducteLayout);
         jPanelDadesProducteLayout.setHorizontalGroup(
@@ -91,15 +93,11 @@ public class BuyProductDialog extends javax.swing.JDialog {
             .addGroup(jPanelDadesProducteLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanelDadesProducteLayout.createSequentialGroup()
-                        .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabelProductName)
-                            .addComponent(jLabelDate)
-                            .addComponent(jLabelUnits))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(jPanelDadesProducteLayout.createSequentialGroup()
-                        .addComponent(jLabelQuantity)
-                        .addGap(20, 20, 20)))
+                    .addComponent(jLabelProductName)
+                    .addComponent(jLabelDate)
+                    .addComponent(jLabelUnits)
+                    .addComponent(jLabelQuantity))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanelDadesProducteLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jTextFieldQuantity)
                     .addComponent(jTextFieldUnits, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)
@@ -283,7 +281,7 @@ public class BuyProductDialog extends javax.swing.JDialog {
      * @author manel bosch
      * @return true o false
      */
-    private boolean correctAmount(){
+    public boolean correctAmount(){
         String amountString = jTextFieldQuantity.getText();
         float amount = 0;
         try {
@@ -305,7 +303,7 @@ public class BuyProductDialog extends javax.swing.JDialog {
      * @author manel bosch
      * @param f quantitat comprada
      */
-    private void updateProduct(float f){
+    public void updateProduct(float f){
         pClient = new ProductoClientSsl(usuario.getToken());
         producto.setCantidad(producto.getCantidad() - f);
         pClient.edit_JSON(producto, String.valueOf(producto.getId()));

@@ -83,6 +83,12 @@ public class CompanyDialog extends javax.swing.JDialog {
 
         jLabelAdreca.setText("Adreça:");
 
+        jTextFieldNif.setName("nif"); // NOI18N
+
+        jTextFieldNomEmpresa.setName("nom"); // NOI18N
+
+        jTextFieldAdreca.setName("adreca"); // NOI18N
+
         javax.swing.GroupLayout jPanelDadesEmpresaLayout = new javax.swing.GroupLayout(jPanelDadesEmpresa);
         jPanelDadesEmpresa.setLayout(jPanelDadesEmpresaLayout);
         jPanelDadesEmpresaLayout.setHorizontalGroup(
@@ -119,6 +125,7 @@ public class CompanyDialog extends javax.swing.JDialog {
         );
 
         jButtonSave.setText("Guardar");
+        jButtonSave.setName("save"); // NOI18N
         jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSaveActionPerformed(evt);
@@ -199,16 +206,25 @@ public class CompanyDialog extends javax.swing.JDialog {
      * @param evt Event que es produeix en prémer el botó
      */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
+        int done = 0;
         if(empresa == null){
             Empresa e = getCompanyData();
-            eClient.create_JSON(e);
+            if(e != null){
+                done = eClient.create_JSON(e);
+            }
         }else{
             empresa = getCompanyData();
-            String id = empresa.getNif();
-            eClient.edit_JSON(empresa, id);
+            if(empresa != null){
+                String id = empresa.getNif();
+                done = eClient.edit_JSON(empresa, id);
+            }
         }
-        eClient.close();
-        this.dispose(); 
+        if(done == 204 || done == 200){
+            eClient.close();
+            this.dispose(); 
+        }else{
+            JOptionPane.showMessageDialog(null,"No s'ha pogut insertar/modificar l'empresa","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     /**

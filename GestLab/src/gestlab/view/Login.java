@@ -194,7 +194,7 @@ public class Login extends javax.swing.JFrame {
     private void jButtonEnterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonEnterActionPerformed
         jLabelMessage.setText("");
         getData();
-        if(checkPassword(passwd)){
+        if(checkPassword(passwd) && checkLogin(login)){
             String pass = encodePasswd(passwd);
             if(checkData(login, pass)){ 
                 //Crear el token i afegir-lo a l'usuari ho hauria de fer el servidor
@@ -208,11 +208,10 @@ public class Login extends javax.swing.JFrame {
                 gestlabFrame = new GestLabFrame(usuario);
                 gestlabFrame.setVisible(true);
             }else{
-                jLabelMessage.setText("Usuari y password incorrectes");
+                jLabelMessage.setText("Usuari o password incorrectes");
                 cleanFields();
             }
         }else{
-            jLabelMessage.setText("Password ha de ser de "+ GestlabConstants.PASSWD_MIN_SIZE +" caràcters mínim");
             cleanFields();
         }
         
@@ -281,12 +280,33 @@ public class Login extends javax.swing.JFrame {
     }
     
     /**
-     * Mètode per comprovar si el password entrat té més de 8 caràcters
+     * Mètode per comprovar que el login sigui de la mida requerida
+     * @author manel bosch
+     * @param log Login entrat per text
+     * @return true o false
+     */
+    public boolean checkLogin(String log){
+        if(log.length() == GestlabConstants.LOGIN_MIN_SIZE){
+            return true;
+        }else{
+            jLabelMessage.setText("El login ha de ser de "+ GestlabConstants.LOGIN_MIN_SIZE +" caràcters");
+            return false;
+        }
+    }
+    
+    /**
+     * Mètode per comprovar si el password entrat té el mínim de caràcters requerits
+     * @author manel bosch
      * @param pass Password entrat
      * @return true o false
      */
     public Boolean checkPassword(char[] pass){
-        return pass.length >= GestlabConstants.PASSWD_MIN_SIZE;
+        if(pass.length >= GestlabConstants.PASSWD_MIN_SIZE){
+            return true;
+        }else{
+            jLabelMessage.setText("Password ha de ser de "+ GestlabConstants.PASSWD_MIN_SIZE +" caràcters mínim");
+            return false;
+        }
     }
     
     /**

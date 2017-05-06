@@ -249,16 +249,25 @@ public class ProductDialog extends javax.swing.JDialog {
      * @param evt Event que representa prémer el botó
      */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
+        int done = 0;
         if(producto == null){
             Producto p = getProductData();
-            int done = pClient.create_JSON(p);//retorna 204
+            if(p != null){
+                done = pClient.create_JSON(p);//retorna 204
+            }
         }else{
             producto = getProductData();
-            String id = jTextFieldIdProducte.getText();
-            int done = pClient.edit_JSON(producto, id);//retorna 204
+            if(producto != null){
+                String id = jTextFieldIdProducte.getText();
+                done = pClient.edit_JSON(producto, id);//retorna 204
+            }
         }
-        pClient.close();
-        this.dispose(); 
+        if(done == 200 || done == 204){
+            pClient.close();
+            this.dispose(); 
+        }else{
+            JOptionPane.showMessageDialog(null,"No s'ha pogut insertar el producte","Alert !!",JOptionPane.WARNING_MESSAGE);
+        }
     }//GEN-LAST:event_jButtonSaveActionPerformed
 
     /**
@@ -344,9 +353,26 @@ public class ProductDialog extends javax.swing.JDialog {
             }
             return p;
         }else{
-            JOptionPane.showMessageDialog(null,"Omplir tots els camps","Alert !!",JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Omplir tots els camps correctament","Alert !!",JOptionPane.WARNING_MESSAGE);
             return null;
         }
+    }
+    
+    /**
+     * Mètode per saber si la quantitat entrada és un valor correcte
+     * @author manel bosch
+     * @return true o false
+     */
+    private boolean correctAmount(){
+        String amountString = jTextFieldQuantity.getText();
+        float amount = 0;
+        try {
+            amount = Float.parseFloat(amountString);
+            return true;
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(null,"La quantitat entrada no és un valor correcte","Alert !!",JOptionPane.WARNING_MESSAGE);
+            return false;    
+        }    
     }
     
     /**
@@ -358,6 +384,6 @@ public class ProductDialog extends javax.swing.JDialog {
         return !(jTextFieldNom.getText().equals("")
                 ||jTextFieldCompany.getText().equals("")
                 ||jTextFieldUnits.getText().equals("")
-                ||jTextFieldQuantity.getText().equals(""));
+                ||!correctAmount());
     }
 }

@@ -6,6 +6,7 @@ import gestlab.restfulclient.UsuarioClientSsl;
 import gestlab.utils.GestlabConstants;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
+import org.apache.commons.codec.binary.Base64;
 
 /**
  * Classe que gestiona la finestra d'entrada/modificació del password de l'usuari
@@ -66,10 +67,13 @@ public class PasswordDialog extends javax.swing.JDialog {
         jLabelPasswdNew2.setText("Repetir password nou:");
 
         jPasswordFieldOld.setText("jPasswordField1");
+        jPasswordFieldOld.setName("old"); // NOI18N
 
         jPasswordFieldNew.setText("jPasswordField1");
+        jPasswordFieldNew.setName("new1"); // NOI18N
 
         jPasswordFieldNew2.setText("jPasswordField1");
+        jPasswordFieldNew2.setName("new2"); // NOI18N
 
         javax.swing.GroupLayout jPanelDadesEmpresaLayout = new javax.swing.GroupLayout(jPanelDadesEmpresa);
         jPanelDadesEmpresa.setLayout(jPanelDadesEmpresaLayout);
@@ -195,7 +199,7 @@ public class PasswordDialog extends javax.swing.JDialog {
      */
     private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
         if(checkPasswd()){
-            usuario.setContrasena(String.valueOf(jPasswordFieldNew.getPassword()));
+            usuario.setContrasena(encodePasswd(jPasswordFieldNew.getPassword()));
             uClient.edit_JSON(usuario, usuario.getId());
             uClient.close();
             this.dispose();
@@ -253,10 +257,21 @@ public class PasswordDialog extends javax.swing.JDialog {
      * @author manel bosch
      * @return true o false
      */
-    private boolean checkPasswd(){
-        return String.valueOf(jPasswordFieldOld.getPassword()).equals(usuario.getContrasena())
+    public boolean checkPasswd(){
+        return encodePasswd(jPasswordFieldOld.getPassword()).equals(usuario.getContrasena())
                 && !Arrays.equals(jPasswordFieldOld.getPassword(), jPasswordFieldNew.getPassword())
                 && Arrays.equals(jPasswordFieldNew.getPassword(), jPasswordFieldNew2.getPassword())
                 && jPasswordFieldNew.getPassword().length >= GestlabConstants.PASSWD_MIN_SIZE;
+    }
+    
+    /**
+     * Mètode per codificar el password de l'usuari
+     * @author manel bosch
+     * @param pass password a codificar
+     * @return String amb el password codificat
+     */
+    public String encodePasswd(char[] pass){
+        byte[]  bytesEncoded = Base64.encodeBase64(String.valueOf(pass).getBytes());
+        return new String(bytesEncoded);
     }
 }

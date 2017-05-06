@@ -86,7 +86,11 @@ public class BookEquipDialog extends javax.swing.JDialog {
 
         jLabelBeginingDate.setText("Data inici:");
 
+        jTextFieldBeginingDate.setName("begin"); // NOI18N
+
         jLabelEndDate.setText("Data fi:");
+
+        jTextFieldEndDate.setName("end"); // NOI18N
 
         jLabelDateFormat.setFont(new java.awt.Font("Ubuntu", 0, 12)); // NOI18N
         jLabelDateFormat.setText("(aaaa-mm-dd)");
@@ -277,8 +281,9 @@ public class BookEquipDialog extends javax.swing.JDialog {
     /**
      * Mètode per comprovar que les dates són possibles
      * @author manel bosch
+     * @return true o false
      */
-    private boolean checkDates(){
+    public boolean checkDates(){
         String sBegining = jTextFieldBeginingDate.getText();
         String sEnd = jTextFieldEndDate.getText();
         begining = isValidDate(sBegining);
@@ -309,7 +314,7 @@ public class BookEquipDialog extends javax.swing.JDialog {
      * @param dateString cadena de text
      * @return Data entrada com a text
      */
-    private Date isValidDate(String dateString){
+    public Date isValidDate(String dateString){
         try {
             java.util.Date d = (java.util.Date) sdf.parse(dateString);
             Date sqlDate = new Date(d.getTime());

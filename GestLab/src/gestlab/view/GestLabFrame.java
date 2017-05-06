@@ -1610,7 +1610,7 @@ public class GestLabFrame extends javax.swing.JFrame {
                 fillEquipsList();
             }
         }else{
-            JOptionPane.showMessageDialog(null,"Només un administrador pot eliminar una reserva","Alert !!",JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null,"Només l'administrador pot eliminar una reserva","Alert !!",JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jButtonDelbookingActionPerformed
 
@@ -1729,10 +1729,26 @@ public class GestLabFrame extends javax.swing.JFrame {
         cliente.setNombre(jTextFieldNom.getText());
         cliente.setPrimerApellido(jTextFieldCognom1.getText());
         cliente.setSegundoApellido(jTextFieldCognom2.getText());
-        cliente.setEmail(jTextFieldMail.getText());
         cliente.setTelefono(jTextFieldTelf.getText());
-        cClient.edit_JSON(cliente, cliente.getDni());
+        if(checkMail(jTextFieldMail.getText())){
+            cliente.setEmail(jTextFieldMail.getText());
+            cClient.edit_JSON(cliente, cliente.getDni());
+        }else{
+            JOptionPane.showMessageDialog(null,"E-mail no vàlid. Canvi no efectuat","Alert !!",JOptionPane.WARNING_MESSAGE);
+            fillProfile();
+        }
         cClient.close();
+    }
+    
+    /**
+     * Mètode per comprovar que el camp e-mail pugui ser un email correcte
+     * @author manel bosch
+     * @param mail String entrat per text
+     * @return true o false
+     */
+    private boolean checkMail(String mail){
+        //Considero 5 la mida mínima perquè pugui ser una adreça correcte
+        return jTextFieldMail.getText().contains("@") && jTextFieldMail.getText().length() > 5;
     }
 
     
