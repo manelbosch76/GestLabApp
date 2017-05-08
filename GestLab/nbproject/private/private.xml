@@ -4,9 +4,11 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/src/gestlab/view/GestLabFrame.java</file>
-            <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/src/gestlab/view/Login.java</file>
-            <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/src/gestlab/view/ClientDialog.java</file>
-            <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/src/gestlab/view/CompanyDialog.java</file>
+            <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/test/gestlab/view/PE_18.java</file>
+            <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/test/gestlab/view/PE_02.java</file>
+            <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/test/gestlab/view/PE_GestLabFrameTest.java</file>
+            <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/test/gestlab/view/PE_17.java</file>
+            <file>file:/home/manel/GitRepositories/GestLabApp/GestLab/test/gestlab/view/PE_15.java</file>
         </group>
     </open-files>
 </project-private>

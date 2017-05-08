@@ -5,6 +5,8 @@ import gestlab.model.Equipo;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.UsuarioClientSsl;
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import javax.swing.JTextField;
 import org.apache.commons.codec.binary.Base64;
@@ -18,13 +20,14 @@ import utils.TestUtils;
  * Classe per poder provar la classe BookEquipDialog
  * @author manel bosch
  */
-public class BookEquipDialogTest {
+public class PE_18 {
     
     static Equipo equipo;
     static Usuario usuario;
     private UsuarioClientSsl uClient;
     private final Date date = new Date(Calendar.getInstance().getTimeInMillis());//Data del dia actual
     Date today = java.sql.Date.valueOf(date.toString());
+    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
     
     /**
      * Mètode per accedir al sistema com a usuari correcte i crear un equip de prova per fer el test
@@ -50,14 +53,20 @@ public class BookEquipDialogTest {
     /**
      * Mètode per testar si la data passada com a text és vàlida
      * @author manel bosch
+     * @throws java.text.ParseException
      */
     @Test
-    public void testIsValidDate() {
+    public void PE_18_01() throws ParseException {
         System.out.println("isValidDate");
         BookEquipDialog instance = new BookEquipDialog(null,true,usuario,null,equipo);
-        assertEquals(null, instance.isValidDate("12345"));
-        assertEquals(null, instance.isValidDate("2017/04/05"));
-        assertEquals(today, instance.isValidDate("2017-05-04"));//Modificar data perquè sigui sempre l'actual perquè funcioni
+        assertEquals(null, instance.isValidDate(""));
+        assertEquals(null, instance.isValidDate("hola"));
+        assertEquals(null, instance.isValidDate("2017/04/05"));//Data mal formatada
+        
+        String dateString = "2017-08-08";//Data correcte
+        java.util.Date d = (java.util.Date) sdf.parse(dateString);
+        Date sqlDate = new Date(d.getTime());//Creo la data que hauria de retornar el mètode
+        assertEquals(sqlDate, instance.isValidDate(dateString));
     }
     
     /**
@@ -65,7 +74,7 @@ public class BookEquipDialogTest {
      * @author manel bosch
      */
     @Test
-    public void testCheckDates() {
+    public void PE_18_02() {
         System.out.println("checkDates");
         BookEquipDialog instance = new BookEquipDialog(null,true,usuario,null,equipo);
         
@@ -81,12 +90,13 @@ public class BookEquipDialogTest {
         assertEquals(false, instance.checkDates());
         
         equipo.setEstadoAlquiler(true);
-        textBegin.setText("2017-05-04");//Actual però equip reservat
-        textEnd.setText("2017-05-05");
+        textBegin.setText(today.toString());//Correcte però equip reservat
+        textEnd.setText("2017-10-05");
         assertEquals(false, instance.checkDates());
         
-        textBegin.setText("2017-06-07");//Correcte
-        textEnd.setText("2017-06-10");
+        equipo.setEstadoAlquiler(false);
+        textBegin.setText(today.toString());//Correcte i equip no reservat
+        textEnd.setText("2017-10-05");
         assertEquals(true, instance.checkDates());
     }
 }

@@ -386,6 +386,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jTableClients.setAutoCreateRowSorter(true);
         jTableClients.setModel(tableCreator.createTableModel(Cliente.class, clientes));
+        jTableClients.setName("clients"); // NOI18N
         jScrollPaneUsers.setViewportView(jTableClients);
 
         jButtonNewClient.setText("Nou Client");
@@ -578,6 +579,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jTableProducts.setAutoCreateRowSorter(true);
         jTableProducts.setModel(tableCreator.createTableModel(Producto.class, productos));
+        jTableProducts.setName("products"); // NOI18N
         jScrollPaneProducts.setViewportView(jTableProducts);
 
         jTextFieldProduct.setText("Nom Producte");
@@ -835,6 +837,7 @@ public class GestLabFrame extends javax.swing.JFrame {
 
         jTableEquips.setAutoCreateRowSorter(true);
         jTableEquips.setModel(tableCreator.createTableModel(Equipo.class, equipos));
+        jTableEquips.setName("equipment"); // NOI18N
         jScrollPaneEquips.setViewportView(jTableEquips);
 
         jButtonEquipsUsed.setText("Reserves");

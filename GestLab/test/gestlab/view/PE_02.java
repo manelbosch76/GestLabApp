@@ -3,7 +3,7 @@ package gestlab.view;
 
 import gestlab.model.Usuario;
 import gestlab.restfulclient.UsuarioClientSsl;
-import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.After;
 import static org.junit.Assert.assertFalse;
@@ -14,9 +14,9 @@ import utils.TestUtils;
 
 /**
  * Classe per testar el canvi de password
- * @author manel
+ * @author manel bosch
  */
-public class PasswordDialogTest {
+public class PE_02 {
     
     static Usuario usuario;
     private UsuarioClientSsl uClient;
@@ -46,15 +46,13 @@ public class PasswordDialogTest {
      * @author manel bosch
      */
     @Test
-    public void testCheckPasswd() {
+    public void PE_02_01() {
         System.out.println("checkPasswd");
         PasswordDialog instance = new PasswordDialog(null, true, usuario);
-        //canvio la contrasenya de l'usuari per facilitar les proves
-        usuario.setContrasena("maria");
         
-        JTextField textOld = (JTextField)TestUtils.getChildNamed(instance, "old");
-        JTextField textNew1 = (JTextField)TestUtils.getChildNamed(instance, "new1");
-        JTextField textNew2 = (JTextField)TestUtils.getChildNamed(instance, "new2");
+        JPasswordField textOld = (JPasswordField)TestUtils.getChildNamed(instance, "old");
+        JPasswordField textNew1 = (JPasswordField)TestUtils.getChildNamed(instance, "new1");
+        JPasswordField textNew2 = (JPasswordField)TestUtils.getChildNamed(instance, "new2");
         
         //contrasenya antiga diferent a la que té l'usuari
         textOld.setText("manel");
@@ -68,10 +66,16 @@ public class PasswordDialogTest {
         textNew2.setText("josep");
         assertFalse(instance.checkPasswd());
         
-        //contrasenyes noves més curtes
-        textOld.setText("manel");
+        //contrasenyes noves buides (més petites que les demanades)
+        textOld.setText("maria");
         textNew1.setText("");
         textNew2.setText("");
+        assertFalse(instance.checkPasswd());
+        
+        //contrasenyes noves iguals a l'antiga
+        textOld.setText("maria");
+        textNew1.setText("maria");
+        textNew2.setText("maria");
         assertFalse(instance.checkPasswd());
         
         //correcte

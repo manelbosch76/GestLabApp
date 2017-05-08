@@ -8,21 +8,24 @@ import gestlab.restfulclient.UsuarioClientSsl;
 import javax.swing.JTextField;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
 import utils.TestUtils;
 
 /**
  * Classe per provar la classe BuyProductDialog
  * @author manel bosch
  */
-public class BuyProductDialogTest {
+public class PE_17 {
     
-    static Producto producto;
-    static Usuario usuario;
-    private UsuarioClientSsl uClient;
-    private ProductoClientSsl pClient;
+    private Producto producto;
+    private static Usuario usuario;
+    private static UsuarioClientSsl uClient;
+    private static ProductoClientSsl pClient;
+    private float realQuantity;
     
     /**
      * Mètode per accedir al sistema com a usuari correcte i crear un producte de prova per fer el test
@@ -55,7 +58,7 @@ public class BuyProductDialogTest {
      * @author manel bosch
      */
     @Test
-    public void testCorrectAmount() {
+    public void PE_17_01() {
         System.out.println("correctAmount");
         BuyProductDialog instance = new BuyProductDialog(null,true,usuario,null,producto);
         
@@ -64,7 +67,8 @@ public class BuyProductDialogTest {
         text.setText("pep");//Incorrecte: no és float
         assertEquals(false, instance.correctAmount());
         
-        text.setText("225");//Incorrecte: quantitat major que el stock
+        //Incorrecte: quantitat major que el stock. 
+        text.setText("225");
         assertEquals(false, instance.correctAmount());
         
         text.setText("100.25");//Correcte
@@ -76,12 +80,19 @@ public class BuyProductDialogTest {
      * @author manel bosch
      */
     @Test
-    public void testUpdateProduct(){
+    public void PE_17_02(){
         System.out.println("updateProduct");
-        BuyProductDialog instance = new BuyProductDialog(null,true,usuario,null,producto);
-        
         //Per fer la prova ho faig amb un producte real de la base de dades
-        producto = pClient.find_JSON(Producto.class, "1");
-        assertEquals(204, pClient.edit_JSON(producto, String.valueOf(1)));
+        producto = pClient.find_JSON(Producto.class, "3");
+        BuyProductDialog instance = new BuyProductDialog(null,true,usuario,null,producto);
+
+        realQuantity = producto.getCantidad();
+        float newQuantity = (float) (realQuantity*0.5);
+        instance.updateProduct(newQuantity);//Quantitat diferent a la que tenia definida
+        producto = pClient.find_JSON(Producto.class, "3");
+        assertEquals(newQuantity, producto.getCantidad(),0);
+        
+        producto.setCantidad(realQuantity);//Retorno la quantitat inicial al producte
+        pClient.edit_JSON(producto, "3");
     }
 }

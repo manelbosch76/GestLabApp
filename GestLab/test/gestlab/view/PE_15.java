@@ -1,31 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gestlab.view;
 
 import gestlab.model.Empresa;
 import gestlab.model.Usuario;
 import gestlab.restfulclient.EmpresaClientSsl;
 import gestlab.restfulclient.UsuarioClientSsl;
-import static gestlab.view.PasswordDialogTest.usuario;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import org.apache.commons.codec.binary.Base64;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import utils.TestUtils;
 
 /**
- *
- * @author manel
+ * Classe per testar si es crea/modifica una empresa al servei RESTful
+ * @author manel bosch
  */
-public class CompanyDialogTest {
+public class PE_15 {
     
     static Usuario usuario;
     private UsuarioClientSsl uClient;
@@ -58,10 +51,10 @@ public class CompanyDialogTest {
      * @author manel bosch
      */
     @Test
-    public void testSaveActionPerformed() {
+    public void PE_15_01() {
         Empresa e;
         JButton botoSave; JTextField textNif, textNom, textAdreca; 
-        System.out.println("checkPasswd");
+        System.out.println("saveActionPerformed");
         
         //Creo la finestra sense passar-li una empresa
         CompanyDialog instance = new CompanyDialog(null, true, usuario);
@@ -79,7 +72,7 @@ public class CompanyDialogTest {
         e = eClient.find_JSON(Empresa.class, textNif.getText());//Recupero l'empresa que s'hauria d'haver creat
         assertEquals(empresa, e);
         
-        textNif.setText("Q33733110R");//Dades incomplertes i empresa no existent
+        textNif.setText("Q33733110R");//No Existent però amb dades incomplertes
         textNom.setText("");
         textAdreca.setText("");
         botoSave.doClick();
